@@ -330,19 +330,25 @@ body{ -webkit-tap-highlight-color:transparent; padding-block:0; }
    assumed), is fixed relative to the viewport regardless of padding on #cardZone or #aoiCorner
    itself -- padding on either side cancels out against the bottom-anchored math. So a tall
    #cardZone's own unscrolled lower content sits in the same screen region #aoiCorner renders
-   into, with no amount of padding able to separate them. Bounding #cardZone's own height and
-   letting IT scroll internally (the same pattern already used for teachMode) sidesteps the
-   sticky-math entirely: #aoiCorner then always sits right after it, never covering it. On a
-   short view #cardZone is simply shorter than this cap and never scrolls, so no dead space is
-   reintroduced -- only a genuinely tall view engages the internal scrollbar.
-   This sticky+calc mechanism stays the global default (Hub/Quiz/Japanese/Aoi's Day/etc. -- it
-   works fine for them and the dead-space bug above was specifically about NOT forcing a fixed
-   viewport height here). The Teacher Claude Code lesson gets a different, more robust mechanism
-   instead (see "body.lessonLocked" below): that lesson's own real-phone testing showed this
-   sticky+hardcoded-136px-guess math drifts out of sync with #sub's real height once a beat's
-   text is long enough to wrap extra lines, clipping her or shifting her position beat to beat. */
-#cardZone{padding:2px 0 8px; max-height:calc(100svh - var(--host-size) - 136px); overflow-y:auto; -webkit-overflow-scrolling:touch;}
-@supports not (height:100svh){ #cardZone{max-height:calc(100vh - var(--host-size) - 136px);} }
+   into, with no amount of padding able to separate them.
+   This used to be handled by bounding #cardZone's own height with a hardcoded "100svh -
+   host-size - 136px" guess and letting IT scroll internally, same as the Teacher lesson's OLD
+   mechanism -- but that guess rots exactly the same way the Teacher lesson's did: Hub/Quiz/
+   Cooking/Sales/Daily Chat never call reserveSubFor(), so #sub (and therefore #aoiCorner's whole
+   height) grows or shrinks with each view's real caption text, and "136px" was only ever right
+   for one specific caption length. Confirmed via Playwright + getBoundingClientRect(): on Cooking's
+   recipe-detail view in particular, a longer caption line made #aoiCorner taller than the guess
+   accounted for, so #cardZone's own box (max-height-bounded) actually overlapped #aoiCorner's top
+   edge by ~24px instead of sitting flush above it -- the same class of bug as the Teacher lesson's,
+   just inverted (overlap here instead of a gap, because the stale guess under- rather than
+   over-reserves). Fixed the same way that one was: #cardZone no longer bounds its own height or
+   scrolls internally at all -- it reserves space via padding-bottom, measured LIVE off #aoiCorner's
+   own real rendered height (--aoi-reserve-bottom, set by updateAoiReserve() in the script below,
+   already unconditional/global, not scoped to any one view), and the real PAGE scrolls when content
+   is taller than the viewport (see the "page itself scrolls" comment block above .wrap) -- exactly
+   the body.lessonLocked mechanism below, just applied as the default for every portrait view
+   instead of only the Teacher lesson. */
+#cardZone{padding:2px 0 8px; padding-bottom:calc(8px + var(--aoi-reserve-bottom, 170px)); max-height:none; overflow-y:visible;}
 #card{background:var(--surface); border:1.5px solid var(--line); border-radius:var(--card-radius);
   box-shadow:var(--chrome-shadow); padding:12px;}
 .ctag{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-2);margin-bottom:8px;}
@@ -350,7 +356,12 @@ body{ -webkit-tap-highlight-color:transparent; padding-block:0; }
 #aoiCorner{position:sticky; bottom:0; z-index:3; background:var(--bg); padding-top:16px; margin-top:-2px;}
 /* ---------- lesson lock: the Teacher Claude Code lesson's own, more robust positioning ----------
    showView() adds body.lessonLocked only for the teacherLesson view (not Japanese/Aoi's Day --
-   those keep the sticky mechanism above untouched, same scope as the previous round's fix).
+   those keep the same sticky+live-reserve mechanism as the default rule above, just without this
+   extra z-index bump, which the Teacher lesson needs for its own on-card chrome). These two rules
+   duplicate the default #aoiCorner/#cardZone values above (aside from z-index) now that the
+   default case was fixed to use the exact same live-measured mechanism -- kept explicit here
+   rather than deleted so the Teacher lesson's positioning stays self-contained and obviously
+   correct even if the portrait default above ever changes again.
    This used to pin #aoiCorner with position:fixed, bottom:0 -- always glued to the real viewport
    edge no matter how short a given beat's card content was. On a short beat (a small mockScene,
    little text) that left a dead gap: #cardZone's own reserved padding ends right after the short
@@ -3398,7 +3409,18 @@ addEventListener('resize', sizeHost); sizeHost();
    of how tall #sub gets for a given beat's text, the current theme's spacing, or which orientation
    layout is active. A ResizeObserver re-measures whenever her box's own size changes (new line of
    text wraps to another row, theme toggle changes padding, etc.); resize/orientationchange cover
-   viewport changes (rotating the phone, the on-screen keyboard, browser chrome show/hide). */
+   viewport changes (rotating the phone, the on-screen keyboard, browser chrome show/hide).
+   Observing #aoiCorner alone SHOULD already catch every internal content change (#sub growing a
+   line, #aoiChoices' Yes/Pass buttons appearing, a sprite pose swap resizing #host) because any of
+   those changes #aoiCorner's own rendered box too -- but real devices have shown this driven purely
+   by #aoiCorner's own box to occasionally lag a beat behind on a slow font/image load (the observer
+   fires on the NEXT size change, not retroactively, so if two changes land close together -- e.g. a
+   beat's text AND its late-swapped webfont both affect height within the same render -- it's
+   possible for a stale measurement to persist slightly longer than ideal on a real phone, even
+   though this doesn't reproduce in a fast local/headless run). Observing #sub and #host directly
+   too, in addition to #aoiCorner itself, is cheap insurance against exactly that: it makes sure a
+   resize notification fires off of whichever of the three actually changed first, instead of
+   depending on the outer box's own resize always being the one to trigger. */
 var $aoiCorner = document.getElementById('aoiCorner');
 function updateAoiReserve(){
   var r = $aoiCorner.getBoundingClientRect();
@@ -3409,10 +3431,27 @@ function updateAoiReserve(){
   // where this distance-to-edge math is intentional and still correct.
   document.documentElement.style.setProperty('--aoi-reserve-right', Math.max(0, Math.ceil(window.innerWidth - r.left)) + 'px');
 }
-if (window.ResizeObserver) new ResizeObserver(updateAoiReserve).observe($aoiCorner);
+if (window.ResizeObserver){
+  var aoiReserveObserver = new ResizeObserver(updateAoiReserve);
+  aoiReserveObserver.observe($aoiCorner);
+  var $aoiReserveSubEl = document.getElementById('sub');
+  var $aoiReserveHostEl = document.getElementById('host');
+  if ($aoiReserveSubEl) aoiReserveObserver.observe($aoiReserveSubEl);
+  if ($aoiReserveHostEl) aoiReserveObserver.observe($aoiReserveHostEl);
+}
 addEventListener('resize', updateAoiReserve);
 addEventListener('orientationchange', function(){ setTimeout(updateAoiReserve, 60); });
 updateAoiReserve();
+/* Belt-and-suspenders for the exact same real-device race described above: re-measure once more a
+   couple of animation frames after any render that can change her footprint (a new beat's say(),
+   a quiz/JP check rendering its choice buttons, a view switch), well after the observer's own
+   notification would have landed, so a slow webfont/sprite swap that finishes just after the
+   initial measurement still gets picked up quickly instead of sitting stale until the NEXT size
+   change happens to fire the observer again. Cheap (a getBoundingClientRect + a style write) and
+   idempotent, so calling it an extra time when nothing actually changed is harmless. */
+function updateAoiReserveSoon(){
+  requestAnimationFrame(function(){ requestAnimationFrame(updateAoiReserve); });
+}
 
 var BLINKABLE = {"null":1, "eyes_wide":1, "eyes_determined":1, "eyes_side":1};
 function drawAoi(f){
@@ -3453,6 +3492,7 @@ function say(text, opts){
   if ('eyes' in opts) curEyes = opts.eyes;
   renderLine();
   clearAoiChoices();
+  updateAoiReserveSoon();
 }
 /* Small inline choices right under her caption (see #aoiChoices CSS), replacing a big primary
    button living in the content card -- used by Cooking's "walk me through it?" and Sales'
@@ -3469,6 +3509,7 @@ function showAoiChoices(choices){
     btn.addEventListener('click', function(e){ e.stopPropagation(); c.onClick(); });
     zone.appendChild(btn);
   });
+  updateAoiReserveSoon();
 }
 function clearAoiChoices(){ document.getElementById('aoiChoices').innerHTML = ''; }
 window.AoiChoices = { show: showAoiChoices, clear: clearAoiChoices };

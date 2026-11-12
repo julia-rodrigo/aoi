@@ -3558,19 +3558,21 @@ function say(text, opts){
   curText = text; shownChars = 0; typing = true;
   if ('pose' in opts) curPose = opts.pose;
   if ('eyes' in opts) curEyes = opts.eyes;
-  /* Reserve #sub's final height for THIS exact text up front, before the typewriter starts
-     revealing characters. Paced lessons used to instead reserve #sub for the WHOLE lesson's
-     longest beat, once per view-entry, specifically so her face wouldn't shift between beats of
-     different lengths -- but that left visible blank space under every shorter beat (confirmed via
-     screenshot: "extra fill space blank in her background" was literally this). Reserving per-text
-     every time removes that blank space entirely; the trade-off is her face can shift a little
-     between beats of very different lengths, which beats permanent empty space on most of them.
-     Still needed regardless of that trade-off: without reserving for the FINAL text up front,
-     #sub's real height grows mid-typing as more characters wrap to additional lines -- #aoiCorner
-     is a fixed-position flex column anchored by its OWN bottom edge (bottom:0), so a taller #sub
-     still pushes #host (the sibling above it) upward, even though #aoiCorner no longer borrows any
-     space from #cardZone's flow to do it. */
-  reserveSubFor([text]);
+  /* No upfront reservation for #sub's final height anymore. That used to be needed because
+     #aoiCorner was anchored by its own BOTTOM edge (sticky/fixed, bottom:0), so a taller #sub
+     pushed #host upward as she typed -- reserving the full final text's height before typing
+     started kept that from happening, at the cost of a mostly-blank box sized for text that
+     hadn't been typed yet (confirmed directly: that blank box was tipping some beats just past
+     one screen's height, triggering a scrollbar for content that didn't actually need one -- "a
+     white space box that is not needed... because of that box we get a scrolling mechanism").
+     Now that #aoiCorner defaults to plain position:static (see the CSS above), it's anchored by
+     its OWN TOP instead: #host, the first child, never moves no matter how tall #sub grows below
+     it, so there's nothing left to protect against by reserving ahead of time -- #sub can just
+     grow with her real typed text, exactly as tall as it currently needs to be and no taller. The
+     rare view where real content is already taller than the screen (body.aoiNeedsScroll, sticky)
+     can still see a little natural settling while she's mid-line, same trade-off already accepted
+     for her position differing beat to beat. */
+  clearSubReserve();
   renderLine();
   clearAoiChoices();
   updateAoiReserveSoon();

@@ -471,6 +471,43 @@ body.lessonLocked #cardZone{padding-bottom:calc(8px + var(--aoi-reserve-bottom, 
        at that cap. */
     max-width:280px; width:280px; background:transparent; padding:0; margin:0; justify-content:flex-end;
   }
+
+  /* ---------- Aoi's Day (daytrip) landscape only: boxless location card + boxless past-trips list
+     ----------
+     Scoped via body.daytripMode (toggled by showView() only for this view, same pattern as
+     body.lessonLocked above) + .wrap.teachMode, so this stays confined to Aoi's Day's own landscape
+     corner-host layout -- Hub/Quiz/Cooking/Sales/Teacher lesson/Japanese Pronunciation, and Aoi's
+     Day's own PORTRAIT view (same markup, untouched here), all keep their current look.
+     Per direct user clarification, "no boxes anywhere" means DECORATIVE boxes specifically -- a
+     real tappable target (a quiz choice, a hub tile, a cooking/sales scenario card) still gets to
+     look like a button. The little postcard-style location card and the Past-trips list are purely
+     illustrative/informational here, never tappable (renderTripLog() below attaches no click
+     handler to its .card rows), so both lose their border/background/shadow and become plainly
+     laid-out content with generous spacing instead -- no bordered box left for anything to clip
+     against. This is also the actual clipping fix: the postcard's phone-mockup chrome (a fake
+     status-bar notch, a redundant "Aoi's Day" chip that only repeated the header's own badge two
+     lines up) plus its fixed overflow:hidden box were the real cause of the reported cutoff --
+     direct measurement at the shortest common landscape phone size (852x393) showed #card's real
+     content needing 339px of height while #cardZone only had 325px of room to give it (after its
+     own padding), a 14px shortfall that grows fast once Aoi's Day's log of past trips has more than
+     one entry. Stripping that chrome frees far more height than that shortfall, with room to
+     spare for real devices' extra chrome (notches, address bars) that this headless measurement
+     can't see. */
+  body.daytripMode .wrap.teachMode #daytripVisual .mockScene{ max-width:none; }
+  body.daytripMode .wrap.teachMode #daytripVisual .phone{
+    border:none; border-radius:0; background:transparent; box-shadow:none; overflow:visible;
+    padding:6px 0 0;
+  }
+  body.daytripMode .wrap.teachMode #daytripVisual .notch,
+  body.daytripMode .wrap.teachMode #daytripVisual .chips{ display:none; }
+  body.daytripMode .wrap.teachMode .jp-section{
+    background:transparent; border:none; box-shadow:none; padding:0;
+  }
+  body.daytripMode .wrap.teachMode #daytripLog{ display:flex; flex-direction:column; gap:10px; }
+  body.daytripMode .wrap.teachMode #daytripLog .card{
+    background:transparent; border:none; border-radius:0; box-shadow:none; padding:0;
+    cursor:default; gap:2px;
+  }
 }
 /* Safety net for short-landscape phones (an older/smaller device, or a host surface with its own
    extra chrome eating real viewport height) -- same idea as the portrait short-screen net below.
@@ -546,12 +583,22 @@ body.lessonLocked #cardZone{padding-bottom:calc(8px + var(--aoi-reserve-bottom, 
    one view; these do the same job here but scoped to .teachMode so Hub/Quiz are untouched). Only
    engages on genuinely short viewports (a small/older phone, or a host surface like an in-app
    preview pane that eats extra chrome) -- at the heights this app already ships at, none of this
-   applies and her portrait/the subtitle bubble are pixel-identical to the normal rules above. */
-@media (max-height:700px){
+   applies and her portrait/the subtitle bubble are pixel-identical to the normal rules above.
+   Explicitly scoped to `orientation:portrait` -- without it, this "short viewport" math also
+   matched ordinary LANDSCAPE phones (typically ~390-430px tall, always under the 700px/620px
+   breakpoints here), which the stated invariant above never accounted for. That let this rule
+   silently override the dedicated landscape --host-size already set above, shrinking her avatar
+   frame down to ~100-110px on a real landscape phone while #aoi's own canvas stayed sized for the
+   full frame -- #host .frame's overflow:hidden then clipped her bust to whatever arbitrary corner
+   fit, instead of showing the whole scaled-down sprite (confirmed via direct measurement and
+   screenshot across Aoi's Day/Japanese Pronunciation/the Teacher lesson alike, since none of them
+   scope this differently). Landscape already has its own short-screen net just below (the
+   420px-max-height query, font-size only) -- this one stays portrait-only as originally intended. */
+@media (max-height:700px) and (orientation:portrait){
   .wrap.teachMode{ --host-size: min(26vh, 222px); }
   .wrap.teachMode #line{ font-size:13px; }
 }
-@media (max-height:620px){
+@media (max-height:620px) and (orientation:portrait){
   .wrap.teachMode .mockScene .phone .notch{ display:none; }
   .wrap.teachMode .ctag{ margin-bottom:5px; }
 }
@@ -1982,6 +2029,10 @@ function showView(name, opts){
      #aoiCorner (see "body.lessonLocked" in the CSS) -- scoped to just this view, not the other
      TEACH_VIEWS, which keep the sticky/grid mechanism already shipped and verified. */
   document.body.classList.toggle("lessonLocked", name === "teacherLesson");
+  /* Scopes the boxless location-card/past-trips treatment below to just Aoi's Day's own landscape
+     corner-host layout, same pattern as body.lessonLocked just above -- Japanese Pronunciation and
+     the Teacher lesson (also TEACH_VIEWS) are untouched, and so is Aoi's Day's own portrait view. */
+  document.body.classList.toggle("daytripMode", name === "daytrip");
   if (window.AoiHost && window.AoiHost.onView) window.AoiHost.onView(name);
   document.getElementById("cardZone").scrollTop = 0; window.scrollTo(0, 0);
 }

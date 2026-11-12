@@ -3746,13 +3746,34 @@ var DAILY_LINES = ["Hey \u2014 how's your day going?", "No studying here, just c
 var SALES_LINES = ["Pick a scenario \u2014 everyone here has a real reason to say no.", "Sales is finding out why they'd say no, then actually answering it."];
 var SALES_DETAIL_LINES = ["Here's what I'd watch for \u2014 then try it yourself."];
 
+/* ---------- hub greeting (real voice, Fish Audio) ----------
+   10 narrated clips exist under audio/intro/ (greeting_cold, welcome_back, pick_anything,
+   lets_begin, take_your_time, morning, afternoon, evening, miss_you, lets_go), generated ahead
+   of any actual design for using them. Keeping this simple: picks ONE time-of-day-appropriate
+   clip (morning/afternoon/evening, by the real local hour) and plays it once, alongside her
+   existing text greeting, the FIRST time the hub is shown this page load only -- hubGreetedThisLoad
+   is a plain in-memory flag (not localStorage), so it resets on every reload/app open and never
+   replays just because the user bounces back to the hub mid-session. The other 6 clips
+   (welcome_back/pick_anything/lets_begin/take_your_time/miss_you/lets_go) don't have a clean,
+   simple home yet -- left unused rather than forced in. */
+var hubGreetedThisLoad = false;
+function hubGreetingClip(){
+  var h = new Date().getHours();
+  return h < 12 ? 'morning' : (h < 17 ? 'afternoon' : 'evening');
+}
+function playHubGreeting(){
+  if (hubGreetedThisLoad) return;
+  hubGreetedThisLoad = true;
+  new Audio('audio/intro/' + hubGreetingClip() + '.mp3').play().catch(function(){});
+}
+
 window.AoiHost = {
   say: say, /* exposed so paced lesson content (e.g. the Japanese view) can drive her line directly */
   reserveSub: reserveSubFor, /* exposed so renderTeacherLesson()/renderJapanese()/renderDaytrip(),
     which live in a different <script> tag's own IIFE, can set --sub-reserve for their view */
   clearSubReserve: clearSubReserve,
   onView: function(name){
-    if (name === 'hub') say(pick(HUB_LINES), { pose: 'present_r', eyes: null });
+    if (name === 'hub'){ say(pick(HUB_LINES), { pose: 'present_r', eyes: null }); playHubGreeting(); }
     else if (name === 'quizSelect') say(pick(QUIZSELECT_LINES), { pose: 'point_r', eyes: null });
     else if (name === 'teacher') say(pick(TEACHER_LINES), { pose: 'present_l', eyes: 'eyes_think' });
     else if (name === 'subjectHome') say(pick(SUBJECT_LINES), { pose: 'point_r', eyes: null });

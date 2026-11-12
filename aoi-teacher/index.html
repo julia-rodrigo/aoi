@@ -3509,11 +3509,23 @@ updateAoiScrollMode();
    true height still counts toward scrollHeight either way (it's never removed from flow, sticky
    or not), but #cardZone's reserve padding only exists once the class is already on, which would
    make "do we need the class" depend on whether the class is already set. Dropping it first breaks
-   that circularity. A tiny +1px slack absorbs subpixel rounding so a page that fits exactly doesn't
-   flicker the class on and off. */
+   that circularity.
+   AOI_FITS_SLACK is deliberately generous (not a tiny rounding fudge): a beat that's only a few
+   tens of pixels past one screen still renders completely fine left in plain static flow -- worst
+   case the browser's own native scroll reveals those last few px, which is imperceptible -- while
+   routing it into aoiNeedsScroll's sticky mechanism re-exposes the exact engage-before-you've-
+   scrolled edge case documented on #aoiCorner above. Confirmed directly as the cause of an
+   intermittent report (same beat, same fully-typed text, clipped in one screenshot and clean in
+   another): the real content was only ~2px over the OLD 1px-slack threshold, so ordinary
+   measurement jitter (a webfont finishing its swap, a sprite settling) was enough to flip which
+   side of the line it landed on from one load to the next. A wider margin keeps genuinely-long
+   content (Hub's full card list, a multi-step recipe -- both hundreds of px over) correctly routed
+   into scroll mode while keeping every borderline case safely out of the mechanism that's fragile
+   at its edges. */
+var AOI_FITS_SLACK = 48;
 function updateAoiScrollMode(){
   document.body.classList.remove('aoiNeedsScroll');
-  var fits = document.documentElement.scrollHeight <= window.innerHeight + 1;
+  var fits = document.documentElement.scrollHeight <= window.innerHeight + AOI_FITS_SLACK;
   document.body.classList.toggle('aoiNeedsScroll', !fits);
   updateAoiReserve();
 }
@@ -3627,17 +3639,19 @@ function reserveSubFor(texts){
   document.documentElement.style.setProperty('--sub-reserve', Math.ceil(max) + 'px');
 }
 function clearSubReserve(){ lastReserveTexts = null; document.documentElement.style.removeProperty('--sub-reserve'); }
-/* The measurement above runs against whatever font is active the instant it's called. On a fast/
-   cached connection the custom webfont (Google Fonts, linked in <head>) is already active by then,
-   but on a real device over a real network it commonly isn't yet -- the browser renders the fallback
-   system font first and swaps to the real one a moment later once it finishes downloading, which
-   re-wraps the caption to a different line count/height than what was just measured and reserved,
-   desyncing #sub from --sub-reserve exactly the way a real phone (not a fast local test) would show.
-   Re-running the measurement once the real fonts are confirmed active closes that gap. */
+/* Whatever is on screen the instant this runs is measured against whatever font is active right
+   then. On a fast/cached connection the custom webfont (Google Fonts, linked in <head>) is already
+   active, but on a real device over a real network it commonly isn't yet -- the browser renders a
+   fallback system font first and swaps to the real one a moment later once it finishes downloading,
+   which re-wraps the caption to a different line count/height than whatever was just measured.
+   Confirmed as the real cause of an intermittent report ("sometimes clipped, sometimes not", same
+   beat, same text): body.aoiNeedsScroll had been decided off the fallback font's shorter wrap,
+   then the real webfont swapped in afterward and made the caption taller without anything
+   re-checking whether that still fit -- a stale "fits" verdict left over from before the swap,
+   not a one-off fluke. Re-running updateAoiScrollMode() (which re-measures from scratch) once the
+   real fonts are confirmed active closes that gap for whatever beat happens to be showing then. */
 if (window.document && document.fonts && document.fonts.ready){
-  document.fonts.ready.then(function(){
-    if (lastReserveTexts) reserveSubFor(lastReserveTexts);
-  }).catch(function(){});
+  document.fonts.ready.then(updateAoiScrollMode).catch(function(){});
 }
 
 /* ---------- pinch-to-resize and drag-to-reposition her portrait ----------

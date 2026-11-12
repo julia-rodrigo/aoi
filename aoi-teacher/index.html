@@ -3574,21 +3574,24 @@ function say(text, opts){
   curText = text; shownChars = 0; typing = true;
   if ('pose' in opts) curPose = opts.pose;
   if ('eyes' in opts) curEyes = opts.eyes;
-  /* No upfront reservation for #sub's final height anymore. That used to be needed because
-     #aoiCorner was anchored by its own BOTTOM edge (sticky/fixed, bottom:0), so a taller #sub
-     pushed #host upward as she typed -- reserving the full final text's height before typing
-     started kept that from happening, at the cost of a mostly-blank box sized for text that
-     hadn't been typed yet (confirmed directly: that blank box was tipping some beats just past
-     one screen's height, triggering a scrollbar for content that didn't actually need one -- "a
-     white space box that is not needed... because of that box we get a scrolling mechanism").
-     Now that #aoiCorner defaults to plain position:static (see the CSS above), it's anchored by
-     its OWN TOP instead: #host, the first child, never moves no matter how tall #sub grows below
-     it, so there's nothing left to protect against by reserving ahead of time -- #sub can just
-     grow with her real typed text, exactly as tall as it currently needs to be and no taller. The
-     rare view where real content is already taller than the screen (body.aoiNeedsScroll, sticky)
-     can still see a little natural settling while she's mid-line, same trade-off already accepted
-     for her position differing beat to beat. */
-  clearSubReserve();
+  /* Reserve #sub's final height for THIS exact text up front, before the typewriter starts
+     revealing characters -- back to doing this (a previous round removed it) after direct
+     confirmation that the alternative is worse: in body.aoiNeedsScroll (sticky, genuinely-tall
+     content), #aoiCorner is anchored by its own BOTTOM edge, so letting #sub grow naturally while
+     typing didn't just nudge #host a little, it grew her whole box's OPAQUE background upward
+     over real content while covering more of it beat by beat -- "this white field covers the
+     contents and moves aoi up and down... remove it altogether", confirmed directly from a
+     screenshot showing a blank sheet overlapping the New Session card mid-type.
+     The reason this was removed in the first place still matters: reserving blindly reintroduces
+     a mostly-blank box for text that hasn't typed out yet, which can tip a SHORT beat's page just
+     past one screen's height and trigger scroll mode for content that doesn't really need it. That
+     risk is now handled differently -- AOI_FITS_SLACK (see updateAoiScrollMode below) gives a
+     beat ~48px of room before it's treated as needing scroll at all, which comfortably absorbs a
+     reserved-but-not-yet-typed box for anything short enough to matter. For a beat that's
+     genuinely going to need scroll regardless (a tall mockup, a long caption), reserving her final
+     size up front means she's already fully sized the instant that beat renders -- nothing left to
+     grow into content while typing, because there's nothing left to grow. */
+  reserveSubFor([text]);
   renderLine();
   clearAoiChoices();
   updateAoiReserveSoon();

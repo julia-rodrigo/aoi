@@ -722,6 +722,7 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
       <button class="navbtn" id="btnBack" hidden type="button" aria-label="Back">&larr;</button>
       <button class="navbtn" id="teacherReplayBtn" hidden type="button" aria-label="Replay her line">&#128266;</button>
       <button class="navbtn" id="teacherTranscriptBtn" hidden type="button" aria-label="Transcript">&#128220;</button>
+      <button class="navbtn" id="quizTranscriptBtn" hidden type="button" aria-label="Transcript">&#128220;</button>
       <button class="navbtn" id="lessonPlayBtn" hidden type="button" aria-label="Pause">&#10074;&#10074;</button>
       <button class="themebtn" id="themeToggle" type="button" aria-label="Toggle theme">&#9728;</button>
       <button class="themebtn" id="settingsBtn" type="button" aria-label="Chat settings">&#9881;</button>
@@ -1096,6 +1097,13 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
         <p class="hint">Live in-app narration isn't possible here &mdash; checked directly against Fish Audio's API (<code>api.fish.audio/v1/tts</code>), and it refuses browser-origin requests outright (no CORS headers at all; a preflight check gets a bare 404). That's a limit on Fish Audio's side, not a missing feature here &mdash; it would need a server in between to relay the request, which this app doesn't have. The offline video pipeline (<code>anime-explainer/</code>) already uses Fish Audio successfully because it calls the API from a real server, not a browser.</p>
       </div>
 
+      <div class="settingsField">
+        <label style="display:flex; align-items:center; gap:8px; text-transform:none; letter-spacing:normal; font-size:13.5px; font-weight:600; color:var(--fg); cursor:pointer;">
+          <input type="checkbox" id="voiceOnToggle" style="width:auto;" checked> Aoi's voice
+        </label>
+        <p class="hint">Plays her pre-recorded voice clips &mdash; lesson narration, the hub greeting, and full quiz explanations. Turn off to keep captions only.</p>
+      </div>
+
       <div class="settingsActions">
         <button type="button" class="btn primary" id="settingsSaveBtn">Save</button>
         <button type="button" class="btn ghost" id="settingsClearBtn">Clear stored key</button>
@@ -1112,6 +1120,16 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
       </div>
     </div>
     <div id="jpTranscript" class="jpTranscriptLog"></div>
+  </div>
+
+  <div id="quizTranscriptPanel" class="overlayPanel" hidden>
+    <div class="panelHead">
+      <span class="panelTitle">Transcript</span>
+      <div class="panelHeadBtns">
+        <button type="button" id="quizTranscriptCloseBtn" class="navbtn" aria-label="Close transcript">&times;</button>
+      </div>
+    </div>
+    <div id="quizTranscript" class="jpTranscriptLog"></div>
   </div>
 
   <div id="daytripTranscriptPanel" class="overlayPanel" hidden>
@@ -1880,6 +1898,19 @@ Q("heart1","heart","The heart has how many chambers?",["Two","Three","Four","Six
   Q("cells15","cells","The relationship between cells, tissues, organs, and organ systems is generally best described as a hierarchy where:",["Organ systems are the smallest unit, building up to form organs, tissues, and finally cells","Cells combine to form tissues, tissues combine to form organs, and organs combine to form organ systems, in increasing levels of organization","All four levels are functionally identical with no real distinction","Tissues are larger than organ systems"],1,"Biological organization generally proceeds from cells, the basic unit, which combine to form tissues, which combine to form organs, which in turn work together as organ systems, each level representing increasing complexity and organization.")
 ];
 
+/* ---------- Aoi's voice setting: a single global, shared read ----------
+   Three separate <script> tags below each wrap their own content in an IIFE (quiz/lesson logic,
+   the host/physics+caption script, and the settings/chat script), so none of them can see another's
+   locally-scoped variables. Rather than plumb a shared binding through all three, this tiny
+   function -- deliberately left OUTSIDE any IIFE, as a true global -- reads the one shared
+   localStorage key directly by its literal string (kept in sync with LS.voiceOn in the settings
+   script further down, where the checkbox itself lives). Checked at the moment of playback, not
+   cached anywhere, so toggling the setting mid-session -- even mid-lesson -- takes effect on the
+   very next line/explanation instead of needing a reload. Defaults to true (voice ON) when unset. */
+function aoiVoiceOn(){
+  try{ return localStorage.getItem('aoi_voice_on_v1') !== '0'; }catch(e){ return true; }
+}
+
 (function(){
 "use strict";
 
@@ -2059,6 +2090,7 @@ function showView(name, opts){
   playBtn.hidden = (name !== "teacherLesson");
   document.getElementById("teacherReplayBtn").hidden = (name !== "teacherLesson");
   document.getElementById("teacherTranscriptBtn").hidden = (name !== "teacherLesson");
+  document.getElementById("quizTranscriptBtn").hidden = (name !== "quiz");
   /* activeLessonAdvance (tap-to-advance, see handleAoiTap() in the Aoi host script) stays set
      for ANY paced-lesson view (TEACH_VIEWS), not just the Teacher lesson -- Daytrip and Japanese
      now use the same tap mechanic instead of their old Continue buttons. renderDaytrip()/
@@ -2247,6 +2279,14 @@ function renderCategoryPage(){
 
 /* ---------- quiz engine ---------- */
 var session = null;
+var quizTranscript = [];
+
+function quizRenderTranscript(){
+  var zone = document.getElementById("quizTranscript");
+  zone.innerHTML = quizTranscript.map(function(t){
+    return "<p>" + t.replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</p>";
+  }).join("");
+}
 
 function buildQueue(type, catId){
   var list;
@@ -2261,6 +2301,8 @@ function startSession(type, catId){
   var queue = buildQueue(type, catId);
   if (!queue.length){ return; }
   session = {type:type, catId:catId, queue:queue, index:0, correct:0, choiceOrder:null, answeredThis:false};
+  quizTranscript = [];
+  quizRenderTranscript();
   showView("quiz", {backTo:"subjectHome"});
   renderQuestion();
 }
@@ -2318,7 +2360,6 @@ function selectChoice(chosenIdx, btnEl){
   var q = currentQuestion();
   var correct = (chosenIdx === q.a);
   var priorMisses = missCounts[q.id] || 0; /* before recordAnswer increments it */
-  if (window.AoiHost) window.AoiHost.react(correct, q.explain, !correct && priorMisses >= 1);
   if (correct) session.correct++;
   recordAnswer(activeSubject, q.id, correct);
 
@@ -2331,8 +2372,24 @@ function selectChoice(chosenIdx, btnEl){
   });
 
   var explain = document.getElementById("quizExplain");
-  explain.className = "explain show";
-  explain.innerHTML = '<b>' + (correct ? "Correct." : "Not quite.") + '</b> ' + q.explain;
+  /* Voice ON: skip the boxed .explain text and the short reaction line -- speak the FULL
+     explanation through her caption instead, and keep a transcript of everything she's said
+     this quiz session reachable via the Transcript button (same pattern as the Teacher lesson/
+     Japanese Pronunciation/Aoi's Day: quizTranscript/quizRenderTranscript/openQuizTranscript).
+     Voice OFF: unchanged from before -- short reaction line via AoiHost.react(), full explanation
+     only in the boxed .explain text, no transcript needed. */
+  if (aoiVoiceOn()){
+    explain.className = "explain";
+    explain.innerHTML = "";
+    var full = (correct ? "Correct. " : "Not quite. ") + q.explain;
+    if (window.AoiHost) window.AoiHost.say(full, {pose: correct ? "point_r" : null, eyes: correct ? "eyes_happy" : "eyes_think"});
+    quizTranscript.push(full);
+    quizRenderTranscript();
+  } else {
+    if (window.AoiHost) window.AoiHost.react(correct, q.explain, !correct && priorMisses >= 1);
+    explain.className = "explain show";
+    explain.innerHTML = '<b>' + (correct ? "Correct." : "Not quite.") + '</b> ' + q.explain;
+  }
 
   document.getElementById("quizScoreLive").textContent = session.correct + " correct";
   document.getElementById("btnNext").disabled = false;
@@ -2578,7 +2635,7 @@ function jpRenderBeat(){
   if (window.AoiHost) window.AoiHost.say(beat.text, {pose: beat.pose || null, eyes: beat.eyes || null});
 
   $jpAudio.pause();
-  if (beat.audio){
+  if (beat.audio && aoiVoiceOn()){
     $jpAudio.src = beat.audio;
     $jpAudio.play().catch(function(){});
   }
@@ -3764,6 +3821,7 @@ function hubGreetingClip(){
 function playHubGreeting(){
   if (hubGreetedThisLoad) return;
   hubGreetedThisLoad = true;
+  if (!aoiVoiceOn()) return;
   new Audio('audio/intro/' + hubGreetingClip() + '.mp3').play().catch(function(){});
 }
 
@@ -3829,7 +3887,11 @@ var LS = {
   customBase:'aoi_chat_custom_base_v1',
   customKey:'aoi_chat_custom_key_v1',
   customModel:'aoi_chat_custom_model_v1',
-  history:'aoi_chat_history_v1'
+  history:'aoi_chat_history_v1',
+  voiceOn:'aoi_voice_on_v1' /* NOTE: this literal key must stay in sync with the one hardcoded in
+    the standalone, global aoiVoiceOn() near the top of the file -- that function reads this same
+    localStorage key directly since it has to be callable from the OTHER two <script> IIFEs too,
+    which can't see this LS object. */
 };
 /* Three separate chat contexts share this same provider/call plumbing (one BYOK key works
    everywhere), but each keeps its OWN history and system prompt, so a study conversation never
@@ -4013,6 +4075,7 @@ var $settings = document.getElementById('settingsPanel');
 var $jpTranscriptPanel = document.getElementById('jpTranscriptPanel');
 var $daytripTranscriptPanel = document.getElementById('daytripTranscriptPanel');
 var $teacherTranscriptPanel = document.getElementById('teacherTranscriptPanel');
+var $quizTranscriptPanel = document.getElementById('quizTranscriptPanel');
 var $backdrop = document.getElementById('overlayBackdrop');
 var $msgs = document.getElementById('chatMsgs');
 var $noKey = document.getElementById('chatNoKey');
@@ -4034,7 +4097,7 @@ function renderHistory(){
 }
 var $panelTitle = document.querySelector('#chatPanel .panelTitle');
 var $saveJournalBtn = document.getElementById('chatSaveJournalBtn');
-var OVERLAY_PANELS = [$panel, $settings, $jpTranscriptPanel, $daytripTranscriptPanel, $teacherTranscriptPanel];
+var OVERLAY_PANELS = [$panel, $settings, $jpTranscriptPanel, $daytripTranscriptPanel, $teacherTranscriptPanel, $quizTranscriptPanel];
 /* Slide/fade the panel+backdrop in via a .open class instead of an instant `hidden` toggle (see
    the .overlayPanel/#overlayBackdrop CSS) -- the double rAF lets the browser paint the "closed"
    state (hidden removed, .open not yet added) on one frame before adding .open on the next, which
@@ -4060,6 +4123,7 @@ function closeAllOverlays(){
 function openJpTranscript(){ showOverlayPanel($jpTranscriptPanel); }
 function openDaytripTranscript(){ showOverlayPanel($daytripTranscriptPanel); }
 function openTeacherTranscript(){ showOverlayPanel($teacherTranscriptPanel); }
+function openQuizTranscript(){ showOverlayPanel($quizTranscriptPanel); }
 function openChat(context){
   currentContext = context || 'study';
   if (currentContext !== 'cooking') contextRecipe = null;
@@ -4118,6 +4182,8 @@ document.getElementById('daytripTranscriptCloseBtn').addEventListener('click', c
 document.getElementById('daytripTranscriptBtn').addEventListener('click', openDaytripTranscript);
 document.getElementById('teacherTranscriptCloseBtn').addEventListener('click', closeAllOverlays);
 document.getElementById('teacherTranscriptBtn').addEventListener('click', openTeacherTranscript);
+document.getElementById('quizTranscriptCloseBtn').addEventListener('click', closeAllOverlays);
+document.getElementById('quizTranscriptBtn').addEventListener('click', openQuizTranscript);
 document.getElementById('chatSettingsBtn').addEventListener('click', openSettings);
 document.getElementById('chatOpenSettingsBtn').addEventListener('click', openSettings);
 document.getElementById('settingsBtn').addEventListener('click', openSettings);
@@ -4161,6 +4227,7 @@ var $claudeModel = document.getElementById('claudeModel');
 var $customBase = document.getElementById('customBase');
 var $customKey = document.getElementById('customKey');
 var $customModel = document.getElementById('customModel');
+var $voiceOnToggle = document.getElementById('voiceOnToggle');
 var $savedMsg = document.getElementById('settingsSavedMsg');
 
 function toggleProviderFields(){
@@ -4175,6 +4242,7 @@ function loadSettingsForm(){
   $customBase.value = get(LS.customBase, '');
   $customKey.value = get(LS.customKey, '');
   $customModel.value = get(LS.customModel, '');
+  $voiceOnToggle.checked = get(LS.voiceOn, '1') !== '0';
   $savedMsg.hidden = true;
   toggleProviderFields();
 }
@@ -4186,6 +4254,7 @@ document.getElementById('settingsSaveBtn').addEventListener('click', function(){
   set(LS.customBase, $customBase.value.trim());
   set(LS.customKey, $customKey.value.trim());
   set(LS.customModel, $customModel.value.trim());
+  set(LS.voiceOn, $voiceOnToggle.checked ? '1' : '0');
   $savedMsg.hidden = false;
   $noKey.hidden = hasKey();
 });

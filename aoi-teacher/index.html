@@ -325,28 +325,33 @@ body{ -webkit-tap-highlight-color:transparent; padding-block:0; }
 #dots span i{display:block;height:100%;width:0;background:var(--accent-2);transition:width .25s ease;}
 
 /* --------- removed: see AOI_CAPTION_V2 below for the current boxless-caption measurements --------- */
-/* ---------- portrait layout: sticky footer, reverted back from plain static flow ----------
-   A brief attempt at removing sticky entirely (plain flow, scroll normally to reach her) traded
-   the dead-gap bug for a worse one: on any view tall enough to scroll, she's no longer guaranteed
-   on-screen at all -- she can render below the fold, "bleeding off the phone" with no visual cue
-   there's more below. Direct instruction: she must always stay visible, stuck at the bottom of the
-   interface, regardless of how much content or how many choice buttons sit above her -- back to
-   sticky. #cardZone reserves space via padding-bottom, measured LIVE off #aoiCorner's own real
-   rendered height (--aoi-reserve-bottom, set by updateAoiReserve() in the script below), and
-   #aoiCorner's margin-top pulls her up by that exact same amount so her own flow height isn't
-   ALSO counted on top of the padding (the double-count that caused the dead-gap bug this reserve
-   mechanism had before) -- see updateAoiReserve() for the live measurement. */
+/* ---------- portrait layout: sticky, on top of (not racing to avoid) scrolling content ----------
+   Root cause finally isolated by direct measurement, not guessing: CSS position:sticky (and
+   position:fixed behaves identically here) computes her "stuck" position purely from viewport
+   height minus her own real height -- it does NOT know or care where the real content actually
+   ends. That formula is only correct once scrolling has happened enough to actually reach it. The
+   bug: sticky can engage on the very FIRST frame, before any scroll, whenever the page is even
+   slightly taller than the viewport (which reserving room for her, by design, makes happen on
+   almost every view) -- at scroll position zero, "stuck" position can land ABOVE where the real
+   content currently ends, overlapping it, and only scrolling the rest of the way down resolves it
+   (confirmed directly: at max scroll the gap is a clean 8px; at scroll zero it was a 52px overlap
+   on a Teacher-lesson beat). This is a CSS mechanics limitation, not a sign the reserve math is
+   wrong. Fixed with a direct correction instead of a smarter formula: forceAoiClear() (near
+   updateAoiReserve() below) measures the REAL gap between #card and #aoiCorner after each render
+   and auto-scrolls just enough to close it whenever it's negative, so the very first frame a beat
+   is ever seen in is already the resolved, non-overlapping one -- the user is never shown the
+   transient broken state scroll position zero can produce. */
 #cardZone{padding:2px 0 8px; padding-bottom:calc(8px + var(--aoi-reserve-bottom, 170px)); max-height:none; overflow-y:visible;}
 #card{background:var(--surface); border:1.5px solid var(--line); border-radius:var(--card-radius);
   box-shadow:var(--chrome-shadow); padding:12px;}
 .ctag{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-2);margin-bottom:8px;}
 
-#aoiCorner{position:sticky; bottom:0; z-index:3; background:var(--bg); padding-top:16px;
+#aoiCorner{position:sticky; bottom:0; z-index:50; background:var(--bg); padding-top:16px;
   margin-top:calc(-2px - var(--aoi-reserve-bottom, 170px));}
 /* Teacher lesson (body.lessonLocked) uses the exact same mechanism as the default case above --
    duplicated explicitly (rather than relying on the default) so a future default change can't
    silently affect this view, per direct instruction that this view's behavior must not change. */
-body.lessonLocked #aoiCorner{position:sticky; bottom:0; z-index:20; background:var(--bg); padding-top:16px;
+body.lessonLocked #aoiCorner{position:sticky; bottom:0; z-index:50; background:var(--bg); padding-top:16px;
   margin-top:calc(-2px - var(--aoi-reserve-bottom, 170px));}
 body.lessonLocked #cardZone{padding-bottom:calc(8px + var(--aoi-reserve-bottom, 170px)); max-height:none; overflow-y:visible;}
 /* ---------- AOI_CAPTION_V2: boxless caption, per direct request ("no more boxes here and
@@ -2661,7 +2666,6 @@ function renderJapanese(){
   jpRenderPracticeLog();
   jpIdx = 0;
   jpTranscript = [];
-  if (window.AoiHost) window.AoiHost.reserveSub(JP_LESSON.map(function(b){ return b.text; }));
   jpRenderBeat();
 }
 
@@ -2905,9 +2909,6 @@ function renderTeacherLesson(){
   tutorTranscript = [];
   teacherEnded = false;
   lessonPlaying = true;
-  if (window.AoiHost) window.AoiHost.reserveSub(TUTOR_LESSON.map(function(b){ return b.text; }).concat([
-    "That's the whole lesson! Tap me to go through it again, or head back to try something else."
-  ]));
   tutorRenderBeat();
 }
 function renderTeacherPicker(){
@@ -3366,11 +3367,6 @@ function renderDaytrip(){
   renderTripLog();
   daytripIdx = 0;
   daytripTranscript = [];
-  if (window.AoiHost) window.AoiHost.reserveSub(
-    ["Today I went to " + dest.place + " — a " + dest.kind.toLowerCase() + ". " + dest.facts[0]]
-      .concat(dest.facts.slice(1))
-      .concat(["That's today's trip! Come back tomorrow and I'll have gone somewhere new."])
-  );
   daytripRenderBeat();
 }
 
@@ -3498,8 +3494,25 @@ updateAoiReserve();
    initial measurement still gets picked up quickly instead of sitting stale until the NEXT size
    change happens to fire the observer again. Cheap (a getBoundingClientRect + a style write) and
    idempotent, so calling it an extra time when nothing actually changed is harmless. */
+/* Direct-measurement correction for the sticky "engages before you've scrolled" bug described in
+   the #aoiCorner CSS comment above: at the browser's CHOSEN resting scroll position (which CSS
+   sticky decides unilaterally the instant a page is taller than the viewport, independent of
+   where the real content ends), check whether her box is actually overlapping #card's real
+   content, and if so, scroll down by exactly that amount. A clean small gap (GAP_OK) is left
+   alone -- this only corrects an actual overlap, never nudges an already-fine layout. Harmless to
+   call on a view/beat that doesn't need it: the overlap check is just two getBoundingClientRect()
+   reads and a comparison. */
+var AOI_GAP_OK = 24;
+function forceAoiClear(){
+  var card = document.getElementById('card');
+  if (!card) return;
+  var cardBottom = card.getBoundingClientRect().bottom;
+  var cornerTop = $aoiCorner.getBoundingClientRect().top;
+  var overlap = cardBottom - cornerTop + AOI_GAP_OK;
+  if (overlap > 0) window.scrollBy(0, overlap);
+}
 function updateAoiReserveSoon(){
-  requestAnimationFrame(function(){ requestAnimationFrame(updateAoiReserve); });
+  requestAnimationFrame(function(){ requestAnimationFrame(function(){ updateAoiReserve(); forceAoiClear(); }); });
 }
 
 var BLINKABLE = {"null":1, "eyes_wide":1, "eyes_determined":1, "eyes_side":1};
@@ -3539,15 +3552,19 @@ function say(text, opts){
   curText = text; shownChars = 0; typing = true;
   if ('pose' in opts) curPose = opts.pose;
   if ('eyes' in opts) curEyes = opts.eyes;
-  /* Reserve #sub's final height for THIS text up front, before the typewriter starts revealing
-     characters, for any view that hasn't already set a view-wide reserve (paced lessons call
-     reserveSubFor() with every beat's text once per view-entry, which already covers whatever any
-     single beat types out -- skip here so this doesn't overwrite that wider reservation with a
-     narrower one). Without this, #sub's real height -- and so her sticky-pinned position, since
-     #aoiCorner's margin is driven off --aoi-reserve-bottom -- grew mid-typing as more characters
-     wrapped to additional lines, which is "material size changing her location" just as much as a
-     longer caption picked up between views is. */
-  if (!lastReserveTexts) reserveSubFor([text]);
+  /* Reserve #sub's final height for THIS exact text up front, before the typewriter starts
+     revealing characters. Paced lessons used to instead reserve #sub for the WHOLE lesson's
+     longest beat, once per view-entry, specifically so her face wouldn't shift between beats of
+     different lengths -- but that left visible blank space under every shorter beat (confirmed via
+     screenshot: "extra fill space blank in her background" was literally this). Reserving per-text
+     every time removes that blank space entirely; the trade-off is her face can shift a little
+     between beats of very different lengths, which beats permanent empty space on most of them.
+     Still needed regardless of that trade-off: without reserving for the FINAL text up front,
+     #sub's real height grows mid-typing as more characters wrap to additional lines -- #aoiCorner
+     is a fixed-position flex column anchored by its OWN bottom edge (bottom:0), so a taller #sub
+     still pushes #host (the sibling above it) upward, even though #aoiCorner no longer borrows any
+     space from #cardZone's flow to do it. */
+  reserveSubFor([text]);
   renderLine();
   clearAoiChoices();
   updateAoiReserveSoon();

@@ -2067,6 +2067,7 @@ function showView(name, opts){
      keeps that assignment from being immediately wiped out. */
   if (!TEACH_VIEWS[name]){ window.activeLessonAdvance = null; if (window.AoiHost) window.AoiHost.clearSubReserve(); }
   if (name !== "teacherLesson"){ clearLessonTimer(); $tutorAudio.pause(); }
+  if (name !== "japanese"){ $jpAudio.pause(); }
   wrapEl.classList.toggle("teachMode", !!TEACH_VIEWS[name]);
   /* The Teacher Claude Code lesson gets its own, more robust fixed-viewport positioning for
      #aoiCorner (see "body.lessonLocked" in the CSS) -- scoped to just this view, not the other
@@ -2510,7 +2511,7 @@ function jpRenderPracticeLog(){
 var JP_LESSON = [
   {
     text: "Japanese has exactly five vowel sounds, and each one stays pure and flat for its whole length — no gliding like English does.",
-    pose: "present_l", eyes: null,
+    pose: "present_l", eyes: null, audio: "audio/japanese/beat1_vowels.mp3",
     check: {
       q: "English \"o\" (as in \"go\") actually glides toward a second sound by the end. Japanese \"o\" does the same thing — true or false?",
       choices: ["True — both glide the same way", "False — Japanese \"o\" stays flat the whole time"],
@@ -2520,7 +2521,7 @@ var JP_LESSON = [
   },
   {
     text: "Japanese is mora-timed: each mora — roughly one kana — gets about equal rhythmic weight, instead of English's stretch-some/swallow-some stress timing.",
-    pose: "point_r", eyes: null,
+    pose: "point_r", eyes: null, audio: "audio/japanese/beat2_mora.mp3",
     check: {
       q: "A long vowel is two morae. How long should it sound next to a short vowel?",
       choices: ["About twice as long", "About the same length", "Shorter, for emphasis"],
@@ -2530,7 +2531,7 @@ var JP_LESSON = [
   },
   {
     text: "One pitfall English speakers hit a lot: the Japanese r. It's not rolled, and it's not an English r or l either.",
-    pose: null, eyes: "eyes_think",
+    pose: null, eyes: "eyes_think", audio: "audio/japanese/beat3_r_sound.mp3",
     check: {
       q: "The Japanese r is closest to which sound?",
       choices: ["A rolled r", "A light \"d\", like the \"tt\" in \"butter\"", "A standard English \"l\""],
@@ -2540,11 +2541,16 @@ var JP_LESSON = [
   },
   {
     text: "That's the core of it: keep vowels flat, give every mora even weight, and flap that r instead of rolling it. The full reference — plus the other pitfalls, your takes, and the practice log — is below whenever you want to drill more.",
-    pose: "present_r", eyes: null
+    pose: "present_r", eyes: null, audio: "audio/japanese/beat4_recap.mp3"
   }
 ];
 var jpIdx = 0;
 var jpTranscript = [];
+/* Her real recorded narration for this lesson (Fish Audio, static files -- same convention as
+   TUTOR_LESSON's $tutorAudio below), played alongside the existing typewriter caption and inline
+   check, never blocking either -- a failed/blocked autoplay (.catch) just leaves the caption/check
+   working exactly as before, audio or not. */
+var $jpAudio = new Audio();
 
 function jpRenderTranscript(){
   var zone = document.getElementById("jpTranscript");
@@ -2570,6 +2576,12 @@ function jpRenderBeat(){
   jpTranscript.push(beat.text);
   jpRenderTranscript();
   if (window.AoiHost) window.AoiHost.say(beat.text, {pose: beat.pose || null, eyes: beat.eyes || null});
+
+  $jpAudio.pause();
+  if (beat.audio){
+    $jpAudio.src = beat.audio;
+    $jpAudio.play().catch(function(){});
+  }
 
   if (beat.check){
     checkZone.hidden = false;

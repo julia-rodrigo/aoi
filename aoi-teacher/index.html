@@ -325,34 +325,30 @@ body{ -webkit-tap-highlight-color:transparent; padding-block:0; }
 #dots span i{display:block;height:100%;width:0;background:var(--accent-2);transition:width .25s ease;}
 
 /* --------- removed: see AOI_CAPTION_V2 below for the current boxless-caption measurements --------- */
-/* ---------- portrait layout: plain static flow, no sticky/reserve math at all ----------
-   Several rounds of "reserve #cardZone's trailing padding off her live-measured height, then pin
-   her with position:sticky/fixed" all shared the same failure mode: whatever reserved the room for
-   her and whatever actually rendered her were two separate calculations (a padding value vs. her
-   real box), and any skew between them -- a stale measurement, a reserve counted twice, a formula
-   tuned for one specific caption length -- showed up as either a dead gap or an overlap. Direct
-   instruction, after watching this bug resurface through several "fixes": no blank space should
-   ever exist unless the real content genuinely doesn't reach that far down -- and if that means her
-   full box doesn't fit without scrolling, that's fine; scrolling to reach her, or her image running
-   up against the content above it, both beat a reserved patch of nothing.
-   So: #aoiCorner is just the next normal block after #cardZone, full stop. No position, no padding
-   reserve, no margin trick -- there is nothing left to miscalculate. Short content: she renders
-   directly under it, zero gap, any leftover room sits below HER (never between content and her,
-   which is the only case direct instruction called out as acceptable). Tall content: the page is
-   exactly as tall as content + her, nothing more, and you scroll normally to reach her -- she's no
-   longer pinned to the viewport while scrolling, which is a deliberate trade against the earlier
-   "always reachable mid-scroll" convenience, in favor of never showing dead space. */
-#cardZone{padding:2px 0 8px; max-height:none; overflow-y:visible;}
+/* ---------- portrait layout: sticky footer, reverted back from plain static flow ----------
+   A brief attempt at removing sticky entirely (plain flow, scroll normally to reach her) traded
+   the dead-gap bug for a worse one: on any view tall enough to scroll, she's no longer guaranteed
+   on-screen at all -- she can render below the fold, "bleeding off the phone" with no visual cue
+   there's more below. Direct instruction: she must always stay visible, stuck at the bottom of the
+   interface, regardless of how much content or how many choice buttons sit above her -- back to
+   sticky. #cardZone reserves space via padding-bottom, measured LIVE off #aoiCorner's own real
+   rendered height (--aoi-reserve-bottom, set by updateAoiReserve() in the script below), and
+   #aoiCorner's margin-top pulls her up by that exact same amount so her own flow height isn't
+   ALSO counted on top of the padding (the double-count that caused the dead-gap bug this reserve
+   mechanism had before) -- see updateAoiReserve() for the live measurement. */
+#cardZone{padding:2px 0 8px; padding-bottom:calc(8px + var(--aoi-reserve-bottom, 170px)); max-height:none; overflow-y:visible;}
 #card{background:var(--surface); border:1.5px solid var(--line); border-radius:var(--card-radius);
   box-shadow:var(--chrome-shadow); padding:12px;}
 .ctag{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-2);margin-bottom:8px;}
 
-#aoiCorner{background:var(--bg); padding-top:16px;}
-/* body.lessonLocked (Teacher Claude Code lesson) used to need its own more-robust positioning
-   mechanism while the default case above was still buggy; now that the default is just plain flow
-   (nothing left to get wrong), the Teacher lesson no longer needs a separate rule at all -- it was
-   kept self-contained here specifically so a fix to the default wouldn't risk it, but there's
-   nothing left for a future default change to break. */
+#aoiCorner{position:sticky; bottom:0; z-index:3; background:var(--bg); padding-top:16px;
+  margin-top:calc(-2px - var(--aoi-reserve-bottom, 170px));}
+/* Teacher lesson (body.lessonLocked) uses the exact same mechanism as the default case above --
+   duplicated explicitly (rather than relying on the default) so a future default change can't
+   silently affect this view, per direct instruction that this view's behavior must not change. */
+body.lessonLocked #aoiCorner{position:sticky; bottom:0; z-index:20; background:var(--bg); padding-top:16px;
+  margin-top:calc(-2px - var(--aoi-reserve-bottom, 170px));}
+body.lessonLocked #cardZone{padding-bottom:calc(8px + var(--aoi-reserve-bottom, 170px)); max-height:none; overflow-y:visible;}
 /* ---------- AOI_CAPTION_V2: boxless caption, per direct request ("no more boxes here and
    there") ----------
    #sub used to be a bordered/background "chat bubble" card, with #who as an absolutely-
@@ -397,10 +393,17 @@ body{ -webkit-tap-highlight-color:transparent; padding-block:0; }
 @keyframes aoiblink{50%{opacity:0;}}
 /* Small inline choices a view can show right under her caption instead of a big button in the
    content card (e.g. Cooking's "walk me through it?" Yes/Pass, Sales' Start/Skip). Populated by
-   showAoiChoices()/clearAoiChoices() in the script below; empty and not rendered otherwise. */
-#aoiChoices{order:4; flex-basis:100%; display:flex; gap:8px; flex-wrap:wrap; margin-top:2px;}
-#aoiChoices button{font-family:var(--font-body); font-weight:700; font-size:12.5px; padding:6px 14px;
-  border:1.5px solid var(--accent); border-radius:999px; background:transparent; color:var(--accent); cursor:pointer;}
+   showAoiChoices()/clearAoiChoices() in the script below.
+   min-height reserves this row's space PERMANENTLY, whether or not a view currently has choices
+   to show -- direct instruction: the size of #aoiCorner (and therefore where she's stuck/pinned)
+   must never change based on how many options are showing. Measured directly off a real rendered
+   Yes/Pass row (30px). Buttons stretch (flex:1 each) to fill the full row instead of sitting as
+   narrow left-aligned pills, per direct instruction that choices should span the full width
+   available next to her, not a cramped little cluster. */
+#aoiChoices{order:4; flex-basis:100%; display:flex; gap:8px; margin-top:2px; min-height:30px;}
+#aoiChoices button{flex:1; font-family:var(--font-body); font-weight:700; font-size:12.5px; padding:6px 14px;
+  border:1.5px solid var(--accent); border-radius:999px; background:transparent; color:var(--accent); cursor:pointer;
+  text-align:center;}
 #aoiChoices button.primary{background:var(--accent); color:var(--accent-fg);}
 #aoiChoices button:active{transform:scale(.95);}
 
@@ -3470,7 +3473,9 @@ addEventListener('resize', sizeHost); sizeHost();
 var $aoiCorner = document.getElementById('aoiCorner');
 function updateAoiReserve(){
   var r = $aoiCorner.getBoundingClientRect();
-  // Portrait is now plain static flow (see the CSS above) -- nothing left to reserve there.
+  // Portrait (sticky): her own rendered height -- correct whether she's currently stuck to the
+  // viewport bottom or just sitting in normal flow after a short beat's content.
+  document.documentElement.style.setProperty('--aoi-reserve-bottom', Math.max(0, Math.ceil(r.height)) + 'px');
   // Landscape teacherLesson corner is still position:fixed (small, bottom-right, grid-independent),
   // where this distance-to-edge math is intentional and still correct.
   document.documentElement.style.setProperty('--aoi-reserve-right', Math.max(0, Math.ceil(window.innerWidth - r.left)) + 'px');
@@ -3534,6 +3539,15 @@ function say(text, opts){
   curText = text; shownChars = 0; typing = true;
   if ('pose' in opts) curPose = opts.pose;
   if ('eyes' in opts) curEyes = opts.eyes;
+  /* Reserve #sub's final height for THIS text up front, before the typewriter starts revealing
+     characters, for any view that hasn't already set a view-wide reserve (paced lessons call
+     reserveSubFor() with every beat's text once per view-entry, which already covers whatever any
+     single beat types out -- skip here so this doesn't overwrite that wider reservation with a
+     narrower one). Without this, #sub's real height -- and so her sticky-pinned position, since
+     #aoiCorner's margin is driven off --aoi-reserve-bottom -- grew mid-typing as more characters
+     wrapped to additional lines, which is "material size changing her location" just as much as a
+     longer caption picked up between views is. */
+  if (!lastReserveTexts) reserveSubFor([text]);
   renderLine();
   clearAoiChoices();
   updateAoiReserveSoon();

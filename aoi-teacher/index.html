@@ -319,18 +319,19 @@ body{ -webkit-tap-highlight-color:transparent; padding-block:0; }
 /* ---------- lesson lock: the Teacher Claude Code lesson's own, more robust positioning ----------
    showView() adds body.lessonLocked only for the teacherLesson view (not Japanese/Aoi's Day --
    those keep the sticky mechanism above untouched, same scope as the previous round's fix).
-   #aoiCorner becomes a position:fixed overlay anchored straight to the real viewport edge, so her
-   screen spot is correct by construction regardless of any calc() drifting out of sync with a real
-   device's actual available height -- nothing of hers can ever render below the visible viewport,
-   whatever a given beat's text length does to #sub's height. #cardZone's own scroll/max-height is
-   replaced with a bottom padding equal to --aoi-reserve-bottom, measured live off her actual
-   rendered box by updateAoiReserve() in the script below (on resize and on any change to her own
-   size), so the content area's last line always clears her real current footprint. */
-body.lessonLocked #aoiCorner{position:fixed; left:0; right:0; bottom:0; z-index:20; margin:0 auto; max-width:560px;
-  background:var(--bg); padding-top:16px;
-  padding-left:max(16px, env(safe-area-inset-left,0px));
-  padding-right:max(16px, env(safe-area-inset-right,0px));
-  padding-bottom:max(8px, env(safe-area-inset-bottom,0px));}
+   This used to pin #aoiCorner with position:fixed, bottom:0 -- always glued to the real viewport
+   edge no matter how short a given beat's card content was. On a short beat (a small mockScene,
+   little text) that left a dead gap: #cardZone's own reserved padding ends right after the short
+   content, but her fixed box stays nailed to the actual bottom of the viewport, which can be much
+   lower on a tall phone screen -- the empty space between the two was exactly the "still scrolling
+   down into blank white space" bug. Back to position:sticky (same mechanism as the default case
+   above): on a short beat she simply sits right after the content, no gap; once a beat's content is
+   tall enough to need scrolling, she sticks to the viewport bottom same as before. This only works
+   now because #cardZone's reserve is measured live (updateAoiReserve, below) as her OWN rendered
+   height rather than "distance from her top to the window edge" -- that distance-based formula only
+   ever equalled her height because fixed+bottom:0 guaranteed r.bottom == innerHeight; sticky doesn't
+   guarantee that when she isn't stuck, so the measurement itself switched to a direct height read. */
+body.lessonLocked #aoiCorner{position:sticky; bottom:0; z-index:20; background:var(--bg); padding-top:16px; margin-top:-2px;}
 body.lessonLocked #cardZone{padding-bottom:calc(8px + var(--aoi-reserve-bottom, 170px)); max-height:none; overflow-y:visible;}
 /* ---------- AOI_CAPTION_V2: boxless caption, per direct request ("no more boxes here and
    there") ----------
@@ -3318,7 +3319,11 @@ addEventListener('resize', sizeHost); sizeHost();
 var $aoiCorner = document.getElementById('aoiCorner');
 function updateAoiReserve(){
   var r = $aoiCorner.getBoundingClientRect();
-  document.documentElement.style.setProperty('--aoi-reserve-bottom', Math.max(0, Math.ceil(window.innerHeight - r.top)) + 'px');
+  // Portrait (sticky): her own rendered height -- correct whether she's currently stuck to the
+  // viewport bottom or just sitting in normal flow after a short beat's content.
+  document.documentElement.style.setProperty('--aoi-reserve-bottom', Math.max(0, Math.ceil(r.height)) + 'px');
+  // Landscape teacherLesson corner is still position:fixed (small, bottom-right, grid-independent),
+  // where this distance-to-edge math is intentional and still correct.
   document.documentElement.style.setProperty('--aoi-reserve-right', Math.max(0, Math.ceil(window.innerWidth - r.left)) + 'px');
 }
 if (window.ResizeObserver) new ResizeObserver(updateAoiReserve).observe($aoiCorner);

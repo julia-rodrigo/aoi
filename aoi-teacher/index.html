@@ -125,41 +125,41 @@ h1,h2,h3{font-family:var(--font-display); text-wrap:balance; margin:0;}
    cascade precedence. Shadows use the app's own --chrome-shadow (already "none" in dark/pixel mode,
    a soft shadow in light mode) instead of the original's hardcoded shadow, so it auto-adapts. */
 .mockScene{max-width:300px; margin:0 auto;}
-/* ---------- boxless redesign (direct user instruction, Nov 2026, reference image: "no boxes
-   anywhere, just floating text/labels") ----------
-   These used to read as actual bordered/filled UI chrome: a phone bezel + notch, a bottom-sheet
-   card, a dark terminal panel, a GitHub-settings card, checklist pills, toast cards, two bordered
-   comparison lanes, bordered radio rows. None of that chrome is tappable in this lesson -- it's
-   all illustrative -- so every container-level border/background-fill/radius/shadow below is
-   gone. What still carries the "this is a phone/terminal/checklist" meaning is layout (grouping
-   gaps, indentation, a vertical divider between the two .lane columns), a plain 1px divider where
-   rows genuinely need separating (same pattern as .drill further down and the app's other
-   boxless lists), and the icons/status tags themselves (MOCK_ICONS SVGs, the small CLOUD/LIVE/
-   mono-code labels, the radio-dot/checkmark icons) -- those are small functional-looking labels,
-   not panels, and stay as before. The phone "notch" and bottom-sheet "grab handle" were chrome
-   belonging to the box being removed, so they're hidden rather than left floating with nothing
-   to sit on. */
-.mockScene .phone{padding:2px 2px 6px; max-width:300px; margin:0 auto; position:relative;}
-.mockScene .phone .notch{display:none;}
+/* ---------- restored to match the original standalone "Aoi explains Claude Code on your phone"
+   artifact's own design (direct instruction, Nov 2026: the Teacher lesson's mockups must look like
+   that original page, not the app's later boxless redesign) ----------
+   A brief "no boxes anywhere" pass had stripped every container-level border/background-fill/
+   radius/shadow from this scene -- the phone bezel + notch, the bottom-sheet card, the dark
+   terminal panel, the GitHub-settings card, checklist pills, toast cards, the two comparison
+   lanes, bordered radio rows. That reads correctly for Hub/Quiz/Cooking's real functional chrome,
+   but this lesson is a faithful 1:1 port of a page that was never boxless to begin with, and
+   direct instruction is to match that original's actual look here. So each piece below is restored
+   with the fill/border/radius/shadow the original artifact gave it, using this app's theme
+   variables in place of the original's hardcoded colors (light-only there) so it still reads
+   correctly in dark mode -- border-radius keeps !important since the app's global pixel treatment
+   (*{border-radius:0!important}) would otherwise flatten it regardless. */
+.mockScene .phone{border:2px solid var(--fg); border-radius:22px!important; padding:10px 10px 12px;
+  background:var(--surface); max-width:300px; margin:0 auto; position:relative; overflow:hidden;}
+.mockScene .phone .notch{width:70px; height:6px; border-radius:4px!important; background:var(--fg); margin:0 auto 10px; opacity:.85;}
 .mockScene .apphead{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;}
 .mockScene .apphead h3{font-size:20px; font-weight:800; font-family:var(--font-display);}
 .mockScene .tabs{display:flex; gap:6px;}
 .mockScene .tabs span{font-size:11px; font-weight:700; padding:4px 9px; border-radius:12px!important; background:var(--surface-2); color:var(--muted);}
 .mockScene .tabs span.on{background:var(--accent); color:var(--accent-fg);}
-.mockScene .sess{display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line); opacity:0; animation:tutPop .4s ease-out both;}
-.mockScene .sess:last-of-type{border-bottom:none;}
+.mockScene .sess{display:flex; align-items:center; gap:10px; padding:10px; border-radius:14px!important;
+  background:var(--surface-2); margin-bottom:8px; opacity:0; animation:tutPop .4s ease-out both;}
 .mockScene .sess .ic{width:28px; height:28px; display:grid; place-items:center; flex:none; color:var(--accent-2);}
 .mockScene .sess .ic svg{width:22px; height:22px;}
 .mockScene .sess b{display:block; font-size:14px;}
 .mockScene .sess small{font-size:11px; color:var(--muted);}
-.mockScene .sess .st{margin-left:auto; font-size:10px; font-weight:800; padding:3px 7px; border-radius:8px!important; background:var(--surface-2); color:var(--accent);}
+.mockScene .sess .st{margin-left:auto; font-size:10px; font-weight:800; padding:3px 7px; border-radius:8px!important; background:var(--surface); color:var(--accent);}
 .mockScene .d1{animation-delay:.2s!important;} .mockScene .d2{animation-delay:.45s!important;} .mockScene .d3{animation-delay:.7s!important;}
 .mockScene .d4{animation-delay:1s!important;} .mockScene .d5{animation-delay:1.3s!important;} .mockScene .d6{animation-delay:1.6s!important;}
 .mockScene .fab{position:absolute; right:4px; bottom:2px; width:40px; height:40px; border-radius:14px!important; background:var(--accent); color:var(--accent-fg); display:grid; place-items:center; font-size:24px; font-weight:300;}
 .mockScene .two{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
-.mockScene .lane{padding:2px 2px; text-align:center; opacity:0; animation:tutPop .45s ease-out both;}
-.mockScene .lane + .lane{border-left:1px solid var(--line);}
+.mockScene .lane{border-radius:16px!important; background:var(--surface-2); padding:12px 8px; text-align:center; opacity:0; animation:tutPop .45s ease-out both;}
 .mockScene .lane h4{font-size:13px; font-weight:800; margin-bottom:8px; font-family:var(--font-display);}
+.mockScene .lane.cloud{box-shadow:inset 0 0 0 2px var(--accent-2);}
 .mockScene .lane.cloud h4{color:var(--accent-2);}
 .mockScene .lane .pic{display:flex; flex-direction:column; align-items:center; gap:4px;}
 .mockScene .lane .pic svg{width:40px; height:40px; color:var(--accent);}
@@ -171,31 +171,34 @@ h1,h2,h3{font-family:var(--font-display); text-wrap:balance; margin:0;}
 .mockScene .input{border:1.5px solid var(--line); border-radius:14px!important; padding:10px 12px; font-size:13px; color:var(--muted); display:flex; align-items:center; justify-content:space-between;}
 .mockScene .send{width:30px; height:30px; border-radius:10px!important; background:var(--accent); color:var(--accent-fg); display:grid; place-items:center;}
 .mockScene .send svg{width:16px; height:16px;}
-.mockScene .sheet{position:relative; border-top:1px solid var(--line); padding-top:10px; margin-top:12px;}
-.mockScene .sheet .grab{display:none;}
+.mockScene .sheet{position:relative; background:var(--surface); border-top:1.5px solid var(--line);
+  border-radius:18px 18px 0 0!important; padding:10px 12px 12px; margin-top:12px; box-shadow:var(--chrome-shadow);}
+.mockScene .sheet .grab{width:36px; height:4px; border-radius:3px!important; background:var(--line); margin:0 auto 8px;}
 .mockScene .sheet h5{font-size:14px; font-weight:800; margin-bottom:6px; font-family:var(--font-display);}
-.mockScene .repo{display:flex; align-items:center; gap:8px; font-size:13px; padding:5px 0;}
+.mockScene .repo{display:flex; align-items:center; gap:8px; font-size:13px; padding:7px 8px; border-radius:10px!important;}
 .mockScene .repo svg{width:15px; height:15px; color:var(--muted); flex:none;}
-.mockScene .repo.hl{color:var(--accent); font-weight:700;}
+.mockScene .repo.hl{background:var(--surface-2); color:var(--accent); font-weight:700;}
 .mockScene .gh h3{font-size:16px; font-weight:800; margin-bottom:2px; font-family:var(--font-display);}
 .mockScene .gh p.s{font-size:11px; color:var(--muted); margin-bottom:10px;}
-.mockScene .radio{display:flex; align-items:center; gap:10px; padding:6px 0; font-size:14px; font-weight:600;}
+.mockScene .radio{display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:12px!important;
+  font-size:14px; font-weight:600; margin-bottom:6px; border:1.5px solid var(--line);}
 .mockScene .radio i{width:18px; height:18px; border-radius:50%!important; border:2px solid var(--muted); flex:none; position:relative; display:block;}
-.mockScene .radio.on{color:var(--accent);}
+.mockScene .radio.on{color:var(--accent); border-color:var(--accent-2); background:var(--surface-2);}
 .mockScene .radio.on i{border-color:var(--accent);}
 .mockScene .dotfill{position:absolute; inset:3px; border-radius:50%!important; background:var(--accent); opacity:0;}
 .mockScene .radio.on .dotfill{opacity:1;}
 .mockScene .picked{display:flex; flex-direction:column; gap:5px; margin:4px 0 0 28px;}
-.mockScene .picked .repo{opacity:0; animation:tutPop .35s ease-out both;}
+.mockScene .picked .repo{border:1.5px dashed var(--line); opacity:0; animation:tutPop .35s ease-out both;}
 .mockScene .lock{margin-left:auto; font-size:10px; font-weight:800; color:var(--muted); letter-spacing:.06em;}
 .mockScene .desk{display:flex; align-items:flex-end; justify-content:center; gap:6px;}
 .mockScene .laptop{width:62%;}
-.mockScene .screen{padding:4px 2px; font:600 12px/1.6 var(--font-mono); color:var(--fg); min-height:auto;}
+.mockScene .screen{background:#0B1420; border-radius:10px 10px 4px 4px!important; padding:10px;
+  font:600 11px/1.6 var(--font-mono); color:#CFE9FF; min-height:auto;}
 .mockScene .screen .p{color:var(--accent-2);}
 .mockScene .screen .t{opacity:0; animation:tutPop .3s ease-out both;}
 .mockScene .base{height:9px; background:var(--muted); border-radius:0 0 10px 10px!important; margin:0 -10px;}
 .mockScene .link{flex:1; align-self:center; height:2px; background:repeating-linear-gradient(90deg,var(--accent-2) 0 6px,transparent 6px 11px); background-size:22px 2px; margin-bottom:22px;}
-.mockScene .mini{width:58px; padding:4px 2px;}
+.mockScene .mini{width:58px; border:2px solid var(--fg); border-radius:12px!important; padding:6px 5px; background:var(--surface);}
 .mockScene .mini .bar{height:5px; border-radius:3px!important; background:var(--surface-2); margin-bottom:4px;}
 .mockScene .mini .bar.c{background:var(--accent-2);}
 .mockScene .mini .pad{display:grid; grid-template-columns:1fr 1fr; gap:3px; margin-top:6px;}
@@ -204,17 +207,18 @@ h1,h2,h3{font-family:var(--font-display); text-wrap:balance; margin:0;}
 .mockScene .badge{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700; padding:6px 10px; border-radius:12px!important; background:var(--surface-2);}
 .mockScene .badge .led{width:8px; height:8px; border-radius:50%!important; background:var(--good); animation:tutPulse 1.4s ease-in-out infinite;}
 .mockScene .check{list-style:none; margin:0; padding:0;}
-.mockScene .check li{display:flex; align-items:center; gap:12px; padding:9px 0; border-bottom:1px solid var(--line); font-size:15px; font-weight:700;}
-.mockScene .check li:last-child{border-bottom:none;}
+.mockScene .check li{display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:14px!important;
+  background:var(--surface-2); margin-bottom:8px; font-size:15px; font-weight:700;}
 .mockScene .check .n{font-size:11px; color:var(--muted); font-weight:800; width:14px;}
 .mockScene .check .bx{width:24px; height:24px; border-radius:8px!important; border:2px solid var(--line); display:grid; place-items:center; flex:none; margin-left:auto; background:var(--accent); border-color:var(--accent);}
 .mockScene .check .bx svg{width:14px; height:14px; color:var(--accent-fg);}
 .mockScene .check .mono{font:600 12px var(--font-mono); color:var(--accent); background:var(--surface); border:1px solid var(--line); border-radius:6px!important; padding:1px 5px;}
-.mockScene .toast{display:flex; align-items:center; gap:10px; padding:8px 0; margin-top:8px; opacity:0; animation:tutPop .4s ease-out both;}
+.mockScene .toast{display:flex; align-items:center; gap:10px; background:var(--fg); color:var(--bg);
+  border-radius:14px!important; padding:10px 12px; margin-top:10px; opacity:0; animation:tutPop .4s ease-out both;}
 .mockScene .toast .okc{width:24px; height:24px; border-radius:50%!important; background:var(--good); display:grid; place-items:center; flex:none;}
 .mockScene .toast .okc svg{width:14px; height:14px; color:var(--bg);}
 .mockScene .toast b{font-size:13px; display:block;}
-.mockScene .toast small{font-size:11px; color:var(--muted);}
+.mockScene .toast small{font-size:11px; opacity:.75;}
 .mockScene .spark{position:absolute; color:var(--accent-2); font-size:18px; opacity:0; animation:tutSparkle 1.6s ease-in-out infinite;}
 .mockScene .diff{font:600 12px/1.7 var(--font-mono); padding:2px 0;}
 .mockScene .diff .a{color:var(--good);}

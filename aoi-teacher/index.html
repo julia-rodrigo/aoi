@@ -325,68 +325,34 @@ body{ -webkit-tap-highlight-color:transparent; padding-block:0; }
 #dots span i{display:block;height:100%;width:0;background:var(--accent-2);transition:width .25s ease;}
 
 /* --------- removed: see AOI_CAPTION_V2 below for the current boxless-caption measurements --------- */
-/* #aoiCorner's on-screen position, once position:sticky engages (any view taller than one
-   screen -- true even at scroll-top-zero, not only "once you scroll past her" as earlier
-   assumed), is fixed relative to the viewport regardless of padding on #cardZone or #aoiCorner
-   itself -- padding on either side cancels out against the bottom-anchored math. So a tall
-   #cardZone's own unscrolled lower content sits in the same screen region #aoiCorner renders
-   into, with no amount of padding able to separate them.
-   This used to be handled by bounding #cardZone's own height with a hardcoded "100svh -
-   host-size - 136px" guess and letting IT scroll internally, same as the Teacher lesson's OLD
-   mechanism -- but that guess rots exactly the same way the Teacher lesson's did: Hub/Quiz/
-   Cooking/Sales/Daily Chat never call reserveSubFor(), so #sub (and therefore #aoiCorner's whole
-   height) grows or shrinks with each view's real caption text, and "136px" was only ever right
-   for one specific caption length. Confirmed via Playwright + getBoundingClientRect(): on Cooking's
-   recipe-detail view in particular, a longer caption line made #aoiCorner taller than the guess
-   accounted for, so #cardZone's own box (max-height-bounded) actually overlapped #aoiCorner's top
-   edge by ~24px instead of sitting flush above it -- the same class of bug as the Teacher lesson's,
-   just inverted (overlap here instead of a gap, because the stale guess under- rather than
-   over-reserves). Fixed the same way that one was: #cardZone no longer bounds its own height or
-   scrolls internally at all -- it reserves space via padding-bottom, measured LIVE off #aoiCorner's
-   own real rendered height (--aoi-reserve-bottom, set by updateAoiReserve() in the script below,
-   already unconditional/global, not scoped to any one view), and the real PAGE scrolls when content
-   is taller than the viewport (see the "page itself scrolls" comment block above .wrap) -- exactly
-   the body.lessonLocked mechanism below, just applied as the default for every portrait view
-   instead of only the Teacher lesson. */
-#cardZone{padding:2px 0 8px; padding-bottom:calc(8px + var(--aoi-reserve-bottom, 170px)); max-height:none; overflow-y:visible;}
+/* ---------- portrait layout: plain static flow, no sticky/reserve math at all ----------
+   Several rounds of "reserve #cardZone's trailing padding off her live-measured height, then pin
+   her with position:sticky/fixed" all shared the same failure mode: whatever reserved the room for
+   her and whatever actually rendered her were two separate calculations (a padding value vs. her
+   real box), and any skew between them -- a stale measurement, a reserve counted twice, a formula
+   tuned for one specific caption length -- showed up as either a dead gap or an overlap. Direct
+   instruction, after watching this bug resurface through several "fixes": no blank space should
+   ever exist unless the real content genuinely doesn't reach that far down -- and if that means her
+   full box doesn't fit without scrolling, that's fine; scrolling to reach her, or her image running
+   up against the content above it, both beat a reserved patch of nothing.
+   So: #aoiCorner is just the next normal block after #cardZone, full stop. No position, no padding
+   reserve, no margin trick -- there is nothing left to miscalculate. Short content: she renders
+   directly under it, zero gap, any leftover room sits below HER (never between content and her,
+   which is the only case direct instruction called out as acceptable). Tall content: the page is
+   exactly as tall as content + her, nothing more, and you scroll normally to reach her -- she's no
+   longer pinned to the viewport while scrolling, which is a deliberate trade against the earlier
+   "always reachable mid-scroll" convenience, in favor of never showing dead space. */
+#cardZone{padding:2px 0 8px; max-height:none; overflow-y:visible;}
 #card{background:var(--surface); border:1.5px solid var(--line); border-radius:var(--card-radius);
   box-shadow:var(--chrome-shadow); padding:12px;}
 .ctag{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-2);margin-bottom:8px;}
 
-/* margin-top pulls her up by exactly the same reserve #cardZone just padded out with (see above),
-   instead of letting her render as an ADDITIONAL block after that padding -- without this, her own
-   real flow height was being counted a second time on top of the reserve meant to make room for her,
-   so a view tall enough to scroll (anything past one screen, e.g. Cooking's recipe detail with the
-   Yes/Pass choice beat, or the Hub once scrolled to its last card) showed a dead gap the size of her
-   own box between the true end of visible content and where she was pinned -- confirmed directly via
-   Playwright screenshots scrolled to max on both views. Short/no-scroll content is unaffected: that
-   case never had this bug (nothing to double-count when the page doesn't scroll), and this margin
-   only changes where she lands once scrolling is actually happening. */
-#aoiCorner{position:sticky; bottom:0; z-index:3; background:var(--bg); padding-top:16px;
-  margin-top:calc(-2px - var(--aoi-reserve-bottom, 170px));}
-/* ---------- lesson lock: the Teacher Claude Code lesson's own, more robust positioning ----------
-   showView() adds body.lessonLocked only for the teacherLesson view (not Japanese/Aoi's Day --
-   those keep the same sticky+live-reserve mechanism as the default rule above, just without this
-   extra z-index bump, which the Teacher lesson needs for its own on-card chrome). These two rules
-   duplicate the default #aoiCorner/#cardZone values above (aside from z-index) now that the
-   default case was fixed to use the exact same live-measured mechanism -- kept explicit here
-   rather than deleted so the Teacher lesson's positioning stays self-contained and obviously
-   correct even if the portrait default above ever changes again.
-   This used to pin #aoiCorner with position:fixed, bottom:0 -- always glued to the real viewport
-   edge no matter how short a given beat's card content was. On a short beat (a small mockScene,
-   little text) that left a dead gap: #cardZone's own reserved padding ends right after the short
-   content, but her fixed box stays nailed to the actual bottom of the viewport, which can be much
-   lower on a tall phone screen -- the empty space between the two was exactly the "still scrolling
-   down into blank white space" bug. Back to position:sticky (same mechanism as the default case
-   above): on a short beat she simply sits right after the content, no gap; once a beat's content is
-   tall enough to need scrolling, she sticks to the viewport bottom same as before. This only works
-   now because #cardZone's reserve is measured live (updateAoiReserve, below) as her OWN rendered
-   height rather than "distance from her top to the window edge" -- that distance-based formula only
-   ever equalled her height because fixed+bottom:0 guaranteed r.bottom == innerHeight; sticky doesn't
-   guarantee that when she isn't stuck, so the measurement itself switched to a direct height read. */
-body.lessonLocked #aoiCorner{position:sticky; bottom:0; z-index:20; background:var(--bg); padding-top:16px;
-  margin-top:calc(-2px - var(--aoi-reserve-bottom, 170px));}
-body.lessonLocked #cardZone{padding-bottom:calc(8px + var(--aoi-reserve-bottom, 170px)); max-height:none; overflow-y:visible;}
+#aoiCorner{background:var(--bg); padding-top:16px;}
+/* body.lessonLocked (Teacher Claude Code lesson) used to need its own more-robust positioning
+   mechanism while the default case above was still buggy; now that the default is just plain flow
+   (nothing left to get wrong), the Teacher lesson no longer needs a separate rule at all -- it was
+   kept self-contained here specifically so a fix to the default wouldn't risk it, but there's
+   nothing left for a future default change to break. */
 /* ---------- AOI_CAPTION_V2: boxless caption, per direct request ("no more boxes here and
    there") ----------
    #sub used to be a bordered/background "chat bubble" card, with #who as an absolutely-
@@ -3504,9 +3470,7 @@ addEventListener('resize', sizeHost); sizeHost();
 var $aoiCorner = document.getElementById('aoiCorner');
 function updateAoiReserve(){
   var r = $aoiCorner.getBoundingClientRect();
-  // Portrait (sticky): her own rendered height -- correct whether she's currently stuck to the
-  // viewport bottom or just sitting in normal flow after a short beat's content.
-  document.documentElement.style.setProperty('--aoi-reserve-bottom', Math.max(0, Math.ceil(r.height)) + 'px');
+  // Portrait is now plain static flow (see the CSS above) -- nothing left to reserve there.
   // Landscape teacherLesson corner is still position:fixed (small, bottom-right, grid-independent),
   // where this distance-to-edge math is intentional and still correct.
   document.documentElement.style.setProperty('--aoi-reserve-right', Math.max(0, Math.ceil(window.innerWidth - r.left)) + 'px');
@@ -3666,8 +3630,13 @@ function clampAoiXY(x, y){
   var maxX = Math.round(innerWidth * 0.4), maxY = Math.round(innerHeight * 0.4);
   return { x: Math.max(-maxX, Math.min(maxX, x || 0)), y: Math.max(-maxY, Math.min(maxY, y || 0)) };
 }
+/* Per direct request: every fresh load resets her to dead center in portrait (never reopens on a
+   stale drag offset from earlier testing/use), but a saved landscape position is kept as-is --
+   landscape's corner-host layout is a fixed, deliberate spot she's dragged into once and expected
+   to stay at, while portrait's centered default is the one you'd always want to come back to. */
 function loadAoiPos(){
   try{
+    if (window.innerHeight >= window.innerWidth) return {x:0, y:0, scale:1};
     var raw = localStorage.getItem(AOI_POS_KEY);
     var p = raw ? JSON.parse(raw) : null;
     var scale = Math.max(0.7, Math.min(1.4, (p && p.scale) || 1));

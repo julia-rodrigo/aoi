@@ -99,9 +99,14 @@ h1,h2,h3{font-family:var(--font-display); text-wrap:balance; margin:0;}
    a text box that visibly changes size while you're reading it annoying -- direct request: "it
    should only stay one size." A plain display:none/block toggle keeps it at one fixed size
    whenever it's visible, with nothing to grow or shrink. */
-.explain{display:none; background:var(--surface-2); border-radius:12px; padding:14px 16px; font-size:14px; color:var(--fg);}
+.explain{display:none; padding:4px 0; font-size:14px; line-height:1.5; color:var(--fg);}
 .explain.show{display:block;}
 .explain b{color:var(--accent-2);}
+/* Aoi's Day's own #daytripChecked reuses .explain too, but it's explicitly out of scope for this
+   boxless pass (a concurrent change elsewhere owns Aoi's Day's own layout) -- pin it back to the
+   original background/padding card via ID+class specificity so the quiz/jpBeatExplain redesign
+   above doesn't change how it renders. */
+#daytripChecked.explain{background:var(--surface-2); border-radius:12px; padding:14px 16px;}
 .quizfoot{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;}
 
 .scoreBig{font-family:var(--font-mono); font-size:56px; font-variant-numeric:tabular-nums; line-height:1;}
@@ -120,61 +125,77 @@ h1,h2,h3{font-family:var(--font-display); text-wrap:balance; margin:0;}
    cascade precedence. Shadows use the app's own --chrome-shadow (already "none" in dark/pixel mode,
    a soft shadow in light mode) instead of the original's hardcoded shadow, so it auto-adapts. */
 .mockScene{max-width:300px; margin:0 auto;}
-.mockScene .phone{border:2px solid var(--fg); border-radius:22px!important; padding:10px 10px 12px; background:var(--surface); max-width:300px; margin:0 auto; position:relative; overflow:hidden;}
-.mockScene .phone .notch{width:70px; height:6px; border-radius:4px!important; background:var(--fg); margin:0 auto 10px; opacity:.85;}
+/* ---------- boxless redesign (direct user instruction, Nov 2026, reference image: "no boxes
+   anywhere, just floating text/labels") ----------
+   These used to read as actual bordered/filled UI chrome: a phone bezel + notch, a bottom-sheet
+   card, a dark terminal panel, a GitHub-settings card, checklist pills, toast cards, two bordered
+   comparison lanes, bordered radio rows. None of that chrome is tappable in this lesson -- it's
+   all illustrative -- so every container-level border/background-fill/radius/shadow below is
+   gone. What still carries the "this is a phone/terminal/checklist" meaning is layout (grouping
+   gaps, indentation, a vertical divider between the two .lane columns), a plain 1px divider where
+   rows genuinely need separating (same pattern as .drill further down and the app's other
+   boxless lists), and the icons/status tags themselves (MOCK_ICONS SVGs, the small CLOUD/LIVE/
+   mono-code labels, the radio-dot/checkmark icons) -- those are small functional-looking labels,
+   not panels, and stay as before. The phone "notch" and bottom-sheet "grab handle" were chrome
+   belonging to the box being removed, so they're hidden rather than left floating with nothing
+   to sit on. */
+.mockScene .phone{padding:2px 2px 6px; max-width:300px; margin:0 auto; position:relative;}
+.mockScene .phone .notch{display:none;}
 .mockScene .apphead{display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;}
 .mockScene .apphead h3{font-size:20px; font-weight:800; font-family:var(--font-display);}
 .mockScene .tabs{display:flex; gap:6px;}
 .mockScene .tabs span{font-size:11px; font-weight:700; padding:4px 9px; border-radius:12px!important; background:var(--surface-2); color:var(--muted);}
 .mockScene .tabs span.on{background:var(--accent); color:var(--accent-fg);}
-.mockScene .sess{display:flex; align-items:center; gap:10px; padding:10px; border-radius:14px!important; background:var(--surface-2); margin-bottom:8px; opacity:0; animation:tutPop .4s ease-out both;}
-.mockScene .sess .ic{width:34px; height:34px; border-radius:10px!important; display:grid; place-items:center; flex:none; background:var(--surface); color:var(--accent-2);}
-.mockScene .sess .ic svg{width:20px; height:20px;}
+.mockScene .sess{display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line); opacity:0; animation:tutPop .4s ease-out both;}
+.mockScene .sess:last-of-type{border-bottom:none;}
+.mockScene .sess .ic{width:28px; height:28px; display:grid; place-items:center; flex:none; color:var(--accent-2);}
+.mockScene .sess .ic svg{width:22px; height:22px;}
 .mockScene .sess b{display:block; font-size:14px;}
 .mockScene .sess small{font-size:11px; color:var(--muted);}
 .mockScene .sess .st{margin-left:auto; font-size:10px; font-weight:800; padding:3px 7px; border-radius:8px!important; background:var(--surface-2); color:var(--accent);}
 .mockScene .d1{animation-delay:.2s!important;} .mockScene .d2{animation-delay:.45s!important;} .mockScene .d3{animation-delay:.7s!important;}
 .mockScene .d4{animation-delay:1s!important;} .mockScene .d5{animation-delay:1.3s!important;} .mockScene .d6{animation-delay:1.6s!important;}
-.mockScene .fab{position:absolute; right:14px; bottom:14px; width:40px; height:40px; border-radius:14px!important; background:var(--accent); color:var(--accent-fg); display:grid; place-items:center; font-size:24px; font-weight:300;}
+.mockScene .fab{position:absolute; right:4px; bottom:2px; width:40px; height:40px; border-radius:14px!important; background:var(--accent); color:var(--accent-fg); display:grid; place-items:center; font-size:24px; font-weight:300;}
 .mockScene .two{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
-.mockScene .lane{border-radius:16px!important; background:var(--surface-2); padding:12px 8px; text-align:center; opacity:0; animation:tutPop .45s ease-out both;}
+.mockScene .lane{padding:2px 2px; text-align:center; opacity:0; animation:tutPop .45s ease-out both;}
+.mockScene .lane + .lane{border-left:1px solid var(--line);}
 .mockScene .lane h4{font-size:13px; font-weight:800; margin-bottom:8px; font-family:var(--font-display);}
+.mockScene .lane.cloud h4{color:var(--accent-2);}
 .mockScene .lane .pic{display:flex; flex-direction:column; align-items:center; gap:4px;}
 .mockScene .lane .pic svg{width:40px; height:40px; color:var(--accent);}
 .mockScene .lane .lbl{font-size:11px; color:var(--muted); font-weight:600;}
 .mockScene .lane .arrow{color:var(--accent-2); font-size:18px; line-height:1;}
-.mockScene .lane.cloud{box-shadow:inset 0 0 0 2px var(--accent-2);}
 .mockScene .chips{display:flex; gap:6px; flex-wrap:wrap; margin:10px 0;}
 .mockScene .chip{font-size:12px; font-weight:700; border:1.5px solid var(--line); border-radius:14px!important; padding:5px 10px; display:inline-flex; align-items:center; gap:5px;}
 .mockScene .chip.cy{border-color:var(--accent-2); color:var(--accent); background:var(--surface-2);}
 .mockScene .input{border:1.5px solid var(--line); border-radius:14px!important; padding:10px 12px; font-size:13px; color:var(--muted); display:flex; align-items:center; justify-content:space-between;}
 .mockScene .send{width:30px; height:30px; border-radius:10px!important; background:var(--accent); color:var(--accent-fg); display:grid; place-items:center;}
 .mockScene .send svg{width:16px; height:16px;}
-.mockScene .sheet{position:relative; background:var(--surface); border-top:1.5px solid var(--line); border-radius:18px 18px 0 0!important; padding:10px 12px 12px; margin-top:10px; box-shadow:var(--chrome-shadow);}
-.mockScene .sheet .grab{width:36px; height:4px; border-radius:3px!important; background:var(--line); margin:0 auto 8px;}
+.mockScene .sheet{position:relative; border-top:1px solid var(--line); padding-top:10px; margin-top:12px;}
+.mockScene .sheet .grab{display:none;}
 .mockScene .sheet h5{font-size:14px; font-weight:800; margin-bottom:6px; font-family:var(--font-display);}
-.mockScene .repo{display:flex; align-items:center; gap:8px; font-size:13px; padding:7px 8px; border-radius:10px!important;}
+.mockScene .repo{display:flex; align-items:center; gap:8px; font-size:13px; padding:5px 0;}
 .mockScene .repo svg{width:15px; height:15px; color:var(--muted); flex:none;}
-.mockScene .repo.hl{background:var(--surface-2); font-weight:700;}
+.mockScene .repo.hl{color:var(--accent); font-weight:700;}
 .mockScene .gh h3{font-size:16px; font-weight:800; margin-bottom:2px; font-family:var(--font-display);}
 .mockScene .gh p.s{font-size:11px; color:var(--muted); margin-bottom:10px;}
-.mockScene .radio{display:flex; align-items:center; gap:10px; padding:9px 10px; border-radius:12px!important; font-size:14px; font-weight:600; margin-bottom:6px; border:1.5px solid var(--line);}
+.mockScene .radio{display:flex; align-items:center; gap:10px; padding:6px 0; font-size:14px; font-weight:600;}
 .mockScene .radio i{width:18px; height:18px; border-radius:50%!important; border:2px solid var(--muted); flex:none; position:relative; display:block;}
-.mockScene .radio.on{border-color:var(--accent-2); background:var(--surface-2);}
+.mockScene .radio.on{color:var(--accent);}
 .mockScene .radio.on i{border-color:var(--accent);}
 .mockScene .dotfill{position:absolute; inset:3px; border-radius:50%!important; background:var(--accent); opacity:0;}
 .mockScene .radio.on .dotfill{opacity:1;}
 .mockScene .picked{display:flex; flex-direction:column; gap:5px; margin:4px 0 0 28px;}
-.mockScene .picked .repo{border:1.5px dashed var(--line); opacity:0; animation:tutPop .35s ease-out both;}
+.mockScene .picked .repo{opacity:0; animation:tutPop .35s ease-out both;}
 .mockScene .lock{margin-left:auto; font-size:10px; font-weight:800; color:var(--muted); letter-spacing:.06em;}
 .mockScene .desk{display:flex; align-items:flex-end; justify-content:center; gap:6px;}
 .mockScene .laptop{width:62%;}
-.mockScene .screen{background:var(--fg); border-radius:10px 10px 4px 4px!important; padding:10px; font:600 11px/1.55 var(--font-mono); color:var(--bg); min-height:104px;}
+.mockScene .screen{padding:4px 2px; font:600 12px/1.6 var(--font-mono); color:var(--fg); min-height:auto;}
 .mockScene .screen .p{color:var(--accent-2);}
 .mockScene .screen .t{opacity:0; animation:tutPop .3s ease-out both;}
 .mockScene .base{height:9px; background:var(--muted); border-radius:0 0 10px 10px!important; margin:0 -10px;}
 .mockScene .link{flex:1; align-self:center; height:2px; background:repeating-linear-gradient(90deg,var(--accent-2) 0 6px,transparent 6px 11px); background-size:22px 2px; margin-bottom:22px;}
-.mockScene .mini{width:58px; border:2px solid var(--fg); border-radius:12px!important; padding:6px 5px; background:var(--surface);}
+.mockScene .mini{width:58px; padding:4px 2px;}
 .mockScene .mini .bar{height:5px; border-radius:3px!important; background:var(--surface-2); margin-bottom:4px;}
 .mockScene .mini .bar.c{background:var(--accent-2);}
 .mockScene .mini .pad{display:grid; grid-template-columns:1fr 1fr; gap:3px; margin-top:6px;}
@@ -183,18 +204,19 @@ h1,h2,h3{font-family:var(--font-display); text-wrap:balance; margin:0;}
 .mockScene .badge{display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:700; padding:6px 10px; border-radius:12px!important; background:var(--surface-2);}
 .mockScene .badge .led{width:8px; height:8px; border-radius:50%!important; background:var(--good); animation:tutPulse 1.4s ease-in-out infinite;}
 .mockScene .check{list-style:none; margin:0; padding:0;}
-.mockScene .check li{display:flex; align-items:center; gap:12px; padding:10px 12px; border-radius:14px!important; background:var(--surface-2); margin-bottom:8px; font-size:15px; font-weight:700;}
+.mockScene .check li{display:flex; align-items:center; gap:12px; padding:9px 0; border-bottom:1px solid var(--line); font-size:15px; font-weight:700;}
+.mockScene .check li:last-child{border-bottom:none;}
 .mockScene .check .n{font-size:11px; color:var(--muted); font-weight:800; width:14px;}
 .mockScene .check .bx{width:24px; height:24px; border-radius:8px!important; border:2px solid var(--line); display:grid; place-items:center; flex:none; margin-left:auto; background:var(--accent); border-color:var(--accent);}
 .mockScene .check .bx svg{width:14px; height:14px; color:var(--accent-fg);}
 .mockScene .check .mono{font:600 12px var(--font-mono); color:var(--accent); background:var(--surface); border:1px solid var(--line); border-radius:6px!important; padding:1px 5px;}
-.mockScene .toast{display:flex; align-items:center; gap:10px; background:var(--fg); color:var(--bg); border-radius:14px!important; padding:10px 12px; margin-top:10px; opacity:0; animation:tutPop .4s ease-out both;}
+.mockScene .toast{display:flex; align-items:center; gap:10px; padding:8px 0; margin-top:8px; opacity:0; animation:tutPop .4s ease-out both;}
 .mockScene .toast .okc{width:24px; height:24px; border-radius:50%!important; background:var(--good); display:grid; place-items:center; flex:none;}
 .mockScene .toast .okc svg{width:14px; height:14px; color:var(--bg);}
 .mockScene .toast b{font-size:13px; display:block;}
-.mockScene .toast small{font-size:11px; opacity:.75;}
+.mockScene .toast small{font-size:11px; color:var(--muted);}
 .mockScene .spark{position:absolute; color:var(--accent-2); font-size:18px; opacity:0; animation:tutSparkle 1.6s ease-in-out infinite;}
-.mockScene .diff{font:600 11px/1.6 var(--font-mono); border-radius:10px!important; background:var(--surface-2); padding:8px 10px;}
+.mockScene .diff{font:600 12px/1.7 var(--font-mono); padding:2px 0;}
 .mockScene .diff .a{color:var(--good);}
 @keyframes tutPop{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;}}
 @keyframes tutPulse{50%{box-shadow:0 0 0 6px transparent;}}
@@ -207,13 +229,22 @@ h1,h2,h3{font-family:var(--font-display); text-wrap:balance; margin:0;}
 .brow .bar>i{display:block; height:100%; background:var(--accent);}
 .brow .pct{font-family:var(--font-mono); text-align:right;}
 
-.jp-section{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:12px 14px; display:flex; flex-direction:column; gap:8px;}
+/* ---------- boxless (direct user instruction, Nov 2026): these were bordered/filled "cards"
+   purely for grouping informational text (tips, ingredients, steps, the vowel/mora/pitfalls
+   reference, the upload note) -- nothing in here is itself a tap target (buttons/inputs inside
+   keep their own look), so the panel chrome is gone. A heading plus margin-top is what now reads
+   as "a new section" instead of a bounding box; a thin top divider marks where two of these sit
+   back to back with nothing else (like a hubgrid or a button) between them. */
+.jp-section{margin-top:14px; display:flex; flex-direction:column; gap:8px;}
+.jp-section:first-child{margin-top:0;}
+.jp-section + .jp-section{border-top:1px solid var(--line); padding-top:14px;}
 .jp-section h3{font-size:14px;}
 .jp-section p{margin:0; line-height:1.5; font-size:13px;}
 .jp-section ul{margin:0; padding-left:18px; line-height:1.55; font-size:13px;}
-.jp-note{background:var(--surface-2); border-left:3px solid var(--accent); border-radius:8px; padding:9px 11px; font-size:12px; color:var(--fg);}
+.jp-note{padding:4px 0 0; font-size:12px; line-height:1.5; color:var(--muted);}
+.jp-note::before{content:"Note"; display:block; font-weight:800; font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent); margin-bottom:3px;}
 .vowelrow{display:grid; grid-template-columns:repeat(auto-fit,minmax(74px,1fr)); gap:6px;}
-.vowelchip{background:var(--surface-2); border-radius:10px; padding:7px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:2px;}
+.vowelchip{padding:4px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:2px;}
 .vowelchip .kana{font-family:var(--font-display); font-size:18px;}
 .vowelchip .ipa{font-family:var(--font-mono); font-size:10.5px; color:var(--accent-2);}
 .vowelPlay{width:26px; height:26px; border-radius:999px; border:1px solid var(--line); background:var(--surface);
@@ -225,7 +256,8 @@ h1,h2,h3{font-family:var(--font-display); text-wrap:balance; margin:0;}
 .drill input{margin-top:3px;}
 .drill label{font-size:13px; line-height:1.4; cursor:pointer;}
 .drill .sub{display:block; color:var(--muted); font-size:11.5px; margin-top:1px;}
-.takecard{background:var(--surface-2); border-radius:10px; padding:9px 11px; display:flex; flex-direction:column; gap:6px;}
+.takecard{padding:8px 0 0; display:flex; flex-direction:column; gap:6px; border-top:1px solid var(--line);}
+.takecard:first-child{border-top:none; padding-top:0;}
 
 /* ---------- Japanese lesson: Aoi-paced beats + immediate checks + a transcript, instead of a
    static reference wall shown all at once ---------- */
@@ -615,8 +647,8 @@ body.lessonLocked #cardZone{padding-bottom:calc(8px + var(--aoi-reserve-bottom, 
 body{ font-family:var(--font-mono); -webkit-font-smoothing:none; }
 h1{ font-family:var(--font-pixel); }
 h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
-#card, .navbtn, .themebtn, .btn, .choice, .hubcard, .quizcard, .card, .stat, .jp-section,
-#host .frame, .takecard, #chatPanel, #chatFab, #settingsPanel, #aoiChoices button{
+#card, .navbtn, .themebtn, .btn, .choice, .hubcard, .quizcard, .card, .stat,
+#host .frame, #chatPanel, #chatFab, #settingsPanel, #aoiChoices button{
   border-width:2px; box-shadow:none;
   clip-path:polygon(0 4px,4px 4px,4px 0,calc(100% - 4px) 0,calc(100% - 4px) 4px,100% 4px,100% calc(100% - 4px),calc(100% - 4px) calc(100% - 4px),calc(100% - 4px) 100%,4px 100%,4px calc(100% - 4px),0 calc(100% - 4px));
 }
@@ -2621,7 +2653,7 @@ var TUTOR_LESSON = [
     text: "Cloud sessions need a repo. Tap send without one, and the Repositories list pops right up!",
     pose: "present_l", eyes: null, audio: "audio/tutorial/scene3_repo.mp3",
     visual: '<div class="mockScene"><div class="ctag">New session</div>' +
-      '<div class="phone" style="min-height:290px"><div class="notch"></div>' +
+      '<div class="phone"><div class="notch"></div>' +
       '<div class="apphead"><h3 style="font-size:17px">New session</h3></div>' +
       '<div class="input"><span>Fix the login bug&hellip;</span><span class="send">' + MOCK_ICONS.send + '</span></div>' +
       '<div class="chips"><span class="chip cy">' + MOCK_ICON_SM('cloud', 13) + ' Default</span><span class="chip">+ Add repository</span></div>' +
@@ -2677,7 +2709,7 @@ var TUTOR_LESSON = [
       '<span class="spark" style="right:6px;top:-26px">&#10022;</span><span class="spark" style="right:34px;top:-12px;animation-delay:.5s;font-size:12px">&#10022;</span>' +
       '<div class="diff d1"><div><span class="a">+</span> aoi/index.html</div><div><span class="a">+</span> aoi/README.md</div></div>' +
       '<div class="toast d3"><span class="okc">' + MOCK_ICONS.check + '</span><div><b>Pushed to aoi</b><small>julia-rodrigo/test &middot; just now</small></div></div>' +
-      '<div class="toast d5" style="background:var(--accent)"><span class="okc" style="background:var(--accent-2)">' + MOCK_ICONS.check + '</span><div><b>Session finished</b><small>Ready for your review</small></div></div>' +
+      '<div class="toast d5"><span class="okc" style="background:var(--accent)">' + MOCK_ICONS.check + '</span><div><b style="color:var(--accent)">Session finished</b><small>Ready for your review</small></div></div>' +
       '</div></div>'
   }
 ];

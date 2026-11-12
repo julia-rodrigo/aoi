@@ -325,35 +325,42 @@ body{ -webkit-tap-highlight-color:transparent; padding-block:0; }
 #dots span i{display:block;height:100%;width:0;background:var(--accent-2);transition:width .25s ease;}
 
 /* --------- removed: see AOI_CAPTION_V2 below for the current boxless-caption measurements --------- */
-/* ---------- portrait layout: sticky, on top of (not racing to avoid) scrolling content ----------
-   Root cause finally isolated by direct measurement, not guessing: CSS position:sticky (and
-   position:fixed behaves identically here) computes her "stuck" position purely from viewport
-   height minus her own real height -- it does NOT know or care where the real content actually
-   ends. That formula is only correct once scrolling has happened enough to actually reach it. The
-   bug: sticky can engage on the very FIRST frame, before any scroll, whenever the page is even
-   slightly taller than the viewport (which reserving room for her, by design, makes happen on
-   almost every view) -- at scroll position zero, "stuck" position can land ABOVE where the real
-   content currently ends, overlapping it, and only scrolling the rest of the way down resolves it
-   (confirmed directly: at max scroll the gap is a clean 8px; at scroll zero it was a 52px overlap
-   on a Teacher-lesson beat). This is a CSS mechanics limitation, not a sign the reserve math is
-   wrong. Fixed with a direct correction instead of a smarter formula: forceAoiClear() (near
-   updateAoiReserve() below) measures the REAL gap between #card and #aoiCorner after each render
-   and auto-scrolls just enough to close it whenever it's negative, so the very first frame a beat
-   is ever seen in is already the resolved, non-overlapping one -- the user is never shown the
-   transient broken state scroll position zero can produce. */
-#cardZone{padding:2px 0 8px; padding-bottom:calc(8px + var(--aoi-reserve-bottom, 170px)); max-height:none; overflow-y:visible;}
+/* ---------- portrait layout: scroll only exists when content genuinely needs it ----------
+   The auto-scroll "fix" from the previous round corrected an overlap, but direct instruction
+   called that itself wrong: the page silently jumping its scroll position out from under the
+   user ("aoi is set at a different position when the UI updated") is its own bug, and the real
+   requirement is simpler -- she must be visible at the bottom WITHOUT the user ever having to
+   scroll, and there must be no scrolling at all unless the real content is actually taller than
+   the phone screen.
+   The reason sticky kept misbehaving is now understood precisely: position:sticky computes its
+   "stuck" position from viewport height minus her own height alone, with no idea where content
+   ends, and that's only correct once the page has genuinely scrolled that far -- so reserving
+   padding for her, by itself, could tip the page JUST barely past one screen's height and make
+   sticky engage immediately, landing her above content that hasn't earned that position yet.
+   Fixed at the actual root instead of correcting the symptom: #aoiCorner defaults to plain
+   position:static (the ordinary next element in the page, directly under the content, guaranteed
+   zero overlap and zero scroll by construction -- nothing "sticks" so nothing can mis-stick).
+   body.aoiNeedsScroll (set by updateAoiScrollMode() in the script below, which measures the real
+   unreserved page height against the real viewport height every time content or her own size
+   changes) is added ONLY when the real content is ALREADY taller than the screen on its own --
+   in that case, and only then, sticky engages for the whole legitimate reason it exists: so she
+   stays reachable while you scroll through content that genuinely doesn't fit, same as before. */
+#cardZone{padding:2px 0 8px; max-height:none; overflow-y:visible;}
 #card{background:var(--surface); border:1.5px solid var(--line); border-radius:var(--card-radius);
   box-shadow:var(--chrome-shadow); padding:12px;}
 .ctag{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-2);margin-bottom:8px;}
 
-#aoiCorner{position:sticky; bottom:0; z-index:50; background:var(--bg); padding-top:16px;
+#aoiCorner{position:static; background:var(--bg); padding-top:16px;}
+body.aoiNeedsScroll #cardZone{padding-bottom:calc(8px + var(--aoi-reserve-bottom, 170px));}
+body.aoiNeedsScroll #aoiCorner{position:sticky; bottom:0; z-index:50;
   margin-top:calc(-2px - var(--aoi-reserve-bottom, 170px));}
-/* Teacher lesson (body.lessonLocked) uses the exact same mechanism as the default case above --
-   duplicated explicitly (rather than relying on the default) so a future default change can't
-   silently affect this view, per direct instruction that this view's behavior must not change. */
-body.lessonLocked #aoiCorner{position:sticky; bottom:0; z-index:50; background:var(--bg); padding-top:16px;
+/* Teacher lesson (body.lessonLocked) shares this same mechanism deliberately, not by accident --
+   both classes can be present on body at once, and this selector makes that combination explicit
+   so it's obvious it's intentional rather than something a future default change could silently
+   break, per direct instruction that this view's behavior must not change. */
+body.lessonLocked.aoiNeedsScroll #aoiCorner{position:sticky; bottom:0; z-index:50;
   margin-top:calc(-2px - var(--aoi-reserve-bottom, 170px));}
-body.lessonLocked #cardZone{padding-bottom:calc(8px + var(--aoi-reserve-bottom, 170px)); max-height:none; overflow-y:visible;}
+body.lessonLocked.aoiNeedsScroll #cardZone{padding-bottom:calc(8px + var(--aoi-reserve-bottom, 170px));}
 /* ---------- AOI_CAPTION_V2: boxless caption, per direct request ("no more boxes here and
    there") ----------
    #sub used to be a bordered/background "chat bubble" card, with #who as an absolutely-
@@ -3477,16 +3484,17 @@ function updateAoiReserve(){
   document.documentElement.style.setProperty('--aoi-reserve-right', Math.max(0, Math.ceil(window.innerWidth - r.left)) + 'px');
 }
 if (window.ResizeObserver){
-  var aoiReserveObserver = new ResizeObserver(updateAoiReserve);
+  var aoiReserveObserver = new ResizeObserver(function(){ updateAoiScrollMode(); });
   aoiReserveObserver.observe($aoiCorner);
   var $aoiReserveSubEl = document.getElementById('sub');
   var $aoiReserveHostEl = document.getElementById('host');
   if ($aoiReserveSubEl) aoiReserveObserver.observe($aoiReserveSubEl);
   if ($aoiReserveHostEl) aoiReserveObserver.observe($aoiReserveHostEl);
 }
-addEventListener('resize', updateAoiReserve);
-addEventListener('orientationchange', function(){ setTimeout(updateAoiReserve, 60); });
+addEventListener('resize', updateAoiScrollMode);
+addEventListener('orientationchange', function(){ setTimeout(updateAoiScrollMode, 60); });
 updateAoiReserve();
+updateAoiScrollMode();
 /* Belt-and-suspenders for the exact same real-device race described above: re-measure once more a
    couple of animation frames after any render that can change her footprint (a new beat's say(),
    a quiz/JP check rendering its choice buttons, a view switch), well after the observer's own
@@ -3494,25 +3502,23 @@ updateAoiReserve();
    initial measurement still gets picked up quickly instead of sitting stale until the NEXT size
    change happens to fire the observer again. Cheap (a getBoundingClientRect + a style write) and
    idempotent, so calling it an extra time when nothing actually changed is harmless. */
-/* Direct-measurement correction for the sticky "engages before you've scrolled" bug described in
-   the #aoiCorner CSS comment above: at the browser's CHOSEN resting scroll position (which CSS
-   sticky decides unilaterally the instant a page is taller than the viewport, independent of
-   where the real content ends), check whether her box is actually overlapping #card's real
-   content, and if so, scroll down by exactly that amount. A clean small gap (GAP_OK) is left
-   alone -- this only corrects an actual overlap, never nudges an already-fine layout. Harmless to
-   call on a view/beat that doesn't need it: the overlap check is just two getBoundingClientRect()
-   reads and a comparison. */
-var AOI_GAP_OK = 24;
-function forceAoiClear(){
-  var card = document.getElementById('card');
-  if (!card) return;
-  var cardBottom = card.getBoundingClientRect().bottom;
-  var cornerTop = $aoiCorner.getBoundingClientRect().top;
-  var overlap = cardBottom - cornerTop + AOI_GAP_OK;
-  if (overlap > 0) window.scrollBy(0, overlap);
+/* Decides whether body.aoiNeedsScroll is on (see the #aoiCorner CSS comment above for why this
+   exists instead of letting sticky decide for itself): drop the class, let layout settle back to
+   plain static flow, then check the real unreserved document height against the real viewport.
+   Static flow with the class off is the ONLY state this can safely measure from -- #aoiCorner's
+   true height still counts toward scrollHeight either way (it's never removed from flow, sticky
+   or not), but #cardZone's reserve padding only exists once the class is already on, which would
+   make "do we need the class" depend on whether the class is already set. Dropping it first breaks
+   that circularity. A tiny +1px slack absorbs subpixel rounding so a page that fits exactly doesn't
+   flicker the class on and off. */
+function updateAoiScrollMode(){
+  document.body.classList.remove('aoiNeedsScroll');
+  var fits = document.documentElement.scrollHeight <= window.innerHeight + 1;
+  document.body.classList.toggle('aoiNeedsScroll', !fits);
+  updateAoiReserve();
 }
 function updateAoiReserveSoon(){
-  requestAnimationFrame(function(){ requestAnimationFrame(function(){ updateAoiReserve(); forceAoiClear(); }); });
+  requestAnimationFrame(function(){ requestAnimationFrame(updateAoiScrollMode); });
 }
 
 var BLINKABLE = {"null":1, "eyes_wide":1, "eyes_determined":1, "eyes_side":1};

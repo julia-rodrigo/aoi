@@ -329,42 +329,12 @@ body{ -webkit-tap-highlight-color:transparent; padding-block:0; }
 #dots span i{display:block;height:100%;width:0;background:var(--accent-2);transition:width .25s ease;}
 
 /* --------- removed: see AOI_CAPTION_V2 below for the current boxless-caption measurements --------- */
-/* ---------- portrait layout: scroll only exists when content genuinely needs it ----------
-   The auto-scroll "fix" from the previous round corrected an overlap, but direct instruction
-   called that itself wrong: the page silently jumping its scroll position out from under the
-   user ("aoi is set at a different position when the UI updated") is its own bug, and the real
-   requirement is simpler -- she must be visible at the bottom WITHOUT the user ever having to
-   scroll, and there must be no scrolling at all unless the real content is actually taller than
-   the phone screen.
-   The reason sticky kept misbehaving is now understood precisely: position:sticky computes its
-   "stuck" position from viewport height minus her own height alone, with no idea where content
-   ends, and that's only correct once the page has genuinely scrolled that far -- so reserving
-   padding for her, by itself, could tip the page JUST barely past one screen's height and make
-   sticky engage immediately, landing her above content that hasn't earned that position yet.
-   Fixed at the actual root instead of correcting the symptom: #aoiCorner defaults to plain
-   position:static (the ordinary next element in the page, directly under the content, guaranteed
-   zero overlap and zero scroll by construction -- nothing "sticks" so nothing can mis-stick).
-   body.aoiNeedsScroll (set by updateAoiScrollMode() in the script below, which measures the real
-   unreserved page height against the real viewport height every time content or her own size
-   changes) is added ONLY when the real content is ALREADY taller than the screen on its own --
-   in that case, and only then, sticky engages for the whole legitimate reason it exists: so she
-   stays reachable while you scroll through content that genuinely doesn't fit, same as before. */
 #cardZone{padding:2px 0 8px; max-height:none; overflow-y:visible;}
 #card{background:var(--surface); border:1.5px solid var(--line); border-radius:var(--card-radius);
   box-shadow:var(--chrome-shadow); padding:12px;}
 .ctag{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-2);margin-bottom:8px;}
 
 #aoiCorner{position:static; background:var(--bg); padding-top:16px;}
-body.aoiNeedsScroll #cardZone{padding-bottom:calc(8px + var(--aoi-reserve-bottom, 170px));}
-body.aoiNeedsScroll #aoiCorner{position:sticky; bottom:0; z-index:50;
-  margin-top:calc(-2px - var(--aoi-reserve-bottom, 170px));}
-/* Teacher lesson (body.lessonLocked) shares this same mechanism deliberately, not by accident --
-   both classes can be present on body at once, and this selector makes that combination explicit
-   so it's obvious it's intentional rather than something a future default change could silently
-   break, per direct instruction that this view's behavior must not change. */
-body.lessonLocked.aoiNeedsScroll #aoiCorner{position:sticky; bottom:0; z-index:50;
-  margin-top:calc(-2px - var(--aoi-reserve-bottom, 170px));}
-body.lessonLocked.aoiNeedsScroll #cardZone{padding-bottom:calc(8px + var(--aoi-reserve-bottom, 170px));}
 /* ---------- AOI_CAPTION_V2: boxless caption, per direct request ("no more boxes here and
    there") ----------
    #sub used to be a bordered/background "chat bubble" card, with #who as an absolutely-
@@ -607,7 +577,9 @@ body.lessonLocked.aoiNeedsScroll #cardZone{padding-bottom:calc(8px + var(--aoi-r
     grid-area:card; min-width:0; min-height:0; max-height:none; overflow-y:auto;
     -webkit-overflow-scrolling:touch; padding-bottom:12px;
   }
-  body:not(.lessonLocked) .wrap:not(.teachMode){ --host-size: min(32vmax, 260px); }
+  /* 50vh cap: on a phone's short landscape height a full 260px avatar plus her caption does not
+     fit the column, which pushed the caption off the bottom edge. */
+  body:not(.lessonLocked) .wrap:not(.teachMode){ --host-size: min(32vmax, 260px, 50vh); }
   body:not(.lessonLocked) .wrap:not(.teachMode) > #aoiCorner{
     grid-area:corner; position:static; display:flex; flex-direction:column;
     justify-content:center; align-items:stretch; gap:6px; min-height:0;
@@ -634,7 +606,6 @@ body.lessonLocked.aoiNeedsScroll #cardZone{padding-bottom:calc(8px + var(--aoi-r
    scope this differently). Landscape already has its own short-screen net just below (the
    420px-max-height query, font-size only) -- this one stays portrait-only as originally intended. */
 @media (max-height:700px) and (orientation:portrait){
-  .wrap.teachMode{ --host-size: min(26vh, 222px); }
   .wrap.teachMode #line{ font-size:13px; }
 }
 @media (max-height:620px) and (orientation:portrait){
@@ -705,6 +676,38 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 .settingsField input,.settingsField select{border:1px solid var(--line); background:var(--bg); color:var(--fg);
   border-radius:10px; padding:10px 12px; font-size:14px; font-family:inherit; width:100%;}
 .settingsActions{display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;}
+
+/* ---------- overlay host (everything except the wide-landscape grid layouts above) ----------
+   From the user's own sketch: the content card fills the whole screen top to bottom, she sits
+   small at the bottom-left ON TOP of it, and her line sits in a bubble to her right along the
+   bottom edge. Nothing below or behind her is left as bare page background any more, and because
+   she no longer takes a full-width block of her own out of the page flow, far more content fits
+   on one screen without scrolling. She is position:fixed, so neither content length, caption
+   length nor choice buttons can move her; the bubble is anchored by its bottom edge and only ever
+   grows upward beside her. #card keeps a bottom padding the height of her avatar so the last of a
+   long view can still be scrolled clear of her. updateAoiScrollMode() skips the old sticky
+   mechanism entirely in this mode. */
+@media not all and (orientation:landscape) and (min-width:640px){
+  :root{ --host-size: min(22vh, 168px); }
+  .wrap{ min-height:100vh; min-height:100dvh; }
+  #cardZone{ flex:1 0 auto; display:flex; flex-direction:column; padding-bottom:0; }
+  #card{ flex:1 0 auto; padding-bottom:calc(28px + var(--host-size)); }
+  #aoiCorner{ position:fixed; left:0; right:0; bottom:0; z-index:50; margin:0 auto; max-width:560px;
+    flex-direction:row; align-items:flex-end; gap:4px; background:transparent; pointer-events:none;
+    padding:0 max(12px, env(safe-area-inset-right,0px)) max(10px, env(safe-area-inset-bottom,0px)) max(6px, env(safe-area-inset-left,0px)); }
+  #host{ pointer-events:auto; padding:0; }
+  #sub{ pointer-events:auto; flex:1 1 0; min-width:0; opacity:1; margin-bottom:6px;
+    background:var(--surface); border:2px solid var(--line); padding:7px 10px 8px;
+    max-height:calc(var(--host-size) + 70px); overflow-y:auto; }
+  #line{ font-size:14px; line-height:1.35; }
+  #aoiChoices{ min-height:0; }
+  #aoiChoices:empty{ display:none; }
+  #aoiChoices button{ padding:6px 8px; }
+  /* Parked just above her head (a spot that never changes, unlike the bubble's top edge), so it
+     reads as "talk to her" and stays clear of the bubble and of right-aligned buttons like Next. */
+  #chatFab{ width:38px; height:38px; font-size:16px; left:max(10px, env(safe-area-inset-left,0px)); right:auto; z-index:51;
+    bottom:calc(var(--host-size) + 14px + env(safe-area-inset-bottom,0px)); }
+}
 </style>
 </head><body>
 
@@ -3512,36 +3515,12 @@ updateAoiScrollMode();
    initial measurement still gets picked up quickly instead of sitting stale until the NEXT size
    change happens to fire the observer again. Cheap (a getBoundingClientRect + a style write) and
    idempotent, so calling it an extra time when nothing actually changed is harmless. */
-/* Decides whether body.aoiNeedsScroll is on (see the #aoiCorner CSS comment above for why this
-   exists instead of letting sticky decide for itself).
-   Direct instruction narrowed what's even allowed to trigger this: her caption's own length must
-   NEVER be the reason a page scrolls -- only real content growing (the Hub's topic list, a long
-   recipe's steps) is a legitimate reason. Lesson content is meant to be written bitesize specifically
-   so this is rarely even a close call; when a caption does happen to run long, it should just render
-   in whatever room is there rather than demanding the page make room for it via scroll.
-   So this measures #cardZone's own real content height (header + dots + the card, with no reserve
-   padding -- the same "drop the class, let flow settle, then measure" trick as before, since the
-   reserve only exists once the class is already on) and adds AOI_NOMINAL_RESERVE, a FIXED budget
-   sized for a realistic short/bitesize caption (measured directly: a one-line greeting runs ~400px
-   of #aoiCorner, a realistic two-line beat caption ~428px), instead of her ACTUAL current caption's
-   real height. An unusually long caption that blows past that nominal budget simply doesn't count
-   toward this decision at all -- it never pushes the page into scroll mode by itself, exactly as
-   instructed. Only when the CONTENT alone is already big enough to need that much room does
-   aoiNeedsScroll engage, which is the only case direct instruction calls legitimate. */
-var AOI_NOMINAL_RESERVE = 440;
-function updateAoiScrollMode(){
-  document.body.classList.remove('aoiNeedsScroll');
-  var cardZone = document.getElementById('cardZone');
-  // + window.scrollY makes this a document-relative measurement, not viewport-relative, so it
-  // stays correct even if this runs while the page happens to be scrolled (getBoundingClientRect
-  // alone would otherwise understate "where content ends" by however far down the page is).
-  var contentBottom = cardZone
-    ? cardZone.getBoundingClientRect().bottom + window.scrollY
-    : document.documentElement.scrollHeight;
-  var fits = (contentBottom + AOI_NOMINAL_RESERVE) <= window.innerHeight;
-  document.body.classList.toggle('aoiNeedsScroll', !fits);
-  updateAoiReserve();
-}
+/* Her footprint never decides page scroll any more: on phones she is a fixed overlay over the
+   content (see the "overlay host" CSS), and the wide-landscape layouts give her a grid column of
+   her own. The old sticky "aoiNeedsScroll" mode this used to toggle is gone -- in the landscape
+   grid its negative margin fed back into its own measurement and grew her box without bound.
+   The name is kept because every re-measure call site already uses it. */
+function updateAoiScrollMode(){ updateAoiReserve(); }
 function updateAoiReserveSoon(){
   requestAnimationFrame(function(){ requestAnimationFrame(updateAoiScrollMode); });
 }
@@ -3583,23 +3562,8 @@ function say(text, opts){
   curText = text; shownChars = 0; typing = true;
   if ('pose' in opts) curPose = opts.pose;
   if ('eyes' in opts) curEyes = opts.eyes;
-  /* Reserve #sub's final height for THIS exact text up front, before the typewriter starts
-     revealing characters -- back to doing this (a previous round removed it) after direct
-     confirmation that the alternative is worse: in body.aoiNeedsScroll (sticky, genuinely-tall
-     content), #aoiCorner is anchored by its own BOTTOM edge, so letting #sub grow naturally while
-     typing didn't just nudge #host a little, it grew her whole box's OPAQUE background upward
-     over real content while covering more of it beat by beat -- "this white field covers the
-     contents and moves aoi up and down... remove it altogether", confirmed directly from a
-     screenshot showing a blank sheet overlapping the New Session card mid-type.
-     The reason this was removed in the first place still matters: reserving blindly reintroduces
-     a mostly-blank box for text that hasn't typed out yet, which can tip a SHORT beat's page just
-     past one screen's height and trigger scroll mode for content that doesn't really need it. That
-     risk is now handled differently -- AOI_FITS_SLACK (see updateAoiScrollMode below) gives a
-     beat ~48px of room before it's treated as needing scroll at all, which comfortably absorbs a
-     reserved-but-not-yet-typed box for anything short enough to matter. For a beat that's
-     genuinely going to need scroll regardless (a tall mockup, a long caption), reserving her final
-     size up front means she's already fully sized the instant that beat renders -- nothing left to
-     grow into content while typing, because there's nothing left to grow. */
+  /* Size her bubble for THIS line's full text before the typewriter starts, so the bubble never
+     changes size while she is talking (direct request: it should stay even, not grow as it fills). */
   reserveSubFor([text]);
   renderLine();
   clearAoiChoices();
@@ -3655,17 +3619,8 @@ function reserveSubFor(texts){
   document.documentElement.style.setProperty('--sub-reserve', Math.ceil(max) + 'px');
 }
 function clearSubReserve(){ lastReserveTexts = null; document.documentElement.style.removeProperty('--sub-reserve'); }
-/* Whatever is on screen the instant this runs is measured against whatever font is active right
-   then. On a fast/cached connection the custom webfont (Google Fonts, linked in <head>) is already
-   active, but on a real device over a real network it commonly isn't yet -- the browser renders a
-   fallback system font first and swaps to the real one a moment later once it finishes downloading,
-   which re-wraps the caption to a different line count/height than whatever was just measured.
-   Confirmed as the real cause of an intermittent report ("sometimes clipped, sometimes not", same
-   beat, same text): body.aoiNeedsScroll had been decided off the fallback font's shorter wrap,
-   then the real webfont swapped in afterward and made the caption taller without anything
-   re-checking whether that still fit -- a stale "fits" verdict left over from before the swap,
-   not a one-off fluke. Re-running updateAoiScrollMode() (which re-measures from scratch) once the
-   real fonts are confirmed active closes that gap for whatever beat happens to be showing then. */
+/* Re-measure once the real webfonts are active: a fallback font wraps to a different line count,
+   so anything measured before the swap can be stale. */
 if (window.document && document.fonts && document.fonts.ready){
   document.fonts.ready.then(updateAoiScrollMode).catch(function(){});
 }

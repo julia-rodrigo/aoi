@@ -3507,29 +3507,32 @@ updateAoiScrollMode();
    change happens to fire the observer again. Cheap (a getBoundingClientRect + a style write) and
    idempotent, so calling it an extra time when nothing actually changed is harmless. */
 /* Decides whether body.aoiNeedsScroll is on (see the #aoiCorner CSS comment above for why this
-   exists instead of letting sticky decide for itself): drop the class, let layout settle back to
-   plain static flow, then check the real unreserved document height against the real viewport.
-   Static flow with the class off is the ONLY state this can safely measure from -- #aoiCorner's
-   true height still counts toward scrollHeight either way (it's never removed from flow, sticky
-   or not), but #cardZone's reserve padding only exists once the class is already on, which would
-   make "do we need the class" depend on whether the class is already set. Dropping it first breaks
-   that circularity.
-   AOI_FITS_SLACK is deliberately generous (not a tiny rounding fudge): a beat that's only a few
-   tens of pixels past one screen still renders completely fine left in plain static flow -- worst
-   case the browser's own native scroll reveals those last few px, which is imperceptible -- while
-   routing it into aoiNeedsScroll's sticky mechanism re-exposes the exact engage-before-you've-
-   scrolled edge case documented on #aoiCorner above. Confirmed directly as the cause of an
-   intermittent report (same beat, same fully-typed text, clipped in one screenshot and clean in
-   another): the real content was only ~2px over the OLD 1px-slack threshold, so ordinary
-   measurement jitter (a webfont finishing its swap, a sprite settling) was enough to flip which
-   side of the line it landed on from one load to the next. A wider margin keeps genuinely-long
-   content (Hub's full card list, a multi-step recipe -- both hundreds of px over) correctly routed
-   into scroll mode while keeping every borderline case safely out of the mechanism that's fragile
-   at its edges. */
-var AOI_FITS_SLACK = 48;
+   exists instead of letting sticky decide for itself).
+   Direct instruction narrowed what's even allowed to trigger this: her caption's own length must
+   NEVER be the reason a page scrolls -- only real content growing (the Hub's topic list, a long
+   recipe's steps) is a legitimate reason. Lesson content is meant to be written bitesize specifically
+   so this is rarely even a close call; when a caption does happen to run long, it should just render
+   in whatever room is there rather than demanding the page make room for it via scroll.
+   So this measures #cardZone's own real content height (header + dots + the card, with no reserve
+   padding -- the same "drop the class, let flow settle, then measure" trick as before, since the
+   reserve only exists once the class is already on) and adds AOI_NOMINAL_RESERVE, a FIXED budget
+   sized for a realistic short/bitesize caption (measured directly: a one-line greeting runs ~400px
+   of #aoiCorner, a realistic two-line beat caption ~428px), instead of her ACTUAL current caption's
+   real height. An unusually long caption that blows past that nominal budget simply doesn't count
+   toward this decision at all -- it never pushes the page into scroll mode by itself, exactly as
+   instructed. Only when the CONTENT alone is already big enough to need that much room does
+   aoiNeedsScroll engage, which is the only case direct instruction calls legitimate. */
+var AOI_NOMINAL_RESERVE = 440;
 function updateAoiScrollMode(){
   document.body.classList.remove('aoiNeedsScroll');
-  var fits = document.documentElement.scrollHeight <= window.innerHeight + AOI_FITS_SLACK;
+  var cardZone = document.getElementById('cardZone');
+  // + window.scrollY makes this a document-relative measurement, not viewport-relative, so it
+  // stays correct even if this runs while the page happens to be scrolled (getBoundingClientRect
+  // alone would otherwise understate "where content ends" by however far down the page is).
+  var contentBottom = cardZone
+    ? cardZone.getBoundingClientRect().bottom + window.scrollY
+    : document.documentElement.scrollHeight;
+  var fits = (contentBottom + AOI_NOMINAL_RESERVE) <= window.innerHeight;
   document.body.classList.toggle('aoiNeedsScroll', !fits);
   updateAoiReserve();
 }

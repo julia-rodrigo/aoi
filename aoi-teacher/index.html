@@ -676,11 +676,11 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
    in instantly, with the keyboard then flashing in right after (from the input's focus() call),
    which read as janky. transform/opacity are both animatable so the slide-up/fade-in actually play;
    see the CSS comment on .explain above for why a property that isn't (like display) wouldn't. */
-#overlayBackdrop{position:fixed; inset:0; background:rgba(5,10,25,.45); z-index:45;
+#overlayBackdrop{position:fixed; inset:0; background:rgba(5,10,25,.45); z-index:55;
   opacity:0; transition:opacity .22s ease;}
 #overlayBackdrop.open{opacity:1;}
 :root[data-theme="dark"] #overlayBackdrop{background:rgba(0,0,0,.6);}
-.overlayPanel{position:fixed; left:0; right:0; bottom:0; z-index:46; margin:0 auto; max-width:560px;
+.overlayPanel{position:fixed; left:0; right:0; bottom:0; z-index:56; margin:0 auto; max-width:560px;
   background:var(--surface); border:1.5px solid var(--line); border-top-left-radius:20px; border-top-right-radius:20px;
   box-shadow:var(--chrome-shadow); display:flex; flex-direction:column; max-height:min(78vh,620px);
   padding-bottom:env(safe-area-inset-bottom,0px);
@@ -2308,6 +2308,11 @@ document.getElementById("btnMissed").addEventListener("click", function(){ start
 function currentQuestion(){ return session.queue[session.index]; }
 
 function renderQuestion(){
+  /* Advancing to a new question re-renders in place (no showView() call, which is the only other
+     place that resets scroll) -- without this, "Next" left the page wherever the user had scrolled
+     to read the previous question's last choice, dropping them into the middle of the new one
+     instead of its category label / full question text / hint button. */
+  window.scrollTo(0, 0);
   var q = currentQuestion();
   var total = session.queue.length;
   document.getElementById("quizCounter").textContent = (session.index + 1) + " / " + total;
@@ -2348,6 +2353,7 @@ function renderQuestion(){
   document.getElementById("btnNext").disabled = true;
   document.getElementById("btnNext").textContent = (session.index + 1 < total) ? "Next" : "See Results";
   document.getElementById("btnHint").disabled = false;
+  if (window.updateAoiReserveSoon) window.updateAoiReserveSoon();
 }
 
 function selectChoice(chosenIdx, btnEl){
@@ -4174,6 +4180,9 @@ function openChat(context){
   $panelTitle.textContent = currentContext === 'cooking' ? ('Cooking' + (contextRecipe ? ': ' + contextRecipe.title : '')) :
     currentContext === 'daily' ? "How's Your Day?" :
     currentContext === 'sales' ? ('Roleplay' + (contextScenario ? ': ' + contextScenario.title : '')) : 'Talk to Aoi';
+  $input.placeholder = currentContext === 'cooking' ? 'Ask about the recipe…' :
+    currentContext === 'daily' ? "Tell Aoi about your day…" :
+    currentContext === 'sales' ? 'Type your pitch…' : 'Tell Aoi what you want to learn…';
   $saveJournalBtn.hidden = currentContext !== 'daily';
   renderHistory();
   $noKey.hidden = hasKey();

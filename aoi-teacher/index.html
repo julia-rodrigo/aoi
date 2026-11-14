@@ -295,21 +295,8 @@ details.jpRefWrap summary{cursor:pointer; font-family:var(--font-mono); font-siz
 @media (max-width:480px){ .brow{grid-template-columns:96px 1fr 42px;} }
 
 /* ---------- scene-player chrome ----------
-   The page itself scrolls (html/body, normal document flow) — .wrap is NOT locked to a fixed
-   height. An earlier version forced .wrap to height:100vh so #aoiCorner could sit as a sticky
-   footer, but that backfired on tall/desktop viewports: on a short view like the hub, the forced
-   100vh container was much taller than the actual content, and since #aoiCorner sits at its
-   natural flow position (sticky does not pull a short-content footer down to fill unused space),
-   the leftover height just rendered as a large dead gap below her, worst on wide desktop windows
-   where the narrow 560px column is paired with a tall browser window. Fixing it by NOT forcing a
-   height at all: .wrap is only ever as tall as its real content, so there's never unused space to
-   leave a gap in. #top and #aoiCorner stay position:sticky (top:0 / bottom:0), now relative to the
-   real page scroll instead of an inner scroll container — on a short view nothing scrolls and she
-   just sits right after the content; on a genuinely tall view (e.g. the GK roadmap expanded) the
-   page scrolls and she sticks to the viewport bottom once you scroll past her, so she's reachable
-   without hunting for her, in both cases, at any viewport size. html's own background is set too,
-   so a short page's unused viewport area below the content is still filled with the theme's
-   background rather than a stray white gap outside of body's own box. */
+   The page itself scrolls (html/body, normal document flow); .wrap is at least one screen tall so
+   the content card can stretch to the bottom edge behind Aoi (see "content card + floating host"). */
 html,body{height:auto;} /* overrides the base html,body{height:100%} above, which otherwise still forces a full-viewport-tall body even with min-height removed */
 html{background:var(--bg);}
 body{ -webkit-tap-highlight-color:transparent; padding-block:0; }
@@ -328,159 +315,59 @@ body{ -webkit-tap-highlight-color:transparent; padding-block:0; }
 #dots span{flex:1;height:4px;border-radius:3px;background:var(--line);overflow:hidden;}
 #dots span i{display:block;height:100%;width:0;background:var(--accent-2);transition:width .25s ease;}
 
-/* --------- removed: see AOI_CAPTION_V2 below for the current boxless-caption measurements --------- */
-#cardZone{padding:2px 0 8px; max-height:none; overflow-y:visible;}
-#card{background:var(--surface); border:1.5px solid var(--line); border-radius:var(--card-radius);
-  box-shadow:var(--chrome-shadow); padding:12px;}
+/* ---------- content card + floating host ----------
+   From the user's sketches: the content card fills the screen, and Aoi floats over it. She can be
+   dragged anywhere and pinched to resize; nothing in the page flow belongs to her any more, so
+   content length, caption length and choice buttons can never move her. layoutAoi() (script
+   below) reads where she currently is and sets:
+     --aoi-pad-l / --aoi-pad-r / --aoi-pad-b : room the content gives up for her (a side column
+                                               in wide landscape, a bottom band on phones)
+     #sub left/right + --sub-max            : where her text box sits and how wide it may get
+   Her text box is deliberately small and see-through: it hugs its text, sits beside her when she
+   is in a bottom corner, and spans the bottom edge when she is moved elsewhere (she stays visible
+   through it). */
+:root{ --host-size: min(22vh, 168px); --bubble-bg:rgba(255,255,255,.66); --bubble-line:rgba(150,163,200,.55); }
+:root[data-theme="dark"]{ --bubble-bg:rgba(30,32,37,.64); --bubble-line:rgba(110,116,130,.55); }
+.wrap{ min-height:100vh; min-height:100dvh; }
+@media (orientation:landscape) and (min-width:640px){
+  :root{ --host-size: min(58vh, 250px); }
+  .wrap{ max-width:1100px; }
+}
+#cardZone{flex:1 0 auto; display:flex; flex-direction:column; max-height:none; overflow-y:visible;
+  padding:2px var(--aoi-pad-r, 0px) 0 var(--aoi-pad-l, 0px);}
+#card{flex:1 0 auto; background:var(--surface); border:1.5px solid var(--line); border-radius:var(--card-radius);
+  box-shadow:var(--chrome-shadow); padding:12px 12px var(--aoi-pad-b, 190px);}
 .ctag{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-2);margin-bottom:8px;}
 
-#aoiCorner{position:static; background:var(--bg); padding-top:16px;}
-/* ---------- AOI_CAPTION_V2: boxless caption, per direct request ("no more boxes here and
-   there") ----------
-   #sub used to be a bordered/background "chat bubble" card, with #who as an absolutely-
-   positioned pill badge poking up over its top edge. Both are gone: #sub is now a plain,
-   semi-transparent (opacity, not true see-through -- #aoiCorner itself keeps a solid --bg
-   behind it, which is what actually fixed the "badge clipped by content above" bug class, so
-   true transparency would reopen that) subtitle-style caption, laid out as a simple flex row
-   ("AOI" on the left, "tap to skip" on the right, both plain text, no pill/box) followed by her
-   line wrapping full-width beneath -- no absolute positioning left anywhere in here, which is
-   what makes the old "badge pokes into whatever sits above #aoiCorner" bug class structurally
-   impossible now (there is nothing left positioned outside #sub's own normal flow). */
-/* padding-right reserves room for #chatFab (56px, sitting 18px off the real edge -- see its own
-   fixed rule below), so her caption row, no longer confined to a narrower bordered bubble, can't
-   run underneath that independently-fixed button and get covered -- only #sub reserves this, not
-   all of #aoiCorner, so her avatar (centered in #host, #sub's sibling) stays centered. */
-/* --sub-reserve (set by reserveSubFor() in the script below, per paced-lesson view) pins #sub's
-   own box to a constant height for the duration of that view, instead of letting it grow/shrink
-   beat to beat -- #aoiCorner is a flex column with #host stacked above #sub and the WHOLE column
-   anchored by its bottom edge (sticky for most views, position:fixed for the Teacher lesson), so
-   when #sub's real rendered height varied by beat (a longer line wrapping to another row), the
-   column's total height changed, and since its BOTTOM stayed pinned, #host (above #sub in the
-   stack) visibly moved up/down to compensate -- confirmed via getBoundingClientRect() across beats
-   and from the user's own recording ("she keeps moving ... when the text box changes sizes").
-   Fixing the anchor math itself (e.g. anchoring #host from the top instead of the whole column
-   from the bottom) would need #sub to grow downward past the visible column with nothing above it
-   shifting, which conflicts with #host needing to render ABOVE #sub -- simplest robust fix instead
-   makes #sub's box always the same height (the real max across that view's own actual beat texts,
-   measured once per view-entry, not guessed), so the column's total height is also constant and
-   #host's position never moves for THAT reason -- only entering a different view changes it, which
-   is an intentional view change, not drift mid-lesson. min-height (not height) so this can never
-   clip text if some later content is unexpectedly longer than the measured max; it just grows once
-   in that rare case instead of being guaranteed stable. Unset (0px) for views that never call
-   reserveSubFor() -- Hub/Quiz/Cooking/Daily Chat/Sales keep today's natural auto-height behavior. */
-#sub{position:relative; display:flex; flex-wrap:wrap; align-items:baseline; align-content:flex-start; column-gap:8px;
-  background:transparent; border:none; box-shadow:none; border-radius:0;
-  padding:2px max(72px, calc(72px + env(safe-area-inset-right,0px))) 4px 2px; min-height:var(--sub-reserve, 0px); overflow:visible; cursor:pointer; opacity:.92;}
-#who{order:1; background:none; color:var(--accent); font-size:10px; font-weight:700;
-  letter-spacing:.08em; text-transform:uppercase; -webkit-font-smoothing:antialiased;}
-#hint{order:2; margin-left:auto; background:none; border:none; padding:0; font-size:9px; color:var(--muted); letter-spacing:.06em;}
-#line{order:3; flex-basis:100%; font-size:16px; line-height:1.4; font-weight:600; padding-top:1px;}
-#line .caret{display:inline-block;width:2px;height:1em;background:var(--accent-2);vertical-align:-2px;margin-left:2px;animation:aoiblink .8s steps(1) infinite;}
-@keyframes aoiblink{50%{opacity:0;}}
-/* Small inline choices a view can show right under her caption instead of a big button in the
-   content card (e.g. Cooking's "walk me through it?" Yes/Pass, Sales' Start/Skip). Populated by
-   showAoiChoices()/clearAoiChoices() in the script below.
-   min-height reserves this row's space PERMANENTLY, whether or not a view currently has choices
-   to show -- direct instruction: the size of #aoiCorner (and therefore where she's stuck/pinned)
-   must never change based on how many options are showing. Measured directly off a real rendered
-   Yes/Pass row (30px). Buttons stretch (flex:1 each) to fill the full row instead of sitting as
-   narrow left-aligned pills, per direct instruction that choices should span the full width
-   available next to her, not a cramped little cluster. */
-#aoiChoices{order:4; flex-basis:100%; display:flex; gap:8px; margin-top:2px; min-height:30px;}
-#aoiChoices button{flex:1; font-family:var(--font-body); font-weight:700; font-size:12.5px; padding:6px 14px;
-  border:1.5px solid var(--accent); border-radius:999px; background:transparent; color:var(--accent); cursor:pointer;
-  text-align:center;}
-#aoiChoices button.primary{background:var(--accent); color:var(--accent-fg);}
-#aoiChoices button:active{transform:scale(.95);}
-
-/* Her idle portrait reads at roughly a third of the viewport, per direct request, instead of the
-   small fixed 84px box from the earlier crop fix -- that fix (sizeHost reading the frame's real
-   clientWidth with no snapping) still holds at any size, it just needs the frame itself sized up.
-   #cardZone's max-height above is kept in sync via the same --host-size var, so growing her does
-   not reopen the dead-space bug: the two were tuned together, not independently. */
-:root{ --host-size: min(32vh, 260px); }
-#host{flex:none; display:flex; justify-content:center; padding:6px 0 2px;}
+#aoiCorner{position:fixed; inset:0; z-index:50; pointer-events:none;}
+#host{position:absolute; left:0; top:0; z-index:1; pointer-events:auto; cursor:grab; touch-action:none; transform-origin:50% 50%;}
 #host .frame{position:relative; width:var(--host-size); height:var(--host-size); border-radius:16px; overflow:hidden;
   background:radial-gradient(closest-side, rgba(54,160,230,.20), rgba(54,160,230,0));}
 #aoi{display:block; image-rendering:pixelated; image-rendering:-moz-crisp-edges; image-rendering:crisp-edges;}
 
-/* #aoiCorner wraps #sub+#host as one sticky-footer unit (see .wrap/#aoiCorner above); "teaching
-   mode" below repositions this same unit into a landscape content frame's corner instead.
-   #host is reordered ahead of #sub (DOM order is unchanged, JS doesn't care) so her avatar
-   renders above her caption text, per direct request -- "text chunks below her avatar". */
-#aoiCorner{ display:flex; flex-direction:column; gap:2px; touch-action:none; }
-#host{ order:1; cursor:pointer; }
-#sub{ order:2; }
+#sub{position:absolute; z-index:2; bottom:max(8px, env(safe-area-inset-bottom,0px)); pointer-events:auto; cursor:pointer;
+  width:max-content; max-width:var(--sub-max, calc(100vw - 20px)); min-width:var(--sub-w, 0px); min-height:var(--sub-reserve, 0px);
+  display:flex; flex-wrap:wrap; align-items:baseline; align-content:flex-start; column-gap:8px;
+  padding:5px 9px 6px; background:var(--bubble-bg); border:1.5px solid var(--bubble-line);
+  -webkit-backdrop-filter:blur(2px); backdrop-filter:blur(2px);}
+#who{order:1; color:var(--accent); font-size:9.5px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  text-shadow:0 0 3px var(--bg), 0 0 6px var(--bg);}
+#hint{display:none;}
+#line{order:3; flex-basis:100%; font-size:13px; line-height:1.35; font-weight:600;
+  text-shadow:0 0 3px var(--bg), 0 0 6px var(--bg);}
+#line .caret{display:inline-block;width:2px;height:1em;background:var(--accent-2);vertical-align:-2px;margin-left:2px;animation:aoiblink .8s steps(1) infinite;}
+@keyframes aoiblink{50%{opacity:0;}}
+/* Small inline choices a view can show under her line (Cooking's Yes/Pass, Sales' Start/Skip).
+   Populated by showAoiChoices()/clearAoiChoices() in the script below. */
+#aoiChoices{order:4; flex-basis:100%; display:flex; gap:6px; margin-top:5px;}
+#aoiChoices:empty{display:none;}
+#aoiChoices button{flex:1; min-width:66px; font-family:var(--font-body); font-weight:700; font-size:12.5px; padding:6px 8px;
+  border:1.5px solid var(--accent); border-radius:999px; background:var(--surface); color:var(--accent); cursor:pointer;
+  text-align:center;}
+#aoiChoices button.primary{background:var(--accent); color:var(--accent-fg);}
+#aoiChoices button:active{transform:scale(.95);}
 
-/* ---------- teaching mode: landscape corner-host layout for narrated lesson content ----------
-   Modeled on real frames from Aoi's rendered explainer video: a landscape frame, Aoi small in a
-   content-area corner reacting (not a big centered bust), the content card filling the rest, her
-   line in a compact subtitle bubble near her rather than a full-width bar ("show, don't restate" —
-   the card illustrates the point, her line is just a caption). This is additive to, not a
-   replacement for, the portrait scene-player layout above, which still drives hub/quiz/results.
-   showView() adds .teachMode to .wrap for views that are paced narrated lessons (today: Japanese
-   Pronunciation; the same class should cover future narrated-lesson content). Simplification: the
-   corner is fixed bottom-right rather than alternating sides per beat, to keep this scoped. */
 @media (orientation:landscape) and (min-width:640px){
-  .wrap.teachMode{
-    /* Her corner column is a proportional ~30% share (min 150px) rather than a fixed 220px, so the
-       content side keeps a visibly bigger share of a wide landscape frame too, per direct request
-       ("content taking slight more space then her side") -- card/corner were already left/right in
-       that order, this only tunes the ratio between them. */
-    max-width:min(960px,96vw); display:grid; grid-template-columns:1fr minmax(150px,32%); grid-template-rows:auto 1fr;
-    grid-template-areas:"top top" "card corner"; column-gap:16px;
-    /* The grid's "1fr" row only has real leftover space to claim if the grid container itself has
-       a definite height -- without this, .wrap just grows to its content's natural (portrait-sized)
-       height, so "1fr" collapses to min-content instead of the actual remaining viewport height.
-       That was the real landscape bug: #cardZone/#aoiCorner were never getting the ~340px of real
-       vertical room this layout assumes, only ~155px of leftover content height. */
-    height:100svh;
-  }
-  @supports not (height:100svh){ .wrap.teachMode{ height:100vh; } }
-  .wrap.teachMode > #top{ grid-area:top; position:static; }
-  /* Dots has no grid-area of its own, so it was being auto-placed into an implicit extra row
-     after "card"/"corner" instead of sharing the header's row -- eating a sliver of height AND
-     rendering between the two rows rather than under the title. Landscape's corner-host layout
-     doesn't have room for a separate progress row anyway (the original reference video this mode
-     is modeled on never shows a dots bar over a wide frame), so it's simplest to just not show it
-     here; portrait keeps it. */
-  .wrap.teachMode > #dots{ display:none; }
-  .wrap.teachMode > #cardZone{ grid-area:card; min-width:0; min-height:0; max-height:none; overflow-y:auto; -webkit-overflow-scrolling:touch; }
-  .wrap.teachMode > #aoiCorner{
-    grid-area:corner; position:static; display:flex; flex-direction:column; justify-content:flex-end;
-    align-items:stretch; gap:6px; padding-bottom:2px; padding-top:0; margin-top:0; min-height:0;
-  }
-  .wrap.teachMode #sub{ margin:0; min-height:var(--sub-reserve, 0px); padding-right:2px; }
-  .wrap.teachMode #hint{ display:none; }
-  .wrap.teachMode #host{ padding:0; }
-  /* No fixed width/height here on purpose -- #host .frame inherits the global
-     width:var(--host-size) (min(32vh,260px)) same as portrait, per direct request ("aoi is too
-     small in landscape mode she should be the same size as her portrait mode"). --host-size is
-     driven by vh, which only depends on viewport HEIGHT, not orientation, so at a given viewport
-     height she already renders at the same size in both orientations -- she only looked smaller
-     here because of this rule (a hardcoded 88px, later even 64px below) overriding that. */
-  .wrap.teachMode #host .frame{ margin:0 auto; }
-
-  /* Teacher lesson only (body.lessonLocked -- see the portrait rules above for why): the grid-cell
-     corner above is still flow-dependent on the grid row actually getting 100svh of real space,
-     which is exactly the kind of real-device-vs-calc() mismatch that caused the portrait bug. Give
-     this lesson's corner the same real-viewport-anchored treatment as its portrait layout instead:
-     a small fixed box pinned to the bottom-right corner, independent of the grid entirely. Japanese
-     Pronunciation and Aoi's Day are untouched -- they keep the grid-cell mechanism above as already
-     shipped and verified last round. */
-  body.lessonLocked .wrap.teachMode{ height:auto; display:block; }
-  body.lessonLocked .wrap.teachMode > #top{ position:sticky; }
-  body.lessonLocked .wrap.teachMode > #cardZone{
-    max-height:none; overflow-y:visible; padding-bottom:8px; padding-right:var(--aoi-reserve-right, 240px);
-  }
-  body.lessonLocked .wrap.teachMode > #aoiCorner{
-    position:fixed; left:auto; right:max(16px, env(safe-area-inset-right,0px)); bottom:max(16px, env(safe-area-inset-bottom,0px));
-    /* Wide enough for --host-size's full 260px cap (a tall/tablet-width landscape window) now that
-       her frame is no longer forced down to a flat 88px -- was 220px, which would have clipped her
-       at that cap. */
-    max-width:280px; width:280px; background:transparent; padding:0; margin:0; justify-content:flex-end;
-  }
-
   /* ---------- Aoi's Day (daytrip) landscape only: boxless location card + boxless past-trips list
      ----------
      Scoped via body.daytripMode (toggled by showView() only for this view, same pattern as
@@ -517,96 +404,6 @@ body{ -webkit-tap-highlight-color:transparent; padding-block:0; }
     background:transparent; border:none; border-radius:0; box-shadow:none; padding:0;
     cursor:default; gap:2px;
   }
-}
-/* Safety net for short-landscape phones (an older/smaller device, or a host surface with its own
-   extra chrome eating real viewport height) -- same idea as the portrait short-screen net below.
-   This used to also force #host .frame down to a flat 64px, but that media query's own 420px
-   threshold covers ordinary phone landscape heights (~393-412px are both under it), so it was
-   firing, and shrinking her well below portrait size, on completely normal phones -- not just the
-   rare short/older device it was meant for. Only the caption text shrinks slightly here now; her
-   size still comes from --host-size (inherited, same as portrait) via the rule above. */
-@media (orientation:landscape) and (min-width:640px) and (max-height:420px){
-  .wrap.teachMode #line{ font-size:12.5px; }
-}
-/* ---------- landscape fix for the OTHER views (Hub/Quiz/Cooking/etc.) ----------
-   These views are not .teachMode and get no grid at all in landscape -- just the default
-   portrait-style sticky #aoiCorner stretched into a wide-but-short viewport, where --host-size's
-   normal min(32vh,260px) and #cardZone's "minus 136px" budget both assume a tall portrait phone:
-   on a real phone turned sideways (~360-430px of actual height), that formula leaves hardly any
-   room for #cardZone's content (confirmed from the user's own screenshot of the Hub's card list
-   cutting off its last card). An earlier version of this fix shrunk --host-size itself (down to
-   92px) to free up room for #cardZone -- which solved the cramped-list bug, but at the cost of
-   making her render much smaller in landscape than portrait, which the user then separately (and
-   correctly) flagged as wrong ("aoi should be the same size landscape and portrait"). Shrinking
-   her was never necessary: the real fix is to stop SHARING vertical budget between her and
-   #cardZone's flow at all, the same way the Teacher lesson's body.lessonLocked mechanism already
-   solves this (see that rule above) -- #aoiCorner becomes a fixed-position footer, sized by her
-   own real content (full --host-size, same as portrait) via updateAoiReserve() in the script
-   below (already generic, not scoped to lessonLocked), and #cardZone reserves exactly that much
-   bottom padding instead of having its own max-height calc()'d against a guessed constant. This
-   reuses the already-verified lessonLocked mechanism, just applied to every other view too, so her
-   footprint never collides with #cardZone's content, whatever the real device's available height
-   turns out to be -- and she never needs to shrink to make room. .teachMode views are untouched
-   (their own more specific selectors above still win, unaffected by this generic rule). */
-@media (orientation:landscape) and (min-width:640px){
-  /* A fixed-position FOOTER (spanning full width, like portrait's bottom-anchored #aoiCorner) was
-     tried first here and measured directly: at 852x393 it reserved top:54.6 to bottom:393 -- 338px
-     of a 393px-tall viewport -- which covered almost the entire Hub card list behind her opaque
-     background (confirmed by Playwright itself refusing to click a Hub card because #host/#aoiCorner
-     intercepted the pointer). A bottom-spanning footer and a full 260px avatar cannot coexist on a
-     landscape phone's short ~390-430px height, no matter how the budget math is arranged -- there
-     is not enough VERTICAL room, full stop. --host-size's own formula (min(32vh,260px)) compounds
-     this: vh is always the SHORT dimension in landscape, so it never reaches 260px there anyway.
-     The real fix is to stop competing for vertical space at all: give her a side COLUMN (full
-     viewport height, bounded by WIDTH instead, which landscape has plenty of) exactly like the
-     already-proven .teachMode grid above -- and per the user's own earlier explicit instruction
-     ("have her at the right and the options on the left... left taking slightly more space"), on
-     the right. vmax reaches the 260px cap off the now-ample width, same as portrait's vh reaches it
-     off height, so she renders at the same real size in both orientations without starving anyone
-     of room: the content column still gets everything left over (comfortably more than half at
-     these widths), not a shrunk corner. */
-  body:not(.lessonLocked) .wrap:not(.teachMode){
-    max-width:none; width:100%; height:100svh; display:grid;
-    grid-template-columns:1fr minmax(260px, 300px); grid-template-rows:auto 1fr;
-    grid-template-areas:"top top" "card corner"; column-gap:16px;
-  }
-  @supports not (height:100svh){ body:not(.lessonLocked) .wrap:not(.teachMode){ height:100vh; } }
-  body:not(.lessonLocked) .wrap:not(.teachMode) > #top{ grid-area:top; position:static; }
-  body:not(.lessonLocked) .wrap:not(.teachMode) > #dots{ grid-area:top; align-self:end; }
-  body:not(.lessonLocked) .wrap:not(.teachMode) > #cardZone{
-    grid-area:card; min-width:0; min-height:0; max-height:none; overflow-y:auto;
-    -webkit-overflow-scrolling:touch; padding-bottom:12px;
-  }
-  /* 50vh cap: on a phone's short landscape height a full 260px avatar plus her caption does not
-     fit the column, which pushed the caption off the bottom edge. */
-  body:not(.lessonLocked) .wrap:not(.teachMode){ --host-size: min(32vmax, 260px, 50vh); }
-  body:not(.lessonLocked) .wrap:not(.teachMode) > #aoiCorner{
-    grid-area:corner; position:static; display:flex; flex-direction:column;
-    justify-content:center; align-items:stretch; gap:6px; min-height:0;
-    padding-bottom:max(8px, env(safe-area-inset-bottom,0px));
-  }
-  body:not(.lessonLocked) .wrap:not(.teachMode) #host{ padding:0; }
-}
-
-/* ---------- short-screen safety net for portrait teaching mode ----------
-   Matches the original reference page's own two height breakpoints (it has identical
-   `@media (max-height:700px)` / `@media (max-height:620px)` rules, unscoped, because it has only
-   one view; these do the same job here but scoped to .teachMode so Hub/Quiz are untouched). Only
-   engages on genuinely short viewports (a small/older phone, or a host surface like an in-app
-   preview pane that eats extra chrome) -- at the heights this app already ships at, none of this
-   applies and her portrait/the subtitle bubble are pixel-identical to the normal rules above.
-   Explicitly scoped to `orientation:portrait` -- without it, this "short viewport" math also
-   matched ordinary LANDSCAPE phones (typically ~390-430px tall, always under the 700px/620px
-   breakpoints here), which the stated invariant above never accounted for. That let this rule
-   silently override the dedicated landscape --host-size already set above, shrinking her avatar
-   frame down to ~100-110px on a real landscape phone while #aoi's own canvas stayed sized for the
-   full frame -- #host .frame's overflow:hidden then clipped her bust to whatever arbitrary corner
-   fit, instead of showing the whole scaled-down sprite (confirmed via direct measurement and
-   screenshot across Aoi's Day/Japanese Pronunciation/the Teacher lesson alike, since none of them
-   scope this differently). Landscape already has its own short-screen net just below (the
-   420px-max-height query, font-size only) -- this one stays portrait-only as originally intended. */
-@media (max-height:700px) and (orientation:portrait){
-  .wrap.teachMode #line{ font-size:13px; }
 }
 @media (max-height:620px) and (orientation:portrait){
   .wrap.teachMode .mockScene .phone .notch{ display:none; }
@@ -677,37 +474,9 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
   border-radius:10px; padding:10px 12px; font-size:14px; font-family:inherit; width:100%;}
 .settingsActions{display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;}
 
-/* ---------- overlay host (everything except the wide-landscape grid layouts above) ----------
-   From the user's own sketch: the content card fills the whole screen top to bottom, she sits
-   small at the bottom-left ON TOP of it, and her line sits in a bubble to her right along the
-   bottom edge. Nothing below or behind her is left as bare page background any more, and because
-   she no longer takes a full-width block of her own out of the page flow, far more content fits
-   on one screen without scrolling. She is position:fixed, so neither content length, caption
-   length nor choice buttons can move her; the bubble is anchored by its bottom edge and only ever
-   grows upward beside her. #card keeps a bottom padding the height of her avatar so the last of a
-   long view can still be scrolled clear of her. updateAoiScrollMode() skips the old sticky
-   mechanism entirely in this mode. */
-@media not all and (orientation:landscape) and (min-width:640px){
-  :root{ --host-size: min(22vh, 168px); }
-  .wrap{ min-height:100vh; min-height:100dvh; }
-  #cardZone{ flex:1 0 auto; display:flex; flex-direction:column; padding-bottom:0; }
-  #card{ flex:1 0 auto; padding-bottom:calc(28px + var(--host-size)); }
-  #aoiCorner{ position:fixed; left:0; right:0; bottom:0; z-index:50; margin:0 auto; max-width:560px;
-    flex-direction:row; align-items:flex-end; gap:4px; background:transparent; pointer-events:none;
-    padding:0 max(12px, env(safe-area-inset-right,0px)) max(10px, env(safe-area-inset-bottom,0px)) max(6px, env(safe-area-inset-left,0px)); }
-  #host{ pointer-events:auto; padding:0; }
-  #sub{ pointer-events:auto; flex:1 1 0; min-width:0; opacity:1; margin-bottom:6px;
-    background:var(--surface); border:2px solid var(--line); padding:7px 10px 8px;
-    max-height:calc(var(--host-size) + 70px); overflow-y:auto; }
-  #line{ font-size:14px; line-height:1.35; }
-  #aoiChoices{ min-height:0; }
-  #aoiChoices:empty{ display:none; }
-  #aoiChoices button{ padding:6px 8px; }
-  /* Parked just above her head (a spot that never changes, unlike the bubble's top edge), so it
-     reads as "talk to her" and stays clear of the bubble and of right-aligned buttons like Next. */
-  #chatFab{ width:38px; height:38px; font-size:16px; left:max(10px, env(safe-area-inset-left,0px)); right:auto; z-index:51;
-    bottom:calc(var(--host-size) + 14px + env(safe-area-inset-bottom,0px)); }
-}
+/* The chat button rides on her top-left corner (placed by layoutAoi()), so it reads as "talk to
+   her" and never sits over the text box or a right-aligned button like Next. */
+#chatFab{ width:36px; height:36px; font-size:15px; left:var(--fab-x, 8px); top:var(--fab-y, 60vh); right:auto; bottom:auto; z-index:51; }
 </style>
 </head><body>
 
@@ -3469,61 +3238,13 @@ function sizeHost(){
 }
 addEventListener('resize', sizeHost); sizeHost();
 
-/* #cardZone's reserved space for #aoiCorner (see the CSS above #cardZone/#aoiCorner) is measured
-   live off her actual fixed-position box, not guessed -- so it's always exactly right regardless
-   of how tall #sub gets for a given beat's text, the current theme's spacing, or which orientation
-   layout is active. A ResizeObserver re-measures whenever her box's own size changes (new line of
-   text wraps to another row, theme toggle changes padding, etc.); resize/orientationchange cover
-   viewport changes (rotating the phone, the on-screen keyboard, browser chrome show/hide).
-   Observing #aoiCorner alone SHOULD already catch every internal content change (#sub growing a
-   line, #aoiChoices' Yes/Pass buttons appearing, a sprite pose swap resizing #host) because any of
-   those changes #aoiCorner's own rendered box too -- but real devices have shown this driven purely
-   by #aoiCorner's own box to occasionally lag a beat behind on a slow font/image load (the observer
-   fires on the NEXT size change, not retroactively, so if two changes land close together -- e.g. a
-   beat's text AND its late-swapped webfont both affect height within the same render -- it's
-   possible for a stale measurement to persist slightly longer than ideal on a real phone, even
-   though this doesn't reproduce in a fast local/headless run). Observing #sub and #host directly
-   too, in addition to #aoiCorner itself, is cheap insurance against exactly that: it makes sure a
-   resize notification fires off of whichever of the three actually changed first, instead of
-   depending on the outer box's own resize always being the one to trigger. */
-var $aoiCorner = document.getElementById('aoiCorner');
-function updateAoiReserve(){
-  var r = $aoiCorner.getBoundingClientRect();
-  // Portrait (sticky): her own rendered height -- correct whether she's currently stuck to the
-  // viewport bottom or just sitting in normal flow after a short beat's content.
-  document.documentElement.style.setProperty('--aoi-reserve-bottom', Math.max(0, Math.ceil(r.height)) + 'px');
-  // Landscape teacherLesson corner is still position:fixed (small, bottom-right, grid-independent),
-  // where this distance-to-edge math is intentional and still correct.
-  document.documentElement.style.setProperty('--aoi-reserve-right', Math.max(0, Math.ceil(window.innerWidth - r.left)) + 'px');
-}
-if (window.ResizeObserver){
-  var aoiReserveObserver = new ResizeObserver(function(){ updateAoiScrollMode(); });
-  aoiReserveObserver.observe($aoiCorner);
-  var $aoiReserveSubEl = document.getElementById('sub');
-  var $aoiReserveHostEl = document.getElementById('host');
-  if ($aoiReserveSubEl) aoiReserveObserver.observe($aoiReserveSubEl);
-  if ($aoiReserveHostEl) aoiReserveObserver.observe($aoiReserveHostEl);
-}
-addEventListener('resize', updateAoiScrollMode);
-addEventListener('orientationchange', function(){ setTimeout(updateAoiScrollMode, 60); });
-updateAoiReserve();
-updateAoiScrollMode();
-/* Belt-and-suspenders for the exact same real-device race described above: re-measure once more a
-   couple of animation frames after any render that can change her footprint (a new beat's say(),
-   a quiz/JP check rendering its choice buttons, a view switch), well after the observer's own
-   notification would have landed, so a slow webfont/sprite swap that finishes just after the
-   initial measurement still gets picked up quickly instead of sitting stale until the NEXT size
-   change happens to fire the observer again. Cheap (a getBoundingClientRect + a style write) and
-   idempotent, so calling it an extra time when nothing actually changed is harmless. */
-/* Her footprint never decides page scroll any more: on phones she is a fixed overlay over the
-   content (see the "overlay host" CSS), and the wide-landscape layouts give her a grid column of
-   her own. The old sticky "aoiNeedsScroll" mode this used to toggle is gone -- in the landscape
-   grid its negative margin fed back into its own measurement and grew her box without bound.
-   The name is kept because every re-measure call site already uses it. */
-function updateAoiScrollMode(){ updateAoiReserve(); }
+/* Every "her footprint may have changed" call site funnels into layoutAoi() (defined with the
+   drag/pinch code below, once #host and the caption state exist). */
+function updateAoiScrollMode(){ if (typeof layoutAoi === 'function') layoutAoi(); }
 function updateAoiReserveSoon(){
   requestAnimationFrame(function(){ requestAnimationFrame(updateAoiScrollMode); });
 }
+addEventListener('orientationchange', function(){ setTimeout(updateAoiScrollMode, 60); });
 
 var BLINKABLE = {"null":1, "eyes_wide":1, "eyes_determined":1, "eyes_side":1};
 function drawAoi(f){
@@ -3562,11 +3283,11 @@ function say(text, opts){
   curText = text; shownChars = 0; typing = true;
   if ('pose' in opts) curPose = opts.pose;
   if ('eyes' in opts) curEyes = opts.eyes;
-  /* Size her bubble for THIS line's full text before the typewriter starts, so the bubble never
-     changes size while she is talking (direct request: it should stay even, not grow as it fills). */
-  reserveSubFor([text]);
   renderLine();
   clearAoiChoices();
+  /* Sizes her text box for THIS line's full text before the typewriter starts, so the box never
+     changes size while she is talking. */
+  updateAoiScrollMode();
   updateAoiReserveSoon();
 }
 /* Small inline choices right under her caption (see #aoiChoices CSS), replacing a big primary
@@ -3593,93 +3314,129 @@ function handleAoiTap(){
   else if (window.activeLessonAdvance){ window.activeLessonAdvance(); }
 }
 
-/* Measures the tallest #sub would ever need to render across a paced lesson's own real beat
-   texts (at the CURRENT viewport width/theme), via an offscreen clone -- not a guessed constant,
-   so it's exactly right for whatever the actual content is, in any language or font-size change
-   later. Called once per view-entry (renderTeacherLesson/renderJapanese/renderDaytrip below), not
-   per beat, which is what keeps #host stable for the view's whole duration (see the --sub-reserve
-   comment on the #sub CSS rule above) while still never reserving more than the real content needs. */
-var lastReserveTexts = null;
-function reserveSubFor(texts){
-  lastReserveTexts = texts;
-  var real = document.getElementById('sub');
-  var clone = real.cloneNode(true);
-  clone.style.position = 'fixed'; clone.style.visibility = 'hidden'; clone.style.pointerEvents = 'none';
-  clone.style.left = '0'; clone.style.top = '-9999px'; clone.style.minHeight = '0';
-  clone.style.width = real.getBoundingClientRect().width + 'px';
-  document.body.appendChild(clone);
-  var cLine = clone.querySelector('#line');
-  var max = 0;
-  (texts || []).forEach(function(t){
-    cLine.textContent = t;
-    var h = clone.getBoundingClientRect().height;
-    if (h > max) max = h;
-  });
-  document.body.removeChild(clone);
-  document.documentElement.style.setProperty('--sub-reserve', Math.ceil(max) + 'px');
-}
-function clearSubReserve(){ lastReserveTexts = null; document.documentElement.style.removeProperty('--sub-reserve'); }
+/* Paced lessons used to reserve the tallest caption of the whole lesson up front so her avatar
+   (then stacked above the caption) would not shift beat to beat. She floats independently now,
+   so the text box is only ever as big as the current line; these stay as no-ops for the call
+   sites in the lesson views. */
+function reserveSubFor(){}
+function clearSubReserve(){}
 /* Re-measure once the real webfonts are active: a fallback font wraps to a different line count,
    so anything measured before the swap can be stale. */
 if (window.document && document.fonts && document.fonts.ready){
   document.fonts.ready.then(updateAoiScrollMode).catch(function(){});
 }
 
-/* ---------- pinch-to-resize and drag-to-reposition her portrait ----------
-   A previous version let a single pointer drag #host to reposition it, sharing one pointer stream
-   with tap-to-advance, using only a 6px move distance to tell a drag from a tap -- but an ordinary
-   tap-to-advance commonly moves 10-30px between touchstart and touchend on a real touchscreen
-   (finger roll, a slightly diagonal release), so normal lesson taps kept getting misread as drags,
-   and the resulting offset (applied to #host globally, since every view shares one #host) made her
-   drift beat to beat ("she keeps moving around"). That round's fix removed dragging entirely --
-   overcorrecting, since the user does want to be able to drag her wherever she likes; the actual
-   bug was the gesture test, not the feature. Fixed properly this time: a move is only treated as a
-   drag once it has BOTH moved past AOI_DRAG_DIST (18px) AND been held for AOI_DRAG_HOLD_MS (180ms)
-   -- a quick tap (released well under 180ms even with 10-30px of jitter) can never cross the hold
-   gate, so it always reaches pointerup as a plain tap, while a deliberate slow drag crosses both
-   gates and repositions her smoothly from then on. (The real, separate cause of automatic drift --
-   her position shifting because #sub's height varies beat to beat -- is fixed independently via
-   --sub-reserve; see reserveSubFor() and the #sub CSS rule above. That fix holds regardless of
-   whether dragging exists, so restoring drag here doesn't reopen it.)
-   Pinch-to-resize (two pointers, gated to starting on #host, scale clamped 0.7-1.4) is unchanged
-   from the previous round. A 2nd finger joining mid-drag cancels the single-pointer drag tracking
-   and hands off to pinch, since a deliberate two-finger gesture always means "resize", not "drag".
-   Both the drag offset and the pinch scale persist to localStorage and apply as one CSS transform
-   on #host ALONE (not #aoiCorner itself, so #cardZone's reserved space, measured off #aoiCorner's
-   own box, is unaffected) -- x/y are clamped to 40% of the viewport on load so even a value saved
-   before this fix (from the old misfiring code) can't place her off-screen or invisible. */
-var AOI_POS_KEY = 'aoi_pos_v2';
-var AOI_DRAG_DIST = 18, AOI_DRAG_HOLD_MS = 180;
-function clampAoiXY(x, y){
-  var maxX = Math.round(innerWidth * 0.4), maxY = Math.round(innerHeight * 0.4);
-  return { x: Math.max(-maxX, Math.min(maxX, x || 0)), y: Math.max(-maxY, Math.min(maxY, y || 0)) };
-}
-/* Per direct request: every fresh load resets her to dead center in portrait (never reopens on a
-   stale drag offset from earlier testing/use), but a saved landscape position is kept as-is --
-   landscape's corner-host layout is a fixed, deliberate spot she's dragged into once and expected
-   to stay at, while portrait's centered default is the one you'd always want to come back to. */
-function loadAoiPos(){
-  try{
-    if (window.innerHeight >= window.innerWidth) return {x:0, y:0, scale:1};
-    var raw = localStorage.getItem(AOI_POS_KEY);
-    var p = raw ? JSON.parse(raw) : null;
-    var scale = Math.max(0.7, Math.min(1.4, (p && p.scale) || 1));
-    var xy = clampAoiXY(p && p.x, p && p.y);
-    return { x: xy.x, y: xy.y, scale: scale };
-  }catch(e){ return {x:0, y:0, scale:1}; }
-}
-function saveAoiPos(){ try{ localStorage.setItem(AOI_POS_KEY, JSON.stringify({x:aoiX, y:aoiY, scale:aoiScale})); }catch(e){} }
-var _aoiInit = loadAoiPos();
-var aoiX = _aoiInit.x, aoiY = _aoiInit.y, aoiScale = _aoiInit.scale;
+/* ---------- floating host: drag anywhere, pinch to resize, layout that follows her ----------
+   She is a free overlay (#host, positioned by one CSS transform). Her spot is stored as an offset
+   from a default anchor: bottom-left on phones, upper part of a right-hand column in wide
+   landscape. One finger drags her anywhere on screen, two fingers resize her, a double-tap on her
+   while idle puts her back. A move only counts as a drag once it has travelled a little AND been
+   held briefly (or travelled far), so the ordinary jitter of a tap-to-advance never moves her.
+   Phones always open at the default spot; a landscape position is remembered between visits.
+   layoutAoi() then fits everything else around wherever she is:
+     - wide landscape: she owns a side column (left or right, whichever half she is in); the
+       content gives up that width, and her text box sits along the bottom of the column.
+     - phones: the content gives up a bottom band; her text box sits beside her when she is in a
+       bottom corner with room next to her, otherwise it spans the bottom edge (see-through, so
+       she still shows behind it).
+   Content padding is only re-flowed when a drag ends (live would re-wrap the page under the
+   finger); the text box and chat button follow her live. */
+var AOI_POS_KEY = 'aoi_pos_v3';
+var AOI_MIN_SCALE = 0.6, AOI_MAX_SCALE = 2;
 var $hostEl = document.getElementById('host');
-function applyAoiPos(){ $hostEl.style.transform = 'translate(' + aoiX.toFixed(1) + 'px,' + aoiY.toFixed(1) + 'px) scale(' + aoiScale.toFixed(3) + ')'; }
+var $subEl = document.getElementById('sub');
+var $wrapEl = document.querySelector('.wrap');
+var AOI_WIDE = window.matchMedia('(orientation:landscape) and (min-width:640px)');
+function aoiWide(){ return AOI_WIDE.matches; }
+function aoiBase(){ return cvFrame.clientWidth || 168; }
+function aoiSideCol(w){ var vw = innerWidth; return Math.max(240, Math.min(vw * 0.46, Math.max(w + 28, vw * 0.34))); }
+function aoiAnchor(){
+  var w = aoiBase(), vw = innerWidth, vh = innerHeight;
+  if (aoiWide()){
+    var col = aoiSideCol(w);
+    return { left: vw - col + (col - w) / 2, top: Math.max(8, (vh - w) * 0.35) };
+  }
+  return { left: 6, top: vh - w - 10 };
+}
+function loadAoiLandscape(){
+  try{
+    var p = JSON.parse(localStorage.getItem(AOI_POS_KEY) || 'null');
+    if (p) return { x: +p.x || 0, y: +p.y || 0, scale: Math.max(AOI_MIN_SCALE, Math.min(AOI_MAX_SCALE, +p.scale || 1)) };
+  }catch(e){}
+  return { x:0, y:0, scale:1 };
+}
+var aoiPos = { p: { x:0, y:0, scale:1 }, l: loadAoiLandscape() };
+function aoiCur(){ return aoiPos[aoiWide() ? 'l' : 'p']; }
+function saveAoiPos(){ try{ localStorage.setItem(AOI_POS_KEY, JSON.stringify(aoiPos.l)); }catch(e){} }
+function clampAoi(st){
+  var w = aoiBase(), a = aoiAnchor(), over = (st.scale - 1) * w / 2;
+  var minX = over - a.left, maxX = innerWidth - w - over - a.left;
+  var minY = over - a.top, maxY = innerHeight - w - over - a.top;
+  st.x = minX > maxX ? (minX + maxX) / 2 : Math.max(minX, Math.min(maxX, st.x));
+  st.y = minY > maxY ? (minY + maxY) / 2 : Math.max(minY, Math.min(maxY, st.y));
+}
+function applyAoiPos(){
+  var st = aoiCur(), a = aoiAnchor();
+  clampAoi(st);
+  $hostEl.style.transform = 'translate(' + (a.left + st.x).toFixed(1) + 'px,' + (a.top + st.y).toFixed(1) + 'px) scale(' + st.scale.toFixed(3) + ')';
+}
+/* Sizes the text box to the CURRENT line's full text (never bigger), measured on an offscreen
+   clone at the width layoutAoi() just allowed it, so it is already its final size before the
+   typewriter starts and stays that size while she talks. */
+function fitBubble(){
+  var clone = $subEl.cloneNode(true);
+  clone.style.cssText = 'position:fixed;left:0;right:auto;top:-9999px;bottom:auto;visibility:hidden;pointer-events:none;min-width:0;min-height:0;';
+  document.body.appendChild(clone);
+  var cLine = clone.querySelector('#line');
+  if (cLine) cLine.textContent = curText || '';
+  var r = clone.getBoundingClientRect();
+  document.body.removeChild(clone);
+  var root = document.documentElement.style;
+  root.setProperty('--sub-w', Math.ceil(r.width + 4) + 'px');
+  root.setProperty('--sub-reserve', Math.ceil(r.height) + 'px');
+}
+function layoutAoi(live){
+  var vw = innerWidth, vh = innerHeight, M = 10, GAP = 4;
+  var r = $hostEl.getBoundingClientRect();
+  var root = document.documentElement.style;
+  var subLeft = null, subRight = null, subMax, padL = 0, padR = 0, padB;
+  if (aoiWide()){
+    var rightSide = (r.left + r.width / 2) >= vw / 2;
+    var col = rightSide ? (vw - r.left + 14) : (r.right + 14);
+    col = Math.max(aoiSideCol(aoiBase()), Math.min(vw * 0.46, col));
+    var wr = $wrapEl.getBoundingClientRect();
+    if (rightSide){ subRight = M; padR = Math.max(0, wr.right - (vw - col)); }
+    else { subLeft = M; padL = Math.max(0, col - wr.left); }
+    subMax = col - 2 * M;
+    padB = 12;
+  } else {
+    var atBottom = r.bottom > vh - 70;
+    var spaceR = vw - M - (r.right + GAP), spaceL = r.left - GAP - M;
+    if (atBottom && Math.max(spaceR, spaceL) >= vw * 0.5){
+      if (spaceR >= spaceL){ subLeft = r.right + GAP; subMax = spaceR; }
+      else { subRight = vw - r.left + GAP; subMax = spaceL; }
+    } else { subLeft = M; subMax = vw - 2 * M; }
+    padB = r.top > vh * 0.5 ? Math.min(vh * 0.45, vh - r.top + 8) : 96;
+  }
+  $subEl.style.left = subLeft == null ? 'auto' : Math.round(subLeft) + 'px';
+  $subEl.style.right = subRight == null ? 'auto' : Math.round(subRight) + 'px';
+  root.setProperty('--sub-max', Math.floor(subMax) + 'px');
+  root.setProperty('--fab-x', Math.round(Math.max(4, Math.min(vw - 40, r.left - 4))) + 'px');
+  root.setProperty('--fab-y', Math.round(Math.max(4, Math.min(vh - 40, r.top - 10))) + 'px');
+  if (!live){
+    root.setProperty('--aoi-pad-l', Math.round(padL) + 'px');
+    root.setProperty('--aoi-pad-r', Math.round(padR) + 'px');
+    root.setProperty('--aoi-pad-b', Math.round(padB) + 'px');
+  }
+  fitBubble();
+}
+addEventListener('resize', function(){ applyAoiPos(); layoutAoi(); });
 applyAoiPos();
+layoutAoi();
 
 /* aoiGestureWasPinch stays true for the whole multi-touch gesture (set the instant a pinch
-   starts, only cleared once every pointer has lifted) -- checking aoiPinch's instantaneous
-   nullness at each pointerup independently misidentified a pinch's SECOND finger lift as a plain
-   tap (by then aoiPointers is back down to 1 and aoiPinch had already been cleared on the first
-   finger's lift), which would have fired tap-to-advance at the end of every resize gesture. */
+   starts, only cleared once every pointer has lifted), so the second finger lifting at the end of
+   a resize is never mistaken for a tap. */
 var aoiPointers = {}, aoiPinch = null, aoiGestureWasPinch = false;
 var aoiDragCandidate = null, aoiDragging = false;
 function aoiPtDist(a, b){ return Math.hypot(a.x - b.x, a.y - b.y); }
@@ -3687,79 +3444,70 @@ var $aoiCornerEl = document.getElementById('aoiCorner');
 $aoiCornerEl.addEventListener('pointerdown', function(e){
   if (e.target.closest && e.target.closest('#aoiChoices')) return;
   aoiPointers[e.pointerId] = {x:e.clientX, y:e.clientY};
-  var ids = Object.keys(aoiPointers);
-  if (ids.length === 2 && e.target.closest && e.target.closest('#host')){
+  var ids = Object.keys(aoiPointers), st = aoiCur();
+  var onHost = !!(e.target.closest && e.target.closest('#host'));
+  /* Capture, so the drag keeps tracking once the finger/mouse leaves her small box. */
+  if (onHost){ try{ $hostEl.setPointerCapture(e.pointerId); }catch(_){} }
+  if (ids.length === 2 && onHost){
     var pts = ids.map(function(id){ return aoiPointers[id]; });
-    aoiPinch = {dist: aoiPtDist(pts[0], pts[1]), scale: aoiScale};
+    aoiPinch = {dist: aoiPtDist(pts[0], pts[1]) || 1, scale: st.scale};
     aoiGestureWasPinch = true;
     aoiDragCandidate = null; aoiDragging = false; /* a 2nd finger joining hands off from drag to pinch */
-  } else if (ids.length === 1 && e.target.closest && e.target.closest('#host')){
-    aoiDragCandidate = {id:e.pointerId, startX:e.clientX, startY:e.clientY, startTime:Date.now(), baseX:aoiX, baseY:aoiY};
+  } else if (ids.length === 1 && onHost){
+    aoiDragCandidate = {id:e.pointerId, startX:e.clientX, startY:e.clientY, startTime:Date.now(), baseX:st.x, baseY:st.y};
     aoiDragging = false;
   }
 });
 $aoiCornerEl.addEventListener('pointermove', function(e){
   if (!(e.pointerId in aoiPointers)) return;
   aoiPointers[e.pointerId] = {x:e.clientX, y:e.clientY};
-  var ids = Object.keys(aoiPointers);
+  var ids = Object.keys(aoiPointers), st = aoiCur();
   if (ids.length === 2 && aoiPinch){
     var pts = ids.map(function(id){ return aoiPointers[id]; });
-    aoiScale = Math.max(0.7, Math.min(1.4, aoiPinch.scale * (aoiPtDist(pts[0], pts[1]) / aoiPinch.dist)));
-    applyAoiPos();
+    st.scale = Math.max(AOI_MIN_SCALE, Math.min(AOI_MAX_SCALE, aoiPinch.scale * (aoiPtDist(pts[0], pts[1]) / aoiPinch.dist)));
+    applyAoiPos(); layoutAoi(true);
     return;
   }
   if (ids.length === 1 && aoiDragCandidate && e.pointerId === aoiDragCandidate.id){
     var dx = e.clientX - aoiDragCandidate.startX, dy = e.clientY - aoiDragCandidate.startY;
-    if (!aoiDragging && aoiPtDist({x:0,y:0}, {x:dx,y:dy}) > AOI_DRAG_DIST && (Date.now() - aoiDragCandidate.startTime) > AOI_DRAG_HOLD_MS){
-      aoiDragging = true;
-    }
+    var dist = Math.hypot(dx, dy), held = Date.now() - aoiDragCandidate.startTime;
+    if (!aoiDragging && ((dist > 12 && held > 120) || dist > 36)) aoiDragging = true;
     if (aoiDragging){
-      var xy = clampAoiXY(aoiDragCandidate.baseX + dx, aoiDragCandidate.baseY + dy);
-      aoiX = xy.x; aoiY = xy.y;
-      applyAoiPos();
+      st.x = aoiDragCandidate.baseX + dx; st.y = aoiDragCandidate.baseY + dy;
+      applyAoiPos(); layoutAoi(true);
     }
   }
 });
-/* Double-tap-on-her-face resets position/scale to default. This used to be a separate listener
-   on #hostEl alone, reacting to ANY pointerup there with no idea what gesture it belonged to --
-   which misfired on a genuine pinch: both fingers of a pinch also land on #host, and lifting them
-   within 350ms of each other (completely normal, not a deliberate double-tap) looked identical to
-   a double-tap, instantly resetting the resize the user had just made. Folded into aoiEndPointer
-   instead, which already knows whether this pointerup is ending a pinch or a drag (and bails out of
-   the whole tap-vs-reset question for either, before ever touching aoiLastTap) -- only a gesture
-   that resolves as a genuine plain tap on #host can start or complete a double-tap. */
 var aoiLastTap = 0;
 function aoiEndPointer(e){
+  if (!(e.pointerId in aoiPointers)) return;
   delete aoiPointers[e.pointerId];
   var remaining = Object.keys(aoiPointers).length;
-  if (remaining < 2 && aoiPinch){ saveAoiPos(); aoiPinch = null; }
+  var movedHer = false;
+  if (remaining < 2 && aoiPinch){ aoiPinch = null; movedHer = true; }
   var wasDragging = false;
   if (aoiDragCandidate && e.pointerId === aoiDragCandidate.id){
     wasDragging = aoiDragging;
-    if (aoiDragging) saveAoiPos();
     aoiDragCandidate = null; aoiDragging = false;
   }
+  if (wasDragging || movedHer){ saveAoiPos(); layoutAoi(); }
   if (remaining !== 0) return;
   var wasPinch = aoiGestureWasPinch;
   aoiGestureWasPinch = false;
-  if (wasPinch || wasDragging) return;
+  /* A cancelled touch (the browser took the gesture over, e.g. to scroll the page from her text
+     box) is not a tap. */
+  if (wasPinch || wasDragging || e.type === 'pointercancel') return;
   if (e.target.closest && e.target.closest('#aoiChoices')) return;
   var onHost = !!(e.target.closest && e.target.closest('#host'));
-  /* Only an IDLE tap (one that would do nothing anyway -- not currently typing, no active lesson
-     to advance) can start or complete a double-tap-to-reset pair. Tapping through an active
-     lesson fast enough to both finish a line's typing and advance to the next beat (completely
-     normal, fast-forward-through-a-lesson usage) lands well inside the same timing window a real
-     double-tap uses -- without this guard, that ordinary fast-tapping kept wiping out a manual
-     drag mid-lesson, confirmed via getBoundingClientRect() drifting back to the undragged default
-     position on the very next beat in testing. A tap that does real work always breaks the chain
-     (aoiLastTap reset to 0) instead of arming it, so two deliberate lesson-taps in a row can never
-     be misread as a reset, however fast they land. */
+  /* Only an IDLE tap (not typing, no lesson to advance) can start or complete a double-tap reset,
+     so fast tapping through a lesson can never be misread as one. */
   if (onHost){
     var now = Date.now();
     var idleTap = !typing && !window.activeLessonAdvance;
     if (idleTap && (now - aoiLastTap) < 350){
-      aoiX = 0; aoiY = 0; aoiScale = 1; applyAoiPos(); saveAoiPos();
-      aoiLastTap = 0; /* consumed -- a 3rd quick tap starts a fresh pair, not another instant reset */
+      var st = aoiCur(); st.x = 0; st.y = 0; st.scale = 1;
+      applyAoiPos(); layoutAoi(); saveAoiPos();
+      aoiLastTap = 0;
       return;
     }
     aoiLastTap = idleTap ? now : 0;

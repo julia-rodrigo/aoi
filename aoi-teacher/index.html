@@ -474,6 +474,44 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
   border-radius:10px; padding:10px 12px; font-size:14px; font-family:inherit; width:100%;}
 .settingsActions{display:flex; gap:10px; margin-top:16px; flex-wrap:wrap;}
 
+/* ---------- quiz, learn and subject-home screens ----------
+   The quiz/learn/results cards sit directly on the main content card (no second nested box). */
+#view-quiz .quizcard, #view-learn .quizcard, #view-results .quizcard{border:none; padding:0; background:transparent; clip-path:none;}
+.subjStats{display:grid; grid-template-columns:repeat(3,1fr); gap:6px;}
+.stat{background:var(--surface-2); border:1px solid var(--line); padding:7px 8px; display:flex; flex-direction:column; gap:1px; min-width:0;}
+.stat b{font-size:18px; font-variant-numeric:tabular-nums; line-height:1.1;}
+.stat span{font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.06em;}
+#view-subject-home{display:flex; flex-direction:column; gap:10px;}
+#view-subject-home[hidden]{display:none;}
+.modeSeg{display:grid; grid-template-columns:1fr 1fr; border:2px solid var(--accent);}
+.modeSeg button{font-family:var(--font-body); font-weight:700; font-size:13.5px; padding:9px 8px; border:none; background:transparent; color:var(--accent); cursor:pointer;}
+.modeSeg button.on{background:var(--accent); color:var(--accent-fg);}
+.catgrid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr));}
+.catgrid .card{padding:9px 10px; gap:5px;}
+.catgrid .card h3{font-size:13.5px; line-height:1.25;}
+.catgrid .card .meta{font-size:10.5px;}
+.catgrid .card .done{color:var(--good);}
+#subjectActions .btn{flex:1 1 140px;}
+.linkbtn{align-self:flex-start; background:none; border:none; padding:2px 0; color:var(--muted); font-family:var(--font-mono); font-size:11px; text-decoration:underline; cursor:pointer;}
+.qhead{display:flex; align-items:center; justify-content:space-between; gap:10px;}
+.hintbtn{font-family:var(--font-body); font-weight:700; font-size:12px; padding:5px 10px; border:1.5px solid var(--accent-2); background:transparent; color:var(--accent-2); cursor:pointer; flex:none;}
+.hintbtn:disabled{opacity:.45; cursor:default;}
+.choices{gap:8px;}
+.choice{padding:12px 12px; font-size:14px; line-height:1.35; align-items:center; position:relative;}
+.choice .k{width:22px; height:22px; display:grid; place-items:center; border:1.5px solid var(--line); background:var(--surface); font-size:11.5px; font-weight:700;}
+.choice.correct .k{background:var(--good); border-color:var(--good); color:var(--bg);}
+.choice.wrong .k{background:var(--bad); border-color:var(--bad); color:var(--bg);}
+.choice.correct::after{content:"\2713"; margin-left:auto; color:var(--good); font-weight:700; flex:none;}
+.choice.wrong::after{content:"\2715"; margin-left:auto; color:var(--bad); font-weight:700; flex:none;}
+.choice.gone{opacity:.4; text-decoration:line-through;}
+.explain.show{background:var(--surface-2); border-left:3px solid var(--accent-2); padding:9px 11px;}
+#view-quiz .quizfoot .btn.primary, #view-learn .quizfoot .btn.primary{flex:1; padding:11px 14px; font-size:14.5px;}
+.learnPoint{font-size:16px; line-height:1.45; font-weight:600;}
+.learnAsk{background:var(--surface-2); border-left:3px solid var(--accent-2); padding:9px 11px; display:flex; flex-direction:column; gap:3px;}
+.learnAsk .lbl{font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--accent-2);}
+.learnAsk p{margin:0 0 5px; font-size:13px; line-height:1.4;}
+.learnAsk p.ans{margin:0; font-weight:700; color:var(--good);}
+
 /* The chat button rides on her top-left corner (placed by layoutAoi()), so it reads as "talk to
    her" and never sits over the text box or a right-aligned button like Next. */
 #chatFab{ width:36px; height:36px; font-size:15px; left:var(--fab-x, 8px); top:var(--fab-y, 60vh); right:auto; bottom:auto; z-index:51; }
@@ -657,20 +695,25 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 
   <!-- SUBJECT HOME (PPL or GK) -->
   <div id="view-subject-home" hidden>
+    <div class="subjStats">
+      <div class="stat"><b id="homeStatAnswered">0</b><span>answered</span></div>
+      <div class="stat"><b id="homeStatAccuracy">&mdash;</b><span>correct</span></div>
+      <div class="stat"><b id="homeStatMissed">0</b><span>to review</span></div>
+    </div>
     <div class="subjProgress">
       <div class="pline"><span id="homeProgressLabel">0 / 0 answered</span><span id="homeAccuracyInline">&mdash;</span></div>
       <div class="track"><i id="homeProgressBar" style="width:0%"></i></div>
     </div>
 
-    <div class="actions" id="subjectActions">
-      <button class="btn primary" id="btnExam" type="button">Full Exam Simulation (60 Q)</button>
-      <button class="btn" id="btnMissed" type="button">Review Missed</button>
-      <button class="btn ghost" id="btnReset" type="button">Reset Progress</button>
+    <div class="modeSeg" role="tablist" aria-label="Study mode">
+      <button type="button" id="modeLearn" role="tab">Learn</button>
+      <button type="button" id="modeQuiz" role="tab">Quiz</button>
     </div>
+    <p class="hint" id="modeHint" style="margin:0;"></p>
 
     <div>
       <div class="section-title"><h2 id="categoryGridTitle">Study by Subject</h2></div>
-      <div class="grid" id="categoryGrid"></div>
+      <div class="grid catgrid" id="categoryGrid"></div>
       <div class="pager" id="categoryPager" hidden>
         <button type="button" class="btn ghost tiny" id="catPagerPrev" aria-label="Previous page">&larr;</button>
         <span id="catPagerLabel">1 / 1</span>
@@ -678,7 +721,36 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
       </div>
     </div>
 
+    <div class="actions" id="subjectActions">
+      <button class="btn primary" id="btnExam" type="button">Exam (60 Q)</button>
+      <button class="btn" id="btnMissed" type="button">Review Missed</button>
+    </div>
+    <button class="linkbtn" id="btnReset" type="button">Reset Progress</button>
+
     <div id="roadmapZone"></div>
+  </div>
+
+  <!-- LEARN: one bitesize point at a time, then questions on those same points -->
+  <div id="view-learn" hidden>
+    <div class="quizcard">
+      <div class="progressline">
+        <span id="learnCounter">Point 1 / 5</span>
+        <div class="track"><i id="learnProgressBar" style="width:0%"></i></div>
+        <span id="learnPart">Lesson 1 of 1</span>
+      </div>
+      <div class="qcat" id="learnCat">Category</div>
+      <div class="learnPoint" id="learnPoint"></div>
+      <div class="learnAsk">
+        <span class="lbl">How the test asks it</span>
+        <p id="learnQ"></p>
+        <span class="lbl">Answer</span>
+        <p class="ans" id="learnA"></p>
+      </div>
+      <div class="quizfoot">
+        <button class="btn ghost" id="learnBack" type="button">Back</button>
+        <button class="btn primary" id="learnNext" type="button">Next</button>
+      </div>
+    </div>
   </div>
 
   <!-- QUIZ -->
@@ -689,15 +761,15 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
         <div class="track"><i id="quizProgressBar" style="width:0%"></i></div>
         <span id="quizScoreLive">0 correct</span>
       </div>
-      <div>
+      <div class="qhead">
         <div class="qcat" id="quizCat">Category</div>
-        <div class="qtext" id="quizText">Question text</div>
+        <button class="hintbtn" id="btnHint" type="button">Hint</button>
       </div>
-      <button class="btn ghost tiny" id="btnHint" type="button" style="align-self:flex-start;">Hint from Aoi</button>
+      <div class="qtext" id="quizText">Question text</div>
       <div class="choices" id="quizChoices"></div>
       <div class="explain" id="quizExplain"></div>
       <div class="quizfoot">
-        <button class="btn ghost" id="btnQuit" type="button">Quit to Home</button>
+        <button class="btn ghost" id="btnQuit" type="button">Quit</button>
         <button class="btn primary" id="btnNext" type="button" disabled>Next</button>
       </div>
     </div>
@@ -822,6 +894,7 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
       </div>
     </div>
     <div class="settingsBody">
+      <p class="hint" id="settingsSampleNote" hidden>You're viewing this inside Claude, so Aoi can already talk using your Claude account (Claude Sonnet 5.5) &mdash; no key needed. A key below is only used if you add one.</p>
       <p class="hint">Your API key is stored only in this browser (localStorage) on this device. It is never sent anywhere except directly from your browser to the provider's own API &mdash; not to Aoi Teacher's host, not to anyone else. Clearing it below removes it completely.</p>
 
       <div class="settingsField">
@@ -839,8 +912,8 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
         </div>
         <div class="settingsField">
           <label for="claudeModel">Model</label>
-          <input type="text" id="claudeModel" placeholder="claude-sonnet-4-5-20250929">
-          <p class="hint">Check <a href="https://docs.anthropic.com/en/docs/about-claude/models" target="_blank" rel="noopener">Anthropic's model docs</a> if this stops working &mdash; model names change over time.</p>
+          <input type="text" id="claudeModel" placeholder="claude-sonnet-5-5">
+          <p class="hint">Leave blank to use Claude Sonnet 5.5. Check <a href="https://docs.anthropic.com/en/docs/about-claude/models" target="_blank" rel="noopener">Anthropic's model docs</a> if this stops working &mdash; model names change over time.</p>
         </div>
       </div>
 
@@ -1823,6 +1896,7 @@ var views = {
   quizSelect: document.getElementById("view-quiz-select"),
   subjectHome: document.getElementById("view-subject-home"),
   quiz: document.getElementById("view-quiz"),
+  learn: document.getElementById("view-learn"),
   results: document.getElementById("view-results"),
   japanese: document.getElementById("view-japanese"),
   cooking: document.getElementById("view-cooking"),
@@ -1836,7 +1910,7 @@ var backTarget = null;
 /* Views that are paced narrated lessons get the landscape corner-host "teaching mode" layout
    (see .wrap.teachMode CSS) instead of the portrait scene-player stack. Today: Japanese
    Pronunciation and Aoi's Day. Add future narrated-lesson views here too. */
-var TEACH_VIEWS = {japanese:1, daytrip:1, teacherLesson:1};
+var TEACH_VIEWS = {japanese:1, daytrip:1, teacherLesson:1, learn:1};
 var wrapEl = document.querySelector(".wrap");
 /* Single header line: title, with an optional small highlighted category tag right after it on
    the same line, instead of a separate kicker line sitting above the title (ate an extra row of
@@ -1967,6 +2041,14 @@ function renderSubjectHome(){
   document.getElementById("homeProgressLabel").textContent = all.answeredCount + " / " + activeSubject.questions.length + " answered";
   document.getElementById("homeProgressBar").style.width = pct(all.answeredCount / activeSubject.questions.length * 100) + "%";
   document.getElementById("homeAccuracyInline").textContent = all.answeredCount ? pct(all.correct / all.answeredCount * 100) + "% correct" : "\u2014";
+  document.getElementById("homeStatAnswered").textContent = all.answeredCount;
+  document.getElementById("homeStatAccuracy").textContent = all.answeredCount ? pct(all.correct / all.answeredCount * 100) + "%" : "\u2014";
+  document.getElementById("homeStatMissed").textContent = missedQuestions(activeSubject).length;
+  document.getElementById("modeLearn").classList.toggle("on", studyMode === "learn");
+  document.getElementById("modeQuiz").classList.toggle("on", studyMode === "quiz");
+  document.getElementById("modeHint").textContent = studyMode === "learn"
+    ? "Tap a topic: Aoi teaches it a few points at a time, then asks you questions on them."
+    : "Tap a topic to be quizzed on every question in it.";
 
   document.getElementById("categoryGridTitle").textContent = activeSubject.key === "ppl" ? "Study by Subject" : "Topics Available Now";
   document.getElementById("subjectActions").hidden = false;
@@ -2009,7 +2091,7 @@ function renderSubjectHome(){
         if (builtCat){
           row.className = "rm-item done";
           row.innerHTML = '<span class="rm-num">' + num + '</span><span>' + name + '</span>';
-          row.addEventListener("click", function(){ startSession("category", builtCat); });
+          row.addEventListener("click", function(){ openCategory(builtCat); });
         } else {
           row.className = "rm-item todo";
           row.innerHTML = '<span class="rm-num">' + num + '</span><span>' + name + ' \u2014 not built yet</span>';
@@ -2035,15 +2117,90 @@ function renderCategoryPage(){
     var card = document.createElement("button");
     card.type = "button";
     card.className = "card";
-    card.innerHTML =
-      '<span class="swatch"></span>' +
-      '<h3>' + c.name + '</h3>' +
-      '<div class="meta"><span>' + list.length + ' questions</span><span>' + s.correct + '/' + list.length + ' correct</span></div>' +
-      '<div class="bar"><i style="width:' + pct(s.correct/list.length*100) + '%"></i></div>';
-    card.addEventListener("click", function(){ startSession("category", c.id); });
+    if (studyMode === "learn"){
+      var parts = learnParts(list), done = Math.min(learnDone(c.id), parts.length);
+      card.innerHTML =
+        '<h3>' + c.name + '</h3>' +
+        '<div class="meta"><span>' + parts.length + (parts.length === 1 ? ' lesson' : ' lessons') + '</span><span' + (done >= parts.length ? ' class="done"' : '') + '>' +
+          (done >= parts.length ? 'done' : (done + '/' + parts.length)) + '</span></div>' +
+        '<div class="bar"><i style="width:' + pct(done/parts.length*100) + '%"></i></div>';
+    } else {
+      card.innerHTML =
+        '<h3>' + c.name + '</h3>' +
+        '<div class="meta"><span>' + list.length + ' questions</span><span>' + s.correct + '/' + list.length + '</span></div>' +
+        '<div class="bar"><i style="width:' + pct(s.correct/list.length*100) + '%"></i></div>';
+    }
+    card.addEventListener("click", function(){ openCategory(c.id); });
     grid.appendChild(card);
   });
 }
+
+/* ---------- study mode + learn module ----------
+   Works for ANY quiz subject (today PPL and General Knowledge; anything added to SUBJECTS later
+   gets it for free): a category's questions are split into bitesize lessons of LEARN_SIZE points.
+   Each point teaches one question's explanation, shows how the test asks it and the answer, and
+   the lesson ends with a short quiz on those same points. Progress is the number of lessons
+   finished per category, stored per subject. */
+var STUDY_MODE_KEY = "aoi_study_mode_v1";
+var studyMode = (function(){ try{ return localStorage.getItem(STUDY_MODE_KEY) === "quiz" ? "quiz" : "learn"; }catch(e){ return "learn"; } })();
+function setStudyMode(m){
+  studyMode = m;
+  try{ localStorage.setItem(STUDY_MODE_KEY, m); }catch(e){}
+  renderSubjectHome();
+  if (window.AoiHost && window.AoiHost.relayout) window.AoiHost.relayout();
+}
+document.getElementById("modeLearn").addEventListener("click", function(){ setStudyMode("learn"); });
+document.getElementById("modeQuiz").addEventListener("click", function(){ setStudyMode("quiz"); });
+function openCategory(catId){ if (studyMode === "learn") startLearn(catId); else startSession("category", catId); }
+
+var LEARN_SIZE = 5;
+function learnParts(list){
+  var parts = [];
+  for (var i = 0; i < list.length; i += LEARN_SIZE) parts.push(list.slice(i, i + LEARN_SIZE));
+  return parts;
+}
+function learnKey(){ return activeSubject.storageKey + "_learn_v1"; }
+function loadLearn(){ try{ var raw = localStorage.getItem(learnKey()); return raw ? JSON.parse(raw) : {}; }catch(e){ return {}; } }
+function learnDone(catId){ return loadLearn()[catId] || 0; }
+function markLearnDone(catId, partIndex){
+  var d = loadLearn();
+  if ((d[catId] || 0) < partIndex + 1){ d[catId] = partIndex + 1; try{ localStorage.setItem(learnKey(), JSON.stringify(d)); }catch(e){} }
+}
+var learn = null;
+function startLearn(catId, partIndex){
+  var parts = learnParts(catQuestions(activeSubject, catId));
+  if (!parts.length) return;
+  if (partIndex == null){ partIndex = learnDone(catId); if (partIndex >= parts.length) partIndex = 0; }
+  learn = {catId:catId, parts:parts, part:partIndex, i:0};
+  window.activeLessonAdvance = learnAdvance;
+  showView("learn", {backTo:"subjectHome"});
+  renderLearnPoint(true);
+}
+function renderLearnPoint(first){
+  var pts = learn.parts[learn.part], q = pts[learn.i];
+  window.scrollTo(0, 0);
+  document.getElementById("learnCounter").textContent = "Point " + (learn.i + 1) + " / " + pts.length;
+  document.getElementById("learnProgressBar").style.width = pct((learn.i + 1) / pts.length * 100) + "%";
+  document.getElementById("learnPart").textContent = "Lesson " + (learn.part + 1) + " of " + learn.parts.length;
+  document.getElementById("learnCat").textContent = CATNAME[q.cat];
+  document.getElementById("learnPoint").textContent = q.explain;
+  document.getElementById("learnQ").textContent = q.q;
+  document.getElementById("learnA").textContent = q.choices[q.a];
+  document.getElementById("learnBack").disabled = learn.i === 0;
+  document.getElementById("learnNext").textContent = learn.i + 1 < pts.length ? "Next" : "Start questions";
+  if (window.AoiHost){
+    if (first) window.AoiHost.line("learn_intro");
+    else window.AoiHost.line("learn_next");
+  }
+}
+function learnAdvance(){
+  var pts = learn.parts[learn.part];
+  if (learn.i + 1 < pts.length){ learn.i++; renderLearnPoint(false); return; }
+  startSession("learn", learn.catId, pts.slice());
+  if (window.AoiHost) window.AoiHost.line("learn_quiz");
+}
+document.getElementById("learnNext").addEventListener("click", learnAdvance);
+document.getElementById("learnBack").addEventListener("click", function(){ if (learn.i > 0){ learn.i--; renderLearnPoint(false); } });
 
 /* ---------- quiz engine ---------- */
 var session = null;
@@ -2065,10 +2222,11 @@ function buildQueue(type, catId){
   return shuffle(list);
 }
 
-function startSession(type, catId){
-  var queue = buildQueue(type, catId);
+function startSession(type, catId, customQueue){
+  var queue = customQueue || buildQueue(type, catId);
   if (!queue.length){ return; }
-  session = {type:type, catId:catId, queue:queue, index:0, correct:0, choiceOrder:null, answeredThis:false};
+  session = {type:type, catId:catId, queue:queue, index:0, correct:0, choiceOrder:null, answeredThis:false, hintStep:0};
+  if (type === "learn") session.learnPart = learn.part;
   quizTranscript = [];
   quizRenderTranscript();
   showView("quiz", {backTo:"subjectHome"});
@@ -2105,11 +2263,12 @@ function renderQuestion(){
   order = shuffle(order);
   session.choiceOrder = order;
   session.answeredThis = false;
+  session.hintStep = 0;
 
   var letters = ["A","B","C","D"];
   var box = document.getElementById("quizChoices");
   box.innerHTML = "";
-  if (window.AoiHost) window.AoiHost.think();
+  if (window.AoiHost && !(session.type === "learn" && session.index === 0)) window.AoiHost.think();
   order.forEach(function(origIdx, pos){
     var btn = document.createElement("button");
     btn.type = "button";
@@ -2124,8 +2283,8 @@ function renderQuestion(){
   explain.innerHTML = "";
   document.getElementById("btnNext").disabled = true;
   document.getElementById("btnNext").textContent = (session.index + 1 < total) ? "Next" : "See Results";
-  document.getElementById("btnHint").disabled = false;
-  if (window.updateAoiReserveSoon) window.updateAoiReserveSoon();
+  updateHintButton();
+  if (window.AoiHost && window.AoiHost.relayout) window.AoiHost.relayout();
 }
 
 function selectChoice(chosenIdx, btnEl){
@@ -2141,6 +2300,7 @@ function selectChoice(chosenIdx, btnEl){
   session.choiceOrder.forEach(function(origIdx, pos){
     var el = buttons[pos];
     el.disabled = true;
+    el.classList.remove("gone");
     if (origIdx === q.a) el.classList.add("correct");
     else if (el === btnEl) el.classList.add("wrong");
   });
@@ -2156,7 +2316,7 @@ function selectChoice(chosenIdx, btnEl){
     explain.className = "explain";
     explain.innerHTML = "";
     var full = (correct ? "Correct. " : "Not quite. ") + q.explain;
-    if (window.AoiHost) window.AoiHost.say(full, {pose: correct ? "point_r" : null, eyes: correct ? "eyes_happy" : "eyes_think"});
+    if (window.AoiHost) window.AoiHost.say(full, {pose: correct ? "point_r" : null, eyes: correct ? "eyes_happy" : "eyes_think", voice: correct ? "react_ok" : "react_no"});
     quizTranscript.push(full);
     quizRenderTranscript();
   } else {
@@ -2167,6 +2327,7 @@ function selectChoice(chosenIdx, btnEl){
 
   document.getElementById("quizScoreLive").textContent = session.correct + " correct";
   document.getElementById("btnNext").disabled = false;
+  updateHintButton();
 }
 
 function nextQuestion(){
@@ -2184,8 +2345,16 @@ function showResults(){
   var pass = scorePct >= 70;
   if (window.AoiHost) window.AoiHost.celebrate(pass, scorePct);
 
+  var retake = document.getElementById("btnRetake");
+  retake.textContent = "Retake";
+  if (session.type === "learn"){
+    markLearnDone(session.catId, session.learnPart);
+    if (session.learnPart + 1 < learn.parts.length) retake.textContent = "Next lesson";
+    else retake.textContent = "Start over";
+  }
   var label = session.type === "exam" ? "Full Exam Simulation" :
               session.type === "missed" ? "Missed Questions Review" :
+              session.type === "learn" ? CATNAME[session.catId] + " \u2014 Lesson " + (session.learnPart + 1) + " questions" :
               CATNAME[session.catId] + " Study Session";
   document.getElementById("resultsLabel").textContent = label;
   document.getElementById("resultsScore").textContent = scorePct + "%";
@@ -2237,6 +2406,7 @@ function handleResetClick(){
   resetArmed = false;
   answers = {};
   saveAnswers(activeSubject, answers);
+  try{ localStorage.removeItem(learnKey()); }catch(e){}
   document.getElementById("btnReset").textContent = "Reset Progress";
   renderSubjectHome();
 }
@@ -2710,19 +2880,55 @@ function startTeacherLesson(){
 document.getElementById("teacherCardClaudeCode").addEventListener("click", startTeacherLesson);
 document.getElementById("teacherStartBtn").addEventListener("click", startTeacherLesson);
 
-/* ---------- hint: reuses the existing BYOK chat/LLM system (window.AoiChat, defined in the chat
-   module below) to ask for a nudge toward the current question, never the answer itself. Does not
-   touch the persistent chat history — this is a one-off, not a saved conversation turn. ---------- */
+/* ---------- hints ----------
+   Built in, so they work with no AI and no key: the first two taps each cross out one wrong
+   choice (down to a 50/50), and the first also points at the rule the question comes from when
+   its explanation cites one. A third tap asks Claude for a nudge only where chat is available. */
+var HINT_MAX = 2;
+function updateHintButton(){
+  var btn = document.getElementById("btnHint");
+  var ai = !!(window.AoiChat && window.AoiChat.hasKey());
+  var left = Math.max(0, HINT_MAX - session.hintStep);
+  btn.textContent = left ? "Hint (" + left + ")" : (ai ? "Ask Aoi" : "Hint (0)");
+  btn.disabled = session.answeredThis || (!left && !ai);
+}
+function hintReference(q){
+  var m = /(14 CFR (?:Part )?\d+(?:\.\d+)?|AIM \d+-\d+-\d+|NTSB \d+)/.exec(q.explain || "");
+  return (m && q.q.indexOf(m[1]) === -1) ? m[1] : null;
+}
 function requestHint(){
   var q = currentQuestion();
-  var btn = document.getElementById("btnHint");
+  if (session.answeredThis) return;
+  var letters = ["A","B","C","D"];
+  var buttons = document.getElementById("quizChoices").querySelectorAll(".choice");
+  if (session.hintStep < HINT_MAX){
+    var wrongPos = [];
+    session.choiceOrder.forEach(function(origIdx, pos){
+      if (origIdx !== q.a && !buttons[pos].classList.contains("gone")) wrongPos.push(pos);
+    });
+    if (wrongPos.length > 1){
+      var pos = wrongPos[Math.floor(Math.random() * wrongPos.length)];
+      buttons[pos].classList.add("gone");
+      buttons[pos].disabled = true;
+      session.hintStep++;
+      var ref = session.hintStep === 1 ? hintReference(q) : null;
+      var text = session.hintStep === 1
+        ? "Hint: it's not " + letters[pos] + "." + (ref ? " This one comes from " + ref + "." : " Read what's left carefully.")
+        : "It's not " + letters[pos] + " either \u2014 you're down to two.";
+      if (window.AoiHost) window.AoiHost.say(text, {pose:"point_r", eyes:null, voice: session.hintStep === 1 ? "hint1" : "hint2"});
+      updateHintButton();
+      return;
+    }
+    session.hintStep = HINT_MAX;
+  }
   if (!window.AoiChat || !window.AoiChat.hasKey()){
-    if (window.AoiHost) window.AoiHost.say("Add your API key in Settings for hints — tap the gear icon up top.", {pose:null, eyes:"eyes_think"});
+    if (window.AoiHost) window.AoiHost.line("hint_none");
+    updateHintButton();
     return;
   }
+  var btn = document.getElementById("btnHint");
   btn.disabled = true;
-  if (window.AoiHost) window.AoiHost.say("Let me think of a hint…", {pose:null, eyes:"eyes_think"});
-  var letters = ["A","B","C","D"];
+  if (window.AoiHost) window.AoiHost.say("Let me think of a hint\u2026", {pose:null, eyes:"eyes_think"});
   var choicesText = q.choices.map(function(c, i){ return letters[i] + ") " + c; }).join("\n");
   var prompt = "The user is answering this quiz question right now and asked for a hint, not the answer:\n\n" +
     "Category: " + CATNAME[q.cat] + "\nQuestion: " + q.q + "\nChoices:\n" + choicesText +
@@ -2733,7 +2939,7 @@ function requestHint(){
     .catch(function(err){
       if (window.AoiHost) window.AoiHost.say("Couldn't get a hint: " + (err && err.message ? err.message : "something went wrong") + ".", {pose:null, eyes:"eyes_think"});
     })
-    .then(function(){ btn.disabled = false; });
+    .then(function(){ updateHintButton(); });
 }
 document.getElementById("btnHint").addEventListener("click", requestHint);
 
@@ -2742,7 +2948,12 @@ document.getElementById("themeToggle").addEventListener("click", cycleTheme);
 document.getElementById("btnQuit").addEventListener("click", function(){ renderSubjectHome(); showView("subjectHome", {backTo:"quizSelect"}); });
 document.getElementById("btnNext").addEventListener("click", nextQuestion);
 document.getElementById("btnHome").addEventListener("click", function(){ renderSubjectHome(); showView("subjectHome", {backTo:"quizSelect"}); });
-document.getElementById("btnRetake").addEventListener("click", function(){ startSession(session.type, session.catId); });
+document.getElementById("btnRetake").addEventListener("click", function(){
+  if (session.type === "learn"){
+    var next = session.learnPart + 1 < learn.parts.length ? session.learnPart + 1 : 0;
+    startLearn(session.catId, next);
+  } else startSession(session.type, session.catId);
+});
 
 document.addEventListener("keydown", function(e){
   var tag = document.activeElement && document.activeElement.tagName;
@@ -3278,8 +3489,20 @@ function renderLine(){
   var n = Math.max(0, Math.min(curText.length, Math.floor(shownChars)));
   $line.innerHTML = esc(curText.slice(0, n)) + (n < curText.length ? '<span class="caret"></span>' : '');
 }
+/* One shared player for her spoken lines (audio/lines/<id>.mp3, her own recorded voice). A new
+   line always cuts off the previous one; a line with no clip just stops whatever was playing. */
+var $lineAudio = new Audio();
+function playLineAudio(id){
+  try{
+    $lineAudio.pause();
+    if (!id || !aoiVoiceOn()) return;
+    $lineAudio.src = 'audio/lines/' + id + '.mp3';
+    $lineAudio.play().catch(function(){});
+  }catch(e){}
+}
 function say(text, opts){
   opts = opts || {};
+  playLineAudio(opts.voice);
   curText = text; shownChars = 0; typing = true;
   if ('pose' in opts) curPose = opts.pose;
   if ('eyes' in opts) curEyes = opts.eyes;
@@ -3423,6 +3646,7 @@ function layoutAoi(live){
   root.setProperty('--sub-max', Math.floor(subMax) + 'px');
   root.setProperty('--fab-x', Math.round(Math.max(4, Math.min(vw - 40, r.left - 4))) + 'px');
   root.setProperty('--fab-y', Math.round(Math.max(4, Math.min(vh - 40, r.top - 10))) + 'px');
+  avoidOptions(r);
   if (!live){
     root.setProperty('--aoi-pad-l', Math.round(padL) + 'px');
     root.setProperty('--aoi-pad-r', Math.round(padR) + 'px');
@@ -3430,6 +3654,45 @@ function layoutAoi(live){
   }
   fitBubble();
 }
+/* Tappable options (menu cards, topic cards, quiz choices) reshape around her the way her text
+   box does: any option she is sitting over pulls its near edge back to clear her, as long as that
+   still leaves it a usable width; otherwise it stays full width under her. Natural (un-pulled)
+   edges are recovered from the margins applied last time, so this never has to reset the page
+   and re-measure. Runs live while she is dragged and again when a scroll settles. */
+var AVOID_SEL = '#card .hubcard, #card .grid > .card, #card .choice';
+function avoidOptions(r){
+  var inX = r.width * 0.14, top = r.top + r.height * 0.06;
+  var hl = r.left + inX, hr = r.right - inX, hb = r.bottom;
+  var els = document.querySelectorAll(AVOID_SEL), plan = [];
+  for (var i = 0; i < els.length; i++){
+    var el = els[i];
+    if (!el.offsetParent) continue;
+    var b = el.getBoundingClientRect();
+    var ml = +el.dataset.aml || 0, mr = +el.dataset.amr || 0;
+    var left = b.left - ml, right = b.right + mr, w = right - left;
+    var nml = 0, nmr = 0;
+    if (b.bottom > top + 6 && b.top < hb - 6 && right > hl && left < hr){
+      var minW = Math.max(120, w * 0.42);
+      var cutR = right - hl + 6, cutL = hr - left + 6;
+      var herRight = (hl + hr) / 2 >= (left + right) / 2;
+      if (herRight && w - cutR >= minW) nmr = cutR;
+      else if (!herRight && w - cutL >= minW) nml = cutL;
+      else if (w - cutR >= minW) nmr = cutR;
+      else if (w - cutL >= minW) nml = cutL;
+    }
+    if (Math.abs(nml - ml) > 1 || Math.abs(nmr - mr) > 1) plan.push([el, Math.round(nml), Math.round(nmr)]);
+  }
+  plan.forEach(function(x){
+    x[0].style.marginLeft = x[1] ? x[1] + 'px' : '';
+    x[0].style.marginRight = x[2] ? x[2] + 'px' : '';
+    x[0].dataset.aml = x[1]; x[0].dataset.amr = x[2];
+  });
+}
+var aoiScrollTimer = null;
+addEventListener('scroll', function(){
+  clearTimeout(aoiScrollTimer);
+  aoiScrollTimer = setTimeout(function(){ avoidOptions($hostEl.getBoundingClientRect()); }, 120);
+}, {passive:true});
 addEventListener('resize', function(){ applyAoiPos(); layoutAoi(); });
 applyAoiPos();
 layoutAoi();
@@ -3544,16 +3807,44 @@ function frame(now){
 requestAnimationFrame(function(t){ last = t; frame(t); });
 
 /* ---------- coaching lines, tied into the quiz engine's existing think()/react()/celebrate() hooks ---------- */
-var HUB_LINES = ["Teacher, Quiz, Singing, Cooking, or just a chat \u2014 pick a mode.", "Ready when you are. Where should we start?"];
-var QUIZSELECT_LINES = ["PPL or General Knowledge \u2014 your call.", "Pick a subject and let's drill."];
-var TEACHER_LINES = ["I've got one real lesson ready \u2014 Claude Code on your phone. Tap in and I'll walk you through it."];
-var SUBJECT_LINES = ["Pick a category to drill, or jump into a full session.", "Pick a topic \u2014 we'll go one question at a time."];
-var THINK_LINES = ["Take your time \u2014 read every choice before you pick.", "No rush, I'm right here if you get stuck.", "Think it through \u2014 you've got this."];
-var COOKING_LINES = ["Browse a recipe, or tap one and I'll talk you through it.", "What are we making today?"];
-var RECIPE_LINES = ["Looks good \u2014 want me to walk you through it step by step?"];
-var DAILY_LINES = ["Hey \u2014 how's your day going?", "No studying here, just chatting if you want."];
-var SALES_LINES = ["Pick a scenario \u2014 everyone here has a real reason to say no.", "Sales is finding out why they'd say no, then actually answering it."];
-var SALES_DETAIL_LINES = ["Here's what I'd watch for \u2014 then try it yourself."];
+/* Every stock line she says, keyed by id. The id is also the name of its voice clip
+   (audio/lines/<id>.mp3, Japanese, generated offline in her own voice), so adding a line here plus
+   a clip of the same name is all it takes to give a new line a voice. */
+var LINES = {
+  hub1:"Teacher, Quiz, Singing, Cooking, or just a chat \u2014 pick a mode.",
+  hub2:"Ready when you are. Where should we start?",
+  quizsel1:"PPL or General Knowledge \u2014 your call.",
+  quizsel2:"Pick a subject and let's drill.",
+  teacher1:"I've got one real lesson ready \u2014 Claude Code on your phone. Tap in and I'll walk you through it.",
+  subj1:"Learn or Quiz \u2014 pick one, then tap a topic.",
+  subj2:"Pick a topic \u2014 we'll take it bit by bit.",
+  think1:"Take your time \u2014 read every choice before you pick.",
+  think2:"No rush, I'm right here if you get stuck.",
+  think3:"Think it through \u2014 you've got this.",
+  cook1:"Browse a recipe, or tap one and I'll talk you through it.",
+  cook2:"What are we making today?",
+  recipe1:"Looks good \u2014 want me to walk you through it step by step?",
+  daily1:"Hey \u2014 how's your day going?",
+  daily2:"No studying here, just chatting if you want.",
+  sales1:"Pick a scenario \u2014 everyone here has a real reason to say no.",
+  sales2:"Sales is finding out why they'd say no, then actually answering it.",
+  salesd1:"Here's what I'd watch for \u2014 then try it yourself.",
+  react_ok:"Correct!",
+  react_no:"Not quite \u2014 here's why.",
+  react_again:"Not quite \u2014 this one's tripped you up before.",
+  hint_none:"That's all my hints for this one \u2014 trust your reasoning.",
+  learn_intro:"Let's learn this bit by bit \u2014 tap me to move on.",
+  learn_next:"Nice \u2014 here's the next point.",
+  learn_quiz:"That's the lesson \u2014 now a few questions to check it stuck."
+};
+function line(id, opts, silent){
+  opts = opts || {};
+  if (!silent) opts.voice = id;
+  say(LINES[id], opts);
+}
+var HUB_LINES = ["hub1","hub2"], QUIZSELECT_LINES = ["quizsel1","quizsel2"], TEACHER_LINES = ["teacher1"],
+    SUBJECT_LINES = ["subj1","subj2"], THINK_LINES = ["think1","think2","think3"], COOKING_LINES = ["cook1","cook2"],
+    RECIPE_LINES = ["recipe1"], DAILY_LINES = ["daily1","daily2"], SALES_LINES = ["sales1","sales2"], SALES_DETAIL_LINES = ["salesd1"];
 
 /* ---------- hub greeting (real voice, Fish Audio) ----------
    10 narrated clips exist under audio/intro/ (greeting_cold, welcome_back, pick_anything,
@@ -3582,35 +3873,38 @@ window.AoiHost = {
   reserveSub: reserveSubFor, /* exposed so renderTeacherLesson()/renderJapanese()/renderDaytrip(),
     which live in a different <script> tag's own IIFE, can set --sub-reserve for their view */
   clearSubReserve: clearSubReserve,
+  line: function(id, opts){ if (LINES[id]) line(id, opts); },
+  relayout: function(){ updateAoiReserveSoon(); },
   onView: function(name){
-    if (name === 'hub'){ say(pick(HUB_LINES), { pose: 'present_r', eyes: null }); playHubGreeting(); }
-    else if (name === 'quizSelect') say(pick(QUIZSELECT_LINES), { pose: 'point_r', eyes: null });
-    else if (name === 'teacher') say(pick(TEACHER_LINES), { pose: 'present_l', eyes: 'eyes_think' });
-    else if (name === 'subjectHome') say(pick(SUBJECT_LINES), { pose: 'point_r', eyes: null });
-    else if (name === 'cooking') say(pick(COOKING_LINES), { pose: 'present_l', eyes: 'eyes_happy' });
-    else if (name === 'recipe') say(pick(RECIPE_LINES), { pose: 'point_l', eyes: 'eyes_happy' });
-    else if (name === 'daily') say(pick(DAILY_LINES), { pose: 'present_r', eyes: 'eyes_happy' });
-    else if (name === 'sales') say(pick(SALES_LINES), { pose: 'point_r', eyes: 'eyes_think' });
-    else if (name === 'salesDetail') say(pick(SALES_DETAIL_LINES), { pose: 'present_l', eyes: 'eyes_think' });
-    /* japanese and teacherLesson: their own jpRenderBeat()/tutorRenderBeat() drive her line directly
-       (paced lesson beats); quiz and results are driven by think()/react()/celebrate() below, at
-       their own specific moments */
+    if (name === 'hub'){
+      /* The very first hub line of a page load is spoken by the time-of-day greeting clip instead. */
+      var greeting = !hubGreetedThisLoad;
+      line(pick(HUB_LINES), { pose: 'present_r', eyes: null }, greeting);
+      playHubGreeting();
+    }
+    else if (name === 'quizSelect') line(pick(QUIZSELECT_LINES), { pose: 'point_r', eyes: null });
+    else if (name === 'teacher') line(pick(TEACHER_LINES), { pose: 'present_l', eyes: 'eyes_think' });
+    else if (name === 'subjectHome') line(pick(SUBJECT_LINES), { pose: 'point_r', eyes: null });
+    else if (name === 'cooking') line(pick(COOKING_LINES), { pose: 'present_l', eyes: 'eyes_happy' });
+    else if (name === 'recipe') line(pick(RECIPE_LINES), { pose: 'point_l', eyes: 'eyes_happy' });
+    else if (name === 'daily') line(pick(DAILY_LINES), { pose: 'present_r', eyes: 'eyes_happy' });
+    else if (name === 'sales') line(pick(SALES_LINES), { pose: 'point_r', eyes: 'eyes_think' });
+    else if (name === 'salesDetail') line(pick(SALES_DETAIL_LINES), { pose: 'present_l', eyes: 'eyes_think' });
+    else playLineAudio(null); /* paced lessons / quiz / learn drive her line themselves */
   },
   think: function(){
-    say(pick(THINK_LINES), { pose: null, eyes: 'eyes_think' });
+    line(pick(THINK_LINES), { pose: null, eyes: 'eyes_think' });
   },
   react: function(correct, explain, repeatMiss){
-    /* The full explanation already renders in the card's own .explain box (quizExplain /
-       jpBeatExplain), with its own fade-in treatment -- see CSS. Her caption gets a short line
-       instead of retyping that whole paragraph a second time underneath it. */
-    var line = correct ? "Correct!" : (repeatMiss ? "Not quite — this one's tripped you up before." : "Not quite — here's why.");
-    say(line, { pose: correct ? 'point_r' : null, eyes: correct ? 'eyes_happy' : 'eyes_think' });
+    /* The full explanation renders in the card's own .explain box; her caption gets a short line. */
+    line(correct ? 'react_ok' : (repeatMiss ? 'react_again' : 'react_no'),
+      { pose: correct ? 'point_r' : null, eyes: correct ? 'eyes_happy' : 'eyes_think' });
   },
   celebrate: function(pass, scorePct){
-    var line = pass
+    var text = pass
       ? ("Nice work" + (scorePct != null ? " \u2014 " + scorePct + "%" : "") + "! That's a solid run.")
       : "Good attempt \u2014 let's review what tripped you up.";
-    say(line, { pose: pass ? 'present_l' : 'point_l', eyes: pass ? null : 'eyes_think' });
+    say(text, { pose: pass ? 'present_l' : 'point_l', eyes: pass ? null : 'eyes_think', voice: pass ? 'celebrate_pass' : 'celebrate_fail' });
   }
 };
 window.AoiHost.onView('hub');
@@ -3668,9 +3962,12 @@ function saveHistory(h){
 }
 
 function currentProvider(){ return get(LS.provider, 'claude'); }
-function hasKey(){
+function hasOwnKey(){
   return currentProvider() === 'claude' ? !!get(LS.claudeKey, '') : !!get(LS.customKey, '');
 }
+/* "Can she talk at all": the user's own key, or (inside the Claude preview) the viewer's own
+   Claude account via the artifact runtime, which needs no key. */
+function hasKey(){ return hasOwnKey() || !!sampleFn; }
 
 /* ---------- system prompt, context-dependent ---------- */
 function systemPrompt(){
@@ -3762,28 +4059,65 @@ function applyNavTags(text){
 }
 
 /* ---------- provider calls — direct browser-to-provider, no intermediary ---------- */
+/* Default model for her chat. A model the user types in Settings replaces it. */
+var DEFAULT_CLAUDE_MODEL = 'claude-sonnet-5-5';
+function claudeRequest(key, body, beta){
+  var headers = {
+    'content-type':'application/json',
+    'x-api-key': key,
+    'anthropic-version':'2023-06-01',
+    'anthropic-dangerous-direct-browser-access':'true'
+  };
+  if (beta) headers['anthropic-beta'] = beta;
+  return fetch('https://api.anthropic.com/v1/messages', { method:'POST', headers: headers, body: JSON.stringify(body) })
+    .then(function(r){
+      return r.text().then(function(t){
+        var data; try{ data = JSON.parse(t); }catch(e){ data = null; }
+        if (!r.ok){ var err = new Error((data && data.error && data.error.message) || ('HTTP ' + r.status)); err.status = r.status; throw err; }
+        return data;
+      });
+    });
+}
 function callClaude(messages){
   var key = get(LS.claudeKey, '');
-  var model = get(LS.claudeModel, '') || 'claude-sonnet-4-5-20250929';
-  return fetch('https://api.anthropic.com/v1/messages', {
-    method:'POST',
-    headers:{
-      'content-type':'application/json',
-      'x-api-key': key,
-      'anthropic-version':'2023-06-01',
-      'anthropic-dangerous-direct-browser-access':'true'
-    },
-    body: JSON.stringify({ model: model, max_tokens: 700, system: systemPrompt(), messages: messages })
-  }).then(function(r){
-    return r.text().then(function(t){
-      var data; try{ data = JSON.parse(t); }catch(e){ data = null; }
-      if (!r.ok){ throw new Error((data && data.error && data.error.message) || ('HTTP ' + r.status)); }
-      if (!data || !data.content || !data.content[0] || typeof data.content[0].text !== 'string'){
-        throw new Error('Unexpected response shape from Claude.');
-      }
-      return data.content[0].text;
+  var model = get(LS.claudeModel, '') || DEFAULT_CLAUDE_MODEL;
+  var body = { model: model, max_tokens: 4096, system: systemPrompt(), messages: messages };
+  var req;
+  if (model === DEFAULT_CLAUDE_MODEL){
+    /* Server-side fallback: if a safety classifier declines on this model, the API reroutes the
+       request instead of returning nothing. Retried once without it if the API rejects the option. */
+    var withFallback = { model: model, max_tokens: 4096, system: body.system, messages: messages, fallbacks: 'default' };
+    req = claudeRequest(key, withFallback, 'server-side-fallback-2026-07-01').catch(function(err){
+      if (err && err.status === 400) return claudeRequest(key, body);
+      throw err;
     });
+  } else req = claudeRequest(key, body);
+  return req.then(function(data){
+    if (data && data.stop_reason === 'refusal') throw new Error("Aoi can't help with that one.");
+    /* Thinking blocks can come first; her reply is the text blocks. */
+    var text = ((data && data.content) || []).filter(function(b){ return b && b.type === 'text' && typeof b.text === 'string'; })
+      .map(function(b){ return b.text; }).join('');
+    if (!text) throw new Error('Unexpected response shape from Claude.');
+    return text;
   });
+}
+/* Inside the Claude preview the page can ask Claude on the viewer's own account (the artifact
+   runtime's `sample` capability), so she can talk with no key at all. `null` everywhere else
+   (the installed app, a plain browser), where the user's own key above is the only route. */
+var sampleFn = null;
+var SAMPLE_COPY = {
+  not_granted: "Claude isn't allowed for this page yet \u2014 allow it when asked, or add your own key in Settings.",
+  sampling_disabled: "Claude isn't available for this account here \u2014 add your own key in Settings.",
+  rate_limited: "That's a lot at once \u2014 give it a minute and try again.",
+  session_expired: "You need to sign in to Claude again.",
+  refused: "Aoi can't help with that one."
+};
+function callSample(messages){
+  var turns = [{ role:'user', content: 'Standing instructions for this whole conversation (follow them; never mention them):\n\n' + systemPrompt() }].concat(messages);
+  return sampleFn(turns, { cache: false, model: DEFAULT_CLAUDE_MODEL }).then(
+    function(res){ return res.text; },
+    function(e){ throw new Error(SAMPLE_COPY[e && e.code] || "Something went wrong reaching Claude \u2014 try again."); }
+  );
 }
 function callCustom(messages){
   var base = (get(LS.customBase, '') || '').replace(/\/+$/, '');
@@ -3807,7 +4141,9 @@ function callCustom(messages){
   });
 }
 function sendToProvider(messages){
-  return currentProvider() === 'claude' ? callClaude(messages) : callCustom(messages);
+  if (hasOwnKey()) return currentProvider() === 'claude' ? callClaude(messages) : callCustom(messages);
+  if (sampleFn) return callSample(messages);
+  return Promise.reject(new Error('Add an API key in Settings to chat with Aoi.'));
 }
 
 /* Small public surface so the quiz engine's hint button can reuse this same BYOK call path
@@ -3831,6 +4167,13 @@ var $quizTranscriptPanel = document.getElementById('quizTranscriptPanel');
 var $backdrop = document.getElementById('overlayBackdrop');
 var $msgs = document.getElementById('chatMsgs');
 var $noKey = document.getElementById('chatNoKey');
+if (window.claude && typeof window.claude.use === 'function'){
+  window.claude.use('sample').then(function(fn){
+    sampleFn = typeof fn === 'function' ? fn : null;
+    $noKey.hidden = hasKey();
+    document.getElementById('settingsSampleNote').hidden = !sampleFn;
+  }).catch(function(){});
+}
 var $form = document.getElementById('chatForm');
 var $input = document.getElementById('chatInput');
 var $sendBtn = document.getElementById('chatSendBtn');

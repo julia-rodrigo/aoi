@@ -454,6 +454,24 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
   padding-bottom:env(safe-area-inset-bottom,0px);
   transform:translateY(100%); transition:transform .25s cubic-bezier(.2,.8,.3,1);}
 .overlayPanel.open{transform:translateY(0);}
+/* Typing on a phone: the on-screen keyboard covers the bottom of the screen (and inside an
+   embedded preview the page is never told it is there), so a panel with a text box in it docks
+   to the TOP half instead, where the box and the conversation stay visible above the keys. */
+.overlayPanel.kbd{top:0; bottom:auto; max-height:52vh; border-top:none; padding-bottom:0;
+  padding-top:env(safe-area-inset-top,0px); transform:translateY(-100%);}
+.overlayPanel.kbd.open{transform:translateY(0);}
+@media (orientation:landscape){ .overlayPanel.kbd{max-height:44vh;} }
+.chatmsg a{color:inherit; font-weight:700;}
+.goalRow{display:flex; align-items:flex-start; gap:8px; padding:8px 0; border-top:1px solid var(--line);}
+.goalRow:first-child{border-top:none;}
+.goalRow input[type=checkbox]{margin-top:3px; flex:none;}
+.goalRow .gtext{flex:1; min-width:0; font-size:13.5px; line-height:1.4;}
+.goalRow.done .gtext{text-decoration:line-through; color:var(--muted);}
+.goalRow .gacts{display:flex; gap:10px; flex-wrap:wrap; margin-top:3px;}
+.goalRow .gacts a, .goalRow .gacts button{background:none; border:none; padding:0; font:inherit; font-size:11.5px; color:var(--accent); text-decoration:underline; cursor:pointer;}
+.goalRow .gdel{background:none; border:none; color:var(--muted); font-size:16px; line-height:1; cursor:pointer; flex:none; padding:0 2px;}
+.goalForm{display:flex; gap:8px;}
+.goalForm input{flex:1; min-width:0; border:1px solid var(--line); background:var(--bg); color:var(--fg); padding:9px 11px; font-size:14px; font-family:inherit;}
 .panelHead{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:14px 16px 10px; flex:none; border-bottom:1px solid var(--line);}
 .panelTitle{font-family:var(--font-display); font-weight:700; font-size:16px;}
 .panelHeadBtns{display:flex; gap:6px;}
@@ -625,6 +643,16 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
       <h3>Just chatting</h3>
       <p>This is separate from the study chat — Aoi's not trying to route you anywhere here, just talking. Open the chat below, and if a reply's worth keeping, save it to your journal.</p>
       <button class="btn primary" id="dailyOpenChatBtn" type="button">Open chat</button>
+    </div>
+    <div class="jp-section">
+      <h3>Your goals</h3>
+      <p class="hint" id="goalsEmpty" style="margin:0;">Aoi wants to know: what would you like to achieve? Add a goal and she'll keep it in mind and suggest next steps and videos.</p>
+      <div id="goalsList"></div>
+      <form class="goalForm" id="goalForm">
+        <input type="text" id="goalInput" placeholder="A goal, e.g. Get my PPL" autocomplete="off" maxlength="140">
+        <button class="btn primary" type="submit">Add</button>
+      </form>
+      <button class="btn" id="goalsAskBtn" type="button">Ask Aoi what to do next</button>
     </div>
     <div>
       <div class="section-title"><h2>Journal</h2></div>
@@ -2268,7 +2296,12 @@ function renderQuestion(){
   var letters = ["A","B","C","D"];
   var box = document.getElementById("quizChoices");
   box.innerHTML = "";
-  if (window.AoiHost && !(session.type === "learn" && session.index === 0)) window.AoiHost.think();
+  if (window.AoiHost){
+    if (session.index > 0) window.AoiHost.think();
+    else if (session.type === "exam") window.AoiHost.line("exam_start");
+    else if (session.type === "missed") window.AoiHost.line("missed_start");
+    else if (session.type !== "learn") window.AoiHost.line(Math.random() < 0.5 ? "lets_begin" : "lets_go");
+  }
   order.forEach(function(origIdx, pos){
     var btn = document.createElement("button");
     btn.type = "button";
@@ -2294,6 +2327,7 @@ function selectChoice(chosenIdx, btnEl){
   var correct = (chosenIdx === q.a);
   var priorMisses = missCounts[q.id] || 0; /* before recordAnswer increments it */
   if (correct) session.correct++;
+  session.streak = correct ? (session.streak || 0) + 1 : 0;
   recordAnswer(activeSubject, q.id, correct);
 
   var buttons = document.getElementById("quizChoices").querySelectorAll(".choice");
@@ -2316,11 +2350,11 @@ function selectChoice(chosenIdx, btnEl){
     explain.className = "explain";
     explain.innerHTML = "";
     var full = (correct ? "Correct. " : "Not quite. ") + q.explain;
-    if (window.AoiHost) window.AoiHost.say(full, {pose: correct ? "point_r" : null, eyes: correct ? "eyes_happy" : "eyes_think", voice: correct ? "react_ok" : "react_no"});
+    if (window.AoiHost) window.AoiHost.say(full, {pose: correct ? "point_r" : null, eyes: correct ? "eyes_happy" : "eyes_think", voice: window.AoiHost.reactId(correct, !correct && priorMisses >= 1, session.streak)});
     quizTranscript.push(full);
     quizRenderTranscript();
   } else {
-    if (window.AoiHost) window.AoiHost.react(correct, q.explain, !correct && priorMisses >= 1);
+    if (window.AoiHost) window.AoiHost.react(correct, q.explain, !correct && priorMisses >= 1, session.streak);
     explain.className = "explain show";
     explain.innerHTML = '<b>' + (correct ? "Correct." : "Not quite.") + '</b> ' + q.explain;
   }
@@ -3143,6 +3177,7 @@ function addJournalEntry(text){
 window.AoiJournal = { add: addJournalEntry };
 function renderDaily(){
   setHeader("How's Your Day?", "Daily Chat");
+  renderGoals();
   var list = document.getElementById("journalList");
   var entries = loadJournal();
   document.getElementById("journalEmpty").hidden = entries.length > 0;
@@ -3156,6 +3191,77 @@ function renderDaily(){
   });
 }
 function esc_(s){ var d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+/* ---------- goals: Aoi asks what the user wants to achieve, keeps the list on this device, and
+   recommends from it. Without any AI each goal still gets a video search link and, when it matches
+   something built into this app, a shortcut to it; with chat available she recommends next steps
+   and videos in conversation (the list is passed into her chat instructions). ---------- */
+var GOALS_KEY = "aoi_goals_v1";
+function loadGoals(){ try{ var raw = localStorage.getItem(GOALS_KEY); return raw ? JSON.parse(raw) : []; }catch(e){ return []; } }
+function saveGoals(g){ try{ localStorage.setItem(GOALS_KEY, JSON.stringify(g)); }catch(e){} }
+var GOAL_SHORTCUTS = [
+  {re:/\b(ppl|pilot|fly|flying|flight|checkride|aviation)\b/i, label:"PPL Checkride Prep", go:function(){ openSubject("ppl"); }},
+  {re:/\b(japan|japanese|sing|singing)\b/i, label:"Japanese Pronunciation", go:function(){ document.getElementById("hubCardSinging").click(); }},
+  {re:/\b(cook|cooking|dish|dishes|recipe|food)\b/i, label:"Cook with Aoi", go:function(){ document.getElementById("hubCardCooking").click(); }},
+  {re:/\b(sell|sales|pitch|money|business)\b/i, label:"Sales Practice", go:function(){ document.getElementById("hubCardSales").click(); }},
+  {re:/\b(travel|antarctica|adventure|explore|geo|geography|map)\b/i, label:"Aoi's Day", go:function(){ document.getElementById("hubCardDaytrip").click(); }},
+  {re:/\b(bio|biology|anatomy|body|knowledge|learn)\b/i, label:"General Knowledge", go:function(){ openSubject("gk"); }}
+];
+function renderGoals(){
+  var goals = loadGoals(), list = document.getElementById("goalsList");
+  document.getElementById("goalsEmpty").hidden = goals.length > 0;
+  document.getElementById("goalsAskBtn").hidden = goals.length === 0;
+  list.innerHTML = "";
+  goals.forEach(function(g){
+    var row = document.createElement("div");
+    row.className = "goalRow" + (g.done ? " done" : "");
+    var cb = document.createElement("input"); cb.type = "checkbox"; cb.checked = !!g.done; cb.setAttribute("aria-label", "Done");
+    cb.addEventListener("change", function(){
+      var all = loadGoals(); all.forEach(function(x){ if (x.id === g.id) x.done = cb.checked; }); saveGoals(all);
+      if (cb.checked && window.AoiHost) window.AoiHost.line("goals_done");
+      renderGoals();
+    });
+    var mid = document.createElement("div"); mid.className = "gtext";
+    var t = document.createElement("div"); t.textContent = g.text; mid.appendChild(t);
+    var acts = document.createElement("div"); acts.className = "gacts";
+    var vid = document.createElement("a");
+    vid.href = "https://www.youtube.com/results?search_query=" + encodeURIComponent(g.text + " for beginners");
+    vid.target = "_blank"; vid.rel = "noopener"; vid.textContent = "Find videos";
+    acts.appendChild(vid);
+    GOAL_SHORTCUTS.forEach(function(sc){
+      if (!sc.re.test(g.text)) return;
+      var b = document.createElement("button"); b.type = "button"; b.textContent = "In this app: " + sc.label;
+      b.addEventListener("click", sc.go);
+      acts.appendChild(b);
+    });
+    var ask = document.createElement("button"); ask.type = "button"; ask.textContent = "Ask Aoi";
+    ask.addEventListener("click", function(){
+      if (window.AoiChat && window.AoiChat.openDaily) window.AoiChat.openDaily("Help me with this goal: " + g.text + ". What should I do next, and what videos should I look for?");
+    });
+    acts.appendChild(ask);
+    mid.appendChild(acts);
+    var del = document.createElement("button"); del.type = "button"; del.className = "gdel"; del.textContent = "\u00d7"; del.setAttribute("aria-label", "Remove goal");
+    del.addEventListener("click", function(){ saveGoals(loadGoals().filter(function(x){ return x.id !== g.id; })); renderGoals(); });
+    row.appendChild(cb); row.appendChild(mid); row.appendChild(del);
+    list.appendChild(row);
+  });
+  if (window.AoiHost && window.AoiHost.relayout) window.AoiHost.relayout();
+}
+document.getElementById("goalForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  var inp = document.getElementById("goalInput"), text = inp.value.trim();
+  if (!text) return;
+  var goals = loadGoals();
+  goals.push({id: String(Date.now()), text: text, done: false, t: Date.now()});
+  saveGoals(goals);
+  inp.value = "";
+  renderGoals();
+  if (window.AoiHost) window.AoiHost.line("goals_added");
+});
+document.getElementById("goalsAskBtn").addEventListener("click", function(){
+  if (window.AoiChat && window.AoiChat.openDaily) window.AoiChat.openDaily("Looking at my goals, what should I do next? Recommend a few things to try and videos to look for.");
+});
+window.AoiGoals = { list: loadGoals };
 document.getElementById("dailyOpenChatBtn").addEventListener("click", function(){
   if (window.AoiChat && window.AoiChat.openDaily) window.AoiChat.openDaily();
 });
@@ -3835,37 +3941,58 @@ var LINES = {
   hint_none:"That's all my hints for this one \u2014 trust your reasoning.",
   learn_intro:"Let's learn this bit by bit \u2014 tap me to move on.",
   learn_next:"Nice \u2014 here's the next point.",
-  learn_quiz:"That's the lesson \u2014 now a few questions to check it stuck."
+  learn_quiz:"That's the lesson \u2014 now a few questions to check it stuck.",
+  morning:"Good morning! What shall we start with today?",
+  afternoon:"Good work today \u2014 let's keep going this afternoon.",
+  evening:"Good evening. How was your day?",
+  miss_you:"Welcome home \u2014 I missed you!",
+  welcome_back:"Welcome back! What shall we do today?",
+  pick_anything:"Pick anything you like \u2014 I'll guide you.",
+  lets_begin:"Alright, let's begin!",
+  lets_go:"Ready? Let's go together!",
+  take_your_time:"Take your time. Call me when you're ready.",
+  ok2:"Nice \u2014 exactly right!",
+  ok3:"Correct! Well done.",
+  ok4:"Perfect!",
+  no2:"Hmm, so close. Let's look again.",
+  no3:"It's okay \u2014 you'll remember it next time.",
+  streak3:"Three in a row! Amazing!",
+  streak5:"Five in a row! You're on fire!",
+  goals_ask:"What goals would you like to achieve? Tell me.",
+  goals_added:"That's a great goal! Let's work on it together.",
+  goals_done:"Goal achieved \u2014 congratulations!",
+  exam_start:"Treat it like the real thing \u2014 sixty questions, let's go.",
+  missed_start:"Let's try the ones you missed again."
 };
+function reactId(correct, repeatMiss, streak){
+  if (correct){
+    if (streak === 3) return 'streak3';
+    if (streak === 5) return 'streak5';
+    return pick(['react_ok','ok2','ok3','ok4']);
+  }
+  return repeatMiss ? 'react_again' : pick(['react_no','no2','no3']);
+}
 function line(id, opts, silent){
   opts = opts || {};
   if (!silent) opts.voice = id;
   say(LINES[id], opts);
 }
-var HUB_LINES = ["hub1","hub2"], QUIZSELECT_LINES = ["quizsel1","quizsel2"], TEACHER_LINES = ["teacher1"],
-    SUBJECT_LINES = ["subj1","subj2"], THINK_LINES = ["think1","think2","think3"], COOKING_LINES = ["cook1","cook2"],
+var HUB_LINES = ["hub1","hub2","welcome_back","pick_anything"], QUIZSELECT_LINES = ["quizsel1","quizsel2"], TEACHER_LINES = ["teacher1"],
+    SUBJECT_LINES = ["subj1","subj2"], THINK_LINES = ["think1","think2","think3","take_your_time"], COOKING_LINES = ["cook1","cook2"],
     RECIPE_LINES = ["recipe1"], DAILY_LINES = ["daily1","daily2"], SALES_LINES = ["sales1","sales2"], SALES_DETAIL_LINES = ["salesd1"];
 
-/* ---------- hub greeting (real voice, Fish Audio) ----------
-   10 narrated clips exist under audio/intro/ (greeting_cold, welcome_back, pick_anything,
-   lets_begin, take_your_time, morning, afternoon, evening, miss_you, lets_go), generated ahead
-   of any actual design for using them. Keeping this simple: picks ONE time-of-day-appropriate
-   clip (morning/afternoon/evening, by the real local hour) and plays it once, alongside her
-   existing text greeting, the FIRST time the hub is shown this page load only -- hubGreetedThisLoad
-   is a plain in-memory flag (not localStorage), so it resets on every reload/app open and never
-   replays just because the user bounces back to the hub mid-session. The other 6 clips
-   (welcome_back/pick_anything/lets_begin/take_your_time/miss_you/lets_go) don't have a clean,
-   simple home yet -- left unused rather than forced in. */
+/* ---------- hub greeting ----------
+   The first hub line of a page load is a proper greeting, spoken and captioned to match: "I
+   missed you" after three or more days away, otherwise by time of day. hubGreetedThisLoad is
+   in-memory only, so it never repeats just because the user bounces back to the hub. */
 var hubGreetedThisLoad = false;
-function hubGreetingClip(){
+var LAST_VISIT_KEY = 'aoi_last_visit_v1';
+function hubGreetingId(){
+  var last = 0;
+  try{ last = +localStorage.getItem(LAST_VISIT_KEY) || 0; localStorage.setItem(LAST_VISIT_KEY, String(Date.now())); }catch(e){}
+  if (last && Date.now() - last > 3 * 86400000) return 'miss_you';
   var h = new Date().getHours();
   return h < 12 ? 'morning' : (h < 17 ? 'afternoon' : 'evening');
-}
-function playHubGreeting(){
-  if (hubGreetedThisLoad) return;
-  hubGreetedThisLoad = true;
-  if (!aoiVoiceOn()) return;
-  new Audio('audio/intro/' + hubGreetingClip() + '.mp3').play().catch(function(){});
 }
 
 window.AoiHost = {
@@ -3874,20 +4001,23 @@ window.AoiHost = {
     which live in a different <script> tag's own IIFE, can set --sub-reserve for their view */
   clearSubReserve: clearSubReserve,
   line: function(id, opts){ if (LINES[id]) line(id, opts); },
+  voice: playLineAudio,
+  reactId: reactId,
   relayout: function(){ updateAoiReserveSoon(); },
   onView: function(name){
     if (name === 'hub'){
-      /* The very first hub line of a page load is spoken by the time-of-day greeting clip instead. */
-      var greeting = !hubGreetedThisLoad;
-      line(pick(HUB_LINES), { pose: 'present_r', eyes: null }, greeting);
-      playHubGreeting();
+      if (!hubGreetedThisLoad){ hubGreetedThisLoad = true; line(hubGreetingId(), { pose: 'present_r', eyes: 'eyes_happy' }); }
+      else line(pick(HUB_LINES), { pose: 'present_r', eyes: null });
     }
     else if (name === 'quizSelect') line(pick(QUIZSELECT_LINES), { pose: 'point_r', eyes: null });
     else if (name === 'teacher') line(pick(TEACHER_LINES), { pose: 'present_l', eyes: 'eyes_think' });
     else if (name === 'subjectHome') line(pick(SUBJECT_LINES), { pose: 'point_r', eyes: null });
     else if (name === 'cooking') line(pick(COOKING_LINES), { pose: 'present_l', eyes: 'eyes_happy' });
     else if (name === 'recipe') line(pick(RECIPE_LINES), { pose: 'point_l', eyes: 'eyes_happy' });
-    else if (name === 'daily') line(pick(DAILY_LINES), { pose: 'present_r', eyes: 'eyes_happy' });
+    else if (name === 'daily'){
+      var noGoals = !(window.AoiGoals && window.AoiGoals.list().length);
+      line(noGoals ? 'goals_ask' : pick(DAILY_LINES), { pose: 'present_r', eyes: 'eyes_happy' });
+    }
     else if (name === 'sales') line(pick(SALES_LINES), { pose: 'point_r', eyes: 'eyes_think' });
     else if (name === 'salesDetail') line(pick(SALES_DETAIL_LINES), { pose: 'present_l', eyes: 'eyes_think' });
     else playLineAudio(null); /* paced lessons / quiz / learn drive her line themselves */
@@ -3895,10 +4025,9 @@ window.AoiHost = {
   think: function(){
     line(pick(THINK_LINES), { pose: null, eyes: 'eyes_think' });
   },
-  react: function(correct, explain, repeatMiss){
+  react: function(correct, explain, repeatMiss, streak){
     /* The full explanation renders in the card's own .explain box; her caption gets a short line. */
-    line(correct ? 'react_ok' : (repeatMiss ? 'react_again' : 'react_no'),
-      { pose: correct ? 'point_r' : null, eyes: correct ? 'eyes_happy' : 'eyes_think' });
+    line(reactId(correct, repeatMiss, streak), { pose: correct ? 'point_r' : null, eyes: correct ? 'eyes_happy' : 'eyes_think' });
   },
   celebrate: function(pass, scorePct){
     var text = pass
@@ -3993,7 +4122,9 @@ function studySystemPrompt(){
     '',
     'If the user asks about a subject that is NOT in the list above, say plainly it is not built into this app yet — do not invent quiz questions or claim content exists that does not. You can still chat normally about it; you just cannot quiz them on it here.',
     '',
-    'Never claim to remember something the user did not actually say earlier in this conversation.'
+    'Never claim to remember something the user did not actually say earlier in this conversation.',
+    '',
+    goalsPromptText() + ' When a video would help, never invent a video title, channel or URL: write a tappable search in exactly this form instead: [[yt:short search phrase]]. At most two per reply.'
   ].join('\n');
 }
 function cookingSystemPrompt(){
@@ -4009,10 +4140,18 @@ function cookingSystemPrompt(){
   }
   return lines.join('\n');
 }
+function goalsPromptText(){
+  var goals = (window.AoiGoals ? window.AoiGoals.list() : []).filter(function(g){ return !g.done; });
+  if (!goals.length) return 'They have not told you any goals yet, so at a natural moment ask what goals they would like to achieve (one friendly question, not an interview) and suggest they add them to the Goals list on the Daily Chat screen.';
+  return 'Their current goals, which they saved in the app, are: ' + goals.map(function(g){ return '"' + g.text + '"'; }).join('; ') + '. Keep these in mind and check in on them naturally.';
+}
 function dailySystemPrompt(){
   var lines = [
     'You are Aoi, the same friendly pixel-art host, but right now you are in Daily Chat mode in the "Aoi Teacher" app — this is NOT a study session, and nothing here should be routed to quizzes or lessons. Just be a warm, casual, curious conversational companion. Ask how the user\'s day went, listen, react genuinely, ask natural follow-ups. Keep replies short and conversational, like a text from a friend, not a lecture.',
-    'Never invent nav tags here, never suggest quizzing them, never claim to remember something they did not actually say earlier in this conversation.'
+    'Never invent nav tags here, never suggest quizzing them, never claim to remember something they did not actually say earlier in this conversation.',
+    '',
+    'You also care about what the user is working toward. ' + goalsPromptText() +
+    ' When it fits, recommend one or two concrete next steps or things to try. When a video would help, never invent a video title, channel or URL: instead write a search they can tap, in exactly this form: [[yt:short search phrase]] (the app turns it into a video search link). At most two such searches per reply.'
   ];
   if (window.AoiTrip){
     var dest = window.AoiTrip.today();
@@ -4152,7 +4291,10 @@ window.AoiChat = {
   hasKey: hasKey,
   ask: function(userContent){ return sendToProvider([{role:'user', content:userContent}]); },
   openCooking: function(recipe){ contextRecipe = recipe || null; openChat('cooking'); },
-  openDaily: function(){ openChat('daily'); },
+  openDaily: function(autoText){
+    openChat('daily');
+    if (autoText && hasKey()){ $input.value = autoText; $form.requestSubmit ? $form.requestSubmit() : $sendBtn.click(); }
+  },
   openSales: function(scenario){ contextScenario = scenario || null; openChat('sales'); }
 };
 
@@ -4178,10 +4320,29 @@ var $form = document.getElementById('chatForm');
 var $input = document.getElementById('chatInput');
 var $sendBtn = document.getElementById('chatSendBtn');
 
+/* Bubble text is built from DOM nodes, never innerHTML. The one bit of markup she can produce,
+   [[yt:search phrase]], becomes a link to a YouTube SEARCH for that phrase (she is told never to
+   invent a specific video), so a recommendation is always a real, tappable search. */
+var YT_RE = /\[\[yt:([^\]]{1,120})\]\]/g;
+function setBubbleText(div, text){
+  div.textContent = '';
+  var last = 0, m;
+  YT_RE.lastIndex = 0;
+  while ((m = YT_RE.exec(text))){
+    if (m.index > last) div.appendChild(document.createTextNode(text.slice(last, m.index)));
+    var a = document.createElement('a');
+    a.href = 'https://www.youtube.com/results?search_query=' + encodeURIComponent(m[1].trim());
+    a.target = '_blank'; a.rel = 'noopener';
+    a.textContent = '\u25B6 ' + m[1].trim();
+    div.appendChild(a);
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) div.appendChild(document.createTextNode(text.slice(last)));
+}
 function addBubble(role, text){
   var div = document.createElement('div');
   div.className = 'chatmsg ' + role;
-  div.textContent = text;
+  setBubbleText(div, text);
   $msgs.appendChild(div);
   $msgs.scrollTop = $msgs.scrollHeight;
   return div;
@@ -4197,8 +4358,16 @@ var OVERLAY_PANELS = [$panel, $settings, $jpTranscriptPanel, $daytripTranscriptP
    the .overlayPanel/#overlayBackdrop CSS) -- the double rAF lets the browser paint the "closed"
    state (hidden removed, .open not yet added) on one frame before adding .open on the next, which
    is what actually makes the transition play instead of popping straight to its end state. */
+var COARSE_POINTER = window.matchMedia('(pointer:coarse)');
+function dockForKeyboard(panelEl){ if (COARSE_POINTER.matches) panelEl.classList.add('kbd'); }
+document.addEventListener('focusin', function(e){
+  var t = e.target;
+  if (!t || !t.closest || !/^(INPUT|TEXTAREA)$/.test(t.tagName) || t.type === 'checkbox') return;
+  var panelEl = t.closest('.overlayPanel');
+  if (panelEl) dockForKeyboard(panelEl);
+});
 function showOverlayPanel(panelEl){
-  OVERLAY_PANELS.forEach(function(p){ if (p !== panelEl) p.hidden = true; });
+  OVERLAY_PANELS.forEach(function(p){ if (p !== panelEl){ p.hidden = true; p.classList.remove('kbd'); } });
   panelEl.hidden = false;
   $backdrop.hidden = false;
   requestAnimationFrame(function(){
@@ -4211,7 +4380,7 @@ function closeAllOverlays(){
   setTimeout(function(){
     /* Only hide a panel that's STILL closed -- if something reopened it in the meantime (a fast
        close-then-reopen tap), don't yank it back out from under that reopen. */
-    OVERLAY_PANELS.forEach(function(p){ if (!p.classList.contains('open')) p.hidden = true; });
+    OVERLAY_PANELS.forEach(function(p){ if (!p.classList.contains('open')){ p.hidden = true; p.classList.remove('kbd'); } });
     if (!$backdrop.classList.contains('open')) $backdrop.hidden = true;
   }, 250);
 }
@@ -4232,6 +4401,7 @@ function openChat(context){
   $saveJournalBtn.hidden = currentContext !== 'daily';
   renderHistory();
   $noKey.hidden = hasKey();
+  if (hasKey()) dockForKeyboard($panel); /* it is about to focus the text box */
   showOverlayPanel($panel);
   /* Focus after the slide-up transition finishes (250ms, see .overlayPanel.open above) rather
      than at a fixed 50ms -- that was firing well before the panel had visually settled, so the
@@ -4304,7 +4474,9 @@ $form.addEventListener('submit', function(e){
   sendToProvider(h.map(function(m){ return {role:m.role, content:m.content}; }))
     .then(function(reply){
       var clean = applyNavTags(reply);
-      thinking.textContent = clean || '(no reply text)';
+      setBubbleText(thinking, clean || '(no reply text)');
+      /* Her live replies have no recorded voice, so she at least reacts out loud when one lands. */
+      if (window.AoiHost && window.AoiHost.voice) window.AoiHost.voice(['chat_ack1','chat_ack2','chat_ack3'][Math.floor(Math.random() * 3)]);
       var h2 = loadHistory();
       h2.push({role:'assistant', content: reply});
       saveHistory(h2);

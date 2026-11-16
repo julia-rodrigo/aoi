@@ -14,6 +14,13 @@ main functions are being made solid first.
 - [ ] Voice for learn-module points and quiz explanations (hundreds of clips to record)
 - [ ] Test everything on a real phone, portrait and landscape
 - [ ] Main menu driven by a list, so new modes are one entry each
+- [x] Teacher tab split into sections (Claude Code, PPL Checkride, General Knowledge, Kitchen,
+      Sales); every module plays in the narrated lesson player, study modules end with a quiz
+- [x] Cooking: cook-along mode, one step at a time, no AI needed
+- [x] Sales: coached walkthrough of each customer, then roleplay practice
+- [x] Fact-check pass on all 669 quiz questions (23 corrected, including 3 wrong answer keys)
+- [ ] Have a flight instructor review the PPL bank before relying on it for the real test;
+      rules change (BasicMed was expanded by the 2024 FAA Reauthorization Act)
 
 ## Next: a model that helps with all of these
 

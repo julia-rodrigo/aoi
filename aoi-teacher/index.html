@@ -530,6 +530,66 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 .learnAsk p{margin:0 0 5px; font-size:13px; line-height:1.4;}
 .learnAsk p.ans{margin:0; font-weight:700; color:var(--good);}
 
+/* Cards are buttons, which take the system's button text colour unless told otherwise (white on a
+   phone in dark system mode, on a light card); the app's own colour must always win. */
+.card{color:var(--fg);}
+.card p{margin:0;}
+
+/* ---------- Teacher library + narrated lesson player ---------- */
+.libhead{display:flex; flex-direction:column; gap:4px; margin-bottom:10px;}
+.libhead p{margin:0; color:var(--muted); font-size:13px; line-height:1.45;}
+.seclist{display:flex; flex-direction:column; gap:8px;}
+.hubcard.seccard{flex-direction:row; align-items:center; gap:12px;}
+.seccard .stxt{display:flex; flex-direction:column; gap:3px; min-width:0;}
+.lic{width:44px; height:44px; display:grid; place-items:center; background:var(--surface-2); color:var(--accent-2); border:1.5px solid var(--line); flex:none;}
+.lic svg{width:26px; height:26px;}
+.modcard .mtop{display:flex; gap:7px; align-items:flex-start;}
+.modcard .mtop svg{width:17px; height:17px; color:var(--accent-2); flex:none; margin-top:1px;}
+.modcard .done{color:var(--good);}
+.lnav{display:flex; gap:10px; margin-top:14px;}
+.lnav .btn{padding:11px 14px; font-size:14px;}
+.lnav .btn.primary{flex:1;}
+.lnav[hidden]{display:none;}
+.lcard{display:flex; flex-direction:column; gap:10px;}
+.pop{animation:tutPop .4s ease-out both;}
+.lhero{display:flex; flex-direction:column; align-items:flex-start; gap:8px; padding:4px 0;}
+.lhero .lic{width:56px; height:56px;}
+.lhero .lic svg{width:32px; height:32px;}
+.lhero h3{font-size:21px; line-height:1.2;}
+.lhero p{margin:0; color:var(--muted); font-size:13.5px; line-height:1.45;}
+.lchips{display:flex; gap:6px; flex-wrap:wrap;}
+.lchip{font-size:11.5px; font-weight:700; padding:4px 9px; background:var(--surface-2); border:1px solid var(--line);}
+.lbtns{display:flex; gap:8px; flex-wrap:wrap;}
+.lbtns .btn{flex:1 1 140px; padding:11px 14px;}
+.examcard{border:1.5px solid var(--line); background:var(--surface-2); padding:12px; display:flex; flex-direction:column; gap:7px;}
+.elbl{font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--accent-2);}
+.examcard .eq{font-size:15px; font-weight:600; line-height:1.4;}
+.eopt{display:flex; align-items:center; gap:9px; padding:8px 10px; border:1px solid var(--line); background:var(--surface); font-size:13px; line-height:1.3;}
+.eopt .k{width:20px; height:20px; display:grid; place-items:center; border:1.5px solid var(--line); font-size:11px; font-weight:700; flex:none; font-family:var(--font-mono); color:var(--muted);}
+.eopt.ok{border-color:var(--good); background:var(--good-bg); font-weight:700;}
+.eopt.ok .k{background:var(--good); border-color:var(--good); color:var(--bg);}
+.eopt.ok::after{content:"\2713"; margin-left:auto; color:var(--good); font-weight:700; flex:none;}
+.eopt.no{opacity:.5;}
+.steplist{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:6px;}
+.steplist li{display:flex; gap:10px; padding:9px 10px; border:1px solid var(--line); background:var(--surface); font-size:13px; line-height:1.4; align-items:flex-start;}
+.steplist li .n{width:22px; height:22px; flex:none; display:grid; place-items:center; font-size:11.5px; font-weight:700; border:1.5px solid var(--line); font-family:var(--font-mono);}
+.steplist li.done{opacity:.5;}
+.steplist li.done .n{background:var(--good); border-color:var(--good); color:var(--bg);}
+.steplist li.now{border:2px solid var(--accent); background:var(--surface-2); font-weight:600; font-size:15px;}
+.steplist li.now .n{background:var(--accent); border-color:var(--accent); color:var(--accent-fg);}
+.steplist li.later{color:var(--muted);}
+.ingr{display:flex; flex-direction:column; gap:5px;}
+.ingr label{display:flex; gap:10px; align-items:center; padding:9px 10px; border:1px solid var(--line); background:var(--surface); font-size:14px; cursor:pointer;}
+.ingr input{width:18px; height:18px; flex:none; margin:0;}
+.ingr label.got{opacity:.5; text-decoration:line-through;}
+.persona{border:1.5px solid var(--line); background:var(--surface-2); padding:12px; display:flex; flex-direction:column; gap:8px;}
+.persona .who{display:flex; gap:10px; align-items:center;}
+.persona .av{width:42px; height:42px; display:grid; place-items:center; background:var(--accent); color:var(--accent-fg); font-weight:800; font-size:19px; flex:none;}
+.persona .who b{display:block; font-size:14.5px;}
+.persona .who div span{font-size:12px; color:var(--muted);}
+.persona p{margin:0; font-size:13.5px; line-height:1.45;}
+.persona .obj{border-left:3px solid var(--bad); padding:7px 10px; background:var(--surface); font-size:13.5px; line-height:1.4;}
+
 /* The chat button rides on her top-left corner (placed by layoutAoi()), so it reads as "talk to
    her" and never sits over the text box or a right-aligned button like Next. */
 #chatFab{ width:36px; height:36px; font-size:15px; left:var(--fab-x, 8px); top:var(--fab-y, 60vh); right:auto; bottom:auto; z-index:51; }
@@ -593,23 +653,17 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 
   <!-- TEACHER: picker (one real lesson so far; more will land here over time) -->
   <div id="view-teacher" hidden>
-    <div class="hubgrid">
-      <button class="hubcard" id="teacherCardClaudeCode" type="button">
-        <span class="badge" style="align-self:flex-start;">Teacher</span>
-        <h3>Claude Code on Your Phone</h3>
-      </button>
-    </div>
-    <div class="jp-section">
-      <h3>Her first real lesson</h3>
-      <p>This is the start of Aoi's narrated-lesson library, not the whole thing yet — one lesson today, more over time. She narrates in Japanese (her real voice, via Fish Audio), with the explanation shown in English as she goes — same as the rest of the app's dual-language material.</p>
-      <button class="btn primary" id="teacherStartBtn" type="button">Start the lesson</button>
-    </div>
+    <div id="teacherLib"></div>
   </div>
 
   <!-- TEACHER LESSON: Claude Code on your phone, narrated beat by beat in Japanese (real audio),
        English text on screen -- same paced-lesson pattern as Singing/Aoi's Day. -->
   <div id="view-teacher-lesson" hidden>
     <div id="teacherVisual"></div>
+    <div class="lnav" id="lessonNav">
+      <button class="btn ghost" id="lessonPrev" type="button">Back</button>
+      <button class="btn primary" id="lessonNext" type="button">Next</button>
+    </div>
   </div>
 
   <!-- COOKING: recipe library + detail, with an option to have Aoi talk it through -->
@@ -756,29 +810,6 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
     <button class="linkbtn" id="btnReset" type="button">Reset Progress</button>
 
     <div id="roadmapZone"></div>
-  </div>
-
-  <!-- LEARN: one bitesize point at a time, then questions on those same points -->
-  <div id="view-learn" hidden>
-    <div class="quizcard">
-      <div class="progressline">
-        <span id="learnCounter">Point 1 / 5</span>
-        <div class="track"><i id="learnProgressBar" style="width:0%"></i></div>
-        <span id="learnPart">Lesson 1 of 1</span>
-      </div>
-      <div class="qcat" id="learnCat">Category</div>
-      <div class="learnPoint" id="learnPoint"></div>
-      <div class="learnAsk">
-        <span class="lbl">How the test asks it</span>
-        <p id="learnQ"></p>
-        <span class="lbl">Answer</span>
-        <p class="ans" id="learnA"></p>
-      </div>
-      <div class="quizfoot">
-        <button class="btn ghost" id="learnBack" type="button">Back</button>
-        <button class="btn primary" id="learnNext" type="button">Next</button>
-      </div>
-    </div>
   </div>
 
   <!-- QUIZ -->
@@ -1047,16 +1078,16 @@ var PPL_CATS = [
 var PPL_QUESTIONS = [
   Q("regs1","regs","Under 14 CFR Part 61, what is the minimum age to be issued a private pilot certificate with airplane privileges?",["16 years old","17 years old","18 years old","21 years old"],1,"An applicant must be at least 17 years old for airplane, rotorcraft, powered-lift, or weight-shift-control aircraft privileges (16 for glider or balloon)."),
   Q("regs2","regs","A pilot who has not reached their 40th birthday on the date of the exam holds a third-class medical certificate. How many calendar months is it valid for private pilot operations?",["12 months","24 months","36 months","60 months"],3,"For a pilot under 40, a third-class medical certificate is valid for 60 calendar months from the month of the exam; it is 24 months for a pilot who is 40 or older."),
-  Q("regs3","regs","To act as pilot in command carrying passengers, within the preceding 90 days a pilot must have made at least how many takeoffs and landings in an aircraft of the same category and class?",["One","Three","Five","Ten"],1,"14 CFR 61.57 requires at least three takeoffs and three landings to a full stop within the preceding 90 days to carry passengers."),
-  Q("regs4","regs","Under BasicMed, what is the maximum certificated takeoff weight allowed for the aircraft being flown?",["4,000 pounds","6,000 pounds","9,000 pounds","12,500 pounds"],1,"BasicMed limits operations to aircraft authorized to carry no more than 6 occupants with a maximum certificated takeoff weight of 6,000 pounds or less."),
+  Q("regs3","regs","To act as pilot in command carrying passengers, within the preceding 90 days a pilot must have made at least how many takeoffs and landings in an aircraft of the same category and class?",["One","Three","Five","Ten"],1,"14 CFR 61.57 requires at least three takeoffs and three landings within the preceding 90 days, in an aircraft of the same category and class (and type, if a type rating is required), to carry passengers. In a tailwheel airplane the landings must be to a full stop."),
+  Q("regs4","regs","Under BasicMed, how often must a pilot complete the approved online medical education course?",["Every 12 calendar months","Every 24 calendar months","Every 48 calendar months","Only once"],1,"BasicMed requires completing an approved online medical education course every 24 calendar months, plus a physical exam with a state-licensed physician every 48 months, using the FAA's comprehensive medical examination checklist."),
   Q("regs5","regs","To carry passengers at night, the required takeoffs and landings to a full stop within the preceding 90 days must be made:",["In any aircraft category","In a simulator only","In an aircraft of the same category and class, with night takeoffs and landings","With an instructor on board"],2,"14 CFR 61.57 requires the night takeoffs and landings to a full stop to be in an aircraft of the same category and class (and type, if required) as the one to be flown."),
   Q("regs6","regs","How often must a pilot who does not meet an exception accomplish a flight review under 14 CFR 61.56?",["Every 12 calendar months","Every 24 calendar months","Every 36 calendar months","Only once, after certification"],1,"A flight review of at least 1 hour of flight training and 1 hour of ground training is required every 24 calendar months, with a logbook endorsement."),
   Q("regs7","regs","An emergency locator transmitter's battery must be replaced, or recharged if rechargeable, after it has been used for 1 cumulative hour, or when what percentage of its useful life has expired, whichever occurs first?",["10 percent","25 percent","50 percent","75 percent"],2,"14 CFR 91.207 requires ELT battery replacement after 1 cumulative hour of use, or when 50 percent of its useful life (or charge) has expired, whichever comes first."),
   Q("regs8","regs","For a VFR flight during the day, an airplane must carry enough fuel to fly to the first point of intended landing and, at normal cruising speed, fly after that for at least:",["10 minutes","30 minutes","45 minutes","60 minutes"],1,"14 CFR 91.151 requires a day VFR fuel reserve of at least 30 minutes beyond the point of intended landing."),
   Q("regs9","regs","For the same VFR flight flown at night, the required fuel reserve beyond the first point of intended landing is at least:",["15 minutes","30 minutes","45 minutes","90 minutes"],2,"At night, 14 CFR 91.151 requires a fuel reserve of at least 45 minutes at normal cruising speed."),
   Q("regs10","regs","Who has final authority and responsibility for the operation and safety of an aircraft during flight time?",["The dispatcher","Air traffic control","The pilot in command","The aircraft owner"],2,"14 CFR 91.3 states the pilot in command is directly responsible for, and is the final authority as to, the operation of the aircraft."),
-  Q("regs11","regs","Private pilots may share the operating expenses of a flight with their passengers, provided each person, including the pilot, pays no less than:",["A token amount set by the FBO","A pro rata share of the operating expenses, such as fuel, oil, airport expenditures, or rental fees","Nothing, since pilots may not share expenses","The full charter rate"],1,"14 CFR 61.113 allows a private pilot to share operating expenses with passengers as long as the pilot pays at least a pro rata share of those expenses."),
-  Q("regs12","regs","Under 14 CFR 61.113, a private pilot may generally NOT:",["Fly to get a meal with friends who pay their share of fuel","Act as pilot in command of an aircraft carrying passengers or property for compensation or hire","Log cross-country flight time","Act as a safety pilot for an instrument-rated pilot"],1,"Private pilots are generally prohibited from carrying passengers or property for compensation or hire, subject to specific limited exceptions such as pro rata expense sharing, certain charitable flights, and acting as a safety pilot."),
+  Q("regs11","regs","Private pilots may share the operating expenses of a flight with their passengers, provided the pilot pays no less than:",["A token amount set by the FBO","A pro rata share of the operating expenses, such as fuel, oil, airport expenditures, or rental fees","Nothing, since pilots may not share expenses","The full charter rate"],1,"14 CFR 61.113 allows a private pilot to share operating expenses with passengers as long as the pilot pays at least a pro rata share of those expenses."),
+  Q("regs12","regs","Under 14 CFR 61.113, a private pilot may generally NOT:",["Fly to get a meal with friends who pay their share of fuel","Act as pilot in command of an aircraft carrying passengers or property for compensation or hire","Log cross-country flight time","Act as a safety pilot for an instrument-rated pilot"],1,"Private pilots are generally prohibited from carrying passengers or property for compensation or hire. 14 CFR 61.113 lists narrow exceptions, such as pro rata expense sharing, flights incidental to a business, and certain charitable and search-and-location flights."),
   Q("regs13","regs","Which documents must be aboard an aircraft during flight, often remembered by the acronym AROW?",["Airworthiness certificate, Registration, Operating limitations, Weight and balance data","Avionics, Radio, Oxygen, Wheels","Altimeter, Radar, Oil, Wings","Airspeed, Rudder, Oil pressure, Windshield"],0,"AROW is a common memory aid for the required aircraft documents: Airworthiness certificate, Registration, Operating limitations (including the POH/AFM), and Weight and balance data."),
   Q("regs14","regs","Compliance with an Airworthiness Directive (AD) issued by the FAA is:",["Optional, at the owner's discretion","Mandatory, within the time or operating limits specified","Only required for aircraft used commercially","Only a recommendation"],1,"Airworthiness Directives are mandatory corrective actions issued by the FAA for safety-of-flight issues, and must be complied with as specified."),
   Q("regs15","regs","Except for certain exceptions, how often must most general aviation aircraft receive an annual inspection?",["Every 6 calendar months","Every 12 calendar months","Every 24 calendar months","Every 100 flight hours only"],1,"14 CFR 91.409 requires most aircraft to have an annual inspection within the preceding 12 calendar months to remain airworthy."),
@@ -1067,9 +1098,9 @@ var PPL_QUESTIONS = [
   Q("regs20","regs","Outside of congested areas, 14 CFR 91.119 generally requires an altitude no lower than:",["500 feet above the surface, except over open water or sparsely populated areas where 500 feet from any person, vessel, vehicle, or structure applies","1,000 feet above the surface everywhere","There is no minimum away from congested areas","2,000 feet above the surface everywhere"],0,"Over other than congested areas, the minimum safe altitude is 500 feet above the surface, except over open water or sparsely populated areas, where the aircraft may not be closer than 500 feet to any person, vessel, vehicle, or structure."),
   Q("regs21","regs","Supplemental oxygen must be used by the required minimum flight crew for that portion of flight at cabin pressure altitudes above 12,500 feet MSL up to and including 14,000 feet MSL that exceeds:",["Any duration at all","30 minutes","2 hours","There is no such requirement"],1,"14 CFR 91.211 requires the required minimum flight crew to use supplemental oxygen for that part of the flight at cabin pressure altitudes above 12,500 feet MSL up through 14,000 feet MSL that is of more than 30 minutes duration."),
   Q("regs22","regs","Above a cabin pressure altitude of 14,000 feet MSL, supplemental oxygen must be used by:",["No one","The required minimum flight crew, for the entire time at that altitude","Only passengers, not crew","Only on flights longer than 4 hours"],1,"Above 14,000 feet MSL cabin pressure altitude, the required minimum flight crew must use supplemental oxygen for the entire time at that altitude."),
-  Q("regs23","regs","Before any flight, 14 CFR 91.103 requires the pilot in command to become familiar with all available information concerning that flight. For a flight away from the vicinity of an airport, this specifically includes:",["Only the weather","Runway lengths at airports of intended use and alternates, and the aircraft's takeoff and landing distance data","Only the fuel price at the destination","Nothing beyond the weather briefing"],1,"For flights not in the vicinity of the departure airport, required preflight information specifically includes runway lengths at airports of intended use and the aircraft's takeoff and landing distance data, in addition to weather, NOTAMs, and fuel requirements."),
+  Q("regs23","regs","Before every flight, 14 CFR 91.103 requires the pilot in command to become familiar with all available information concerning that flight. For any flight, this specifically includes:",["Only the weather","Runway lengths at airports of intended use, and the aircraft's takeoff and landing distance data","Only the fuel price at the destination","Nothing beyond the weather briefing"],1,"For every flight, 91.103 requires runway lengths at airports of intended use and takeoff and landing distance data. For a flight under IFR or not in the vicinity of an airport, it also requires weather reports and forecasts, fuel requirements, alternatives available if the flight cannot be completed as planned, and any known traffic delays."),
   Q("regs24","regs","Dropping an object from an aircraft in flight, under 14 CFR 91.15, is:",["Always prohibited","Prohibited only over water","Allowed if reasonable precautions are taken to avoid injury or damage to persons or property","Only allowed by air carriers"],2,"14 CFR 91.15 permits dropping objects as long as reasonable precautions are taken to avoid injury or damage to persons or property on the surface."),
-  Q("regs25","regs","Under BasicMed, a pilot may NOT operate:",["At altitudes above 18,000 feet MSL or at indicated airspeeds exceeding 250 knots","Below 10,000 feet MSL","Within Class G airspace","During daylight hours only"],0,"BasicMed operations are limited to altitudes at or below 18,000 feet MSL and indicated airspeeds of 250 knots or less, among other limitations such as aircraft weight and occupant count."),
+  Q("regs25","regs","Under BasicMed, a pilot may NOT operate:",["At altitudes above 18,000 feet MSL or at indicated airspeeds exceeding 250 knots","Below 10,000 feet MSL","Within Class G airspace","During daylight hours only"],0,"BasicMed operations are limited to altitudes at or below 18,000 feet MSL and indicated airspeeds of 250 knots or less, along with other limits, including that the flight may not be for compensation or hire."),
   Q("regs26","regs","Under 14 CFR 91.13, operating an aircraft in a careless or reckless manner so as to endanger the life or property of another is:",["Allowed if no one is injured","Prohibited","Only prohibited near airports","Only prohibited at night"],1,"14 CFR 91.13 broadly prohibits careless or reckless operation of an aircraft that endangers the life or property of another."),
   Q("regs27","regs","A pilot's logbook entry for a flight should generally include the date, aircraft type and identification, and:",["The route flown and flight time, including the relevant conditions of flight","Only the pilot's name","Only the total hours on the airframe","The weather at the destination only"],0,"Logbook entries document the date, aircraft make, model and identification, route of flight, and flight time, broken out by relevant categories such as day, night, actual or simulated instrument, and other conditions of flight."),
   Q("regs28","regs","To act as pilot in command of a complex airplane (retractable gear, flaps, and a controllable-pitch propeller), a pilot generally needs:",["No additional training or endorsement","A logbook endorsement from an authorized instructor certifying required training","An additional type rating in every case","A commercial pilot certificate"],1,"14 CFR 61.31 requires a logbook endorsement from an authorized instructor after receiving the required ground and flight training for complex, high-performance, tailwheel, pressurized, and certain other aircraft."),
@@ -1090,14 +1121,14 @@ var PPL_QUESTIONS = [
   Q("airspace10","airspace","Flight within a Military Operations Area (MOA) by a VFR pilot is:",["Prohibited at all times","Permitted, but pilots should exercise caution for military traffic","Only allowed with a military escort","Only allowed above 18,000 feet"],1,"MOAs are not restricted airspace; VFR flight is permitted, but pilots should check for activity and exercise caution due to military training operations."),
   Q("airspace11","airspace","Flight within a Prohibited Area is:",["Allowed with caution","Not allowed at any time, for any aircraft, without specific authorization","Allowed only at night","The same as a Restricted Area"],1,"Prohibited areas are established for security or other reasons, and flight is not allowed within them without specific authorization."),
   Q("airspace12","airspace","Flight within a Restricted Area:",["Is always completely forbidden to civil aircraft","May be hazardous, and requires permission from the controlling agency when the area is active","Requires no special consideration","Is only closed on weekends"],1,"Restricted areas contain unusual, often invisible, hazards such as artillery firing; VFR flight may require clearance from the controlling agency when the area is active, as shown by its activity times on the chart or in NOTAMs."),
-  Q("airspace13","airspace","Warning Areas are established:",["Only over land","Over international waters, to warn pilots of potential hazards such as military activity","Around every airport","Only in Class A airspace"],1,"Warning areas extend outward from the U.S. coast and contain activity that could be hazardous to nonparticipating aircraft, in international airspace."),
+  Q("airspace13","airspace","Warning Areas are established:",["Only over land","Beyond 3 nautical miles from the U.S. coast, over domestic or international waters, to warn of hazards such as military activity","Around every airport","Only in Class A airspace"],1,"A warning area extends from 3 nautical miles outward from the U.S. coast, over domestic or international waters or both, and contains activity that may be hazardous to nonparticipating aircraft."),
   Q("airspace14","airspace","Alert Areas on a sectional chart depict:",["Permanently prohibited airspace","Areas with a high volume of pilot training or unusual aerial activity, requiring extra vigilance","Areas reserved exclusively for gliders","Airspace with no traffic"],1,"Alert areas inform pilots of areas with a high volume of pilot training or an unusual type of aerial activity; all operations follow normal regulations, but pilots should be especially alert."),
   Q("airspace15","airspace","Military Training Routes (MTRs) are established for:",["Low-altitude, high-speed military training flights","Civilian flight training only","Commercial airline routes","Weather balloon launches"],0,"MTRs are developed for military flight training, often at speeds in excess of 250 knots and at low altitude; VFR pilots should be especially alert when crossing these routes, depicted on sectional charts."),
   Q("airspace16","airspace","A Victor airway, based on VOR or VORTAC facilities, is a corridor of Class E airspace that unless otherwise specified extends:",["From the surface to 60,000 feet","4 nautical miles on each side of the centerline, from 1,200 feet AGL up to but not including 18,000 feet MSL","Only above FL600","Only within Class B airspace"],1,"Victor airways are typically 8 nautical miles wide, 4 nautical miles each side of centerline, extending from 1,200 feet AGL up to but not including 18,000 feet MSL, the floor of Class A airspace."),
   Q("airspace17","airspace","The Mode C veil is the airspace within approximately how many nautical miles of a Class B primary airport, within which an operating Mode C transponder is generally required?",["5 nautical miles","10 nautical miles","30 nautical miles","60 nautical miles"],2,"14 CFR 91.215 generally requires an operating Mode C transponder within 30 nautical miles of a Class B primary airport, from the surface up to 10,000 feet MSL, known as the Mode C veil."),
   Q("airspace18","airspace","On a sectional chart, Class B airspace boundaries are depicted with:",["Thin dashed blue lines","Solid blue lines, with each layer labeled with its floor and ceiling altitudes","Red dots","Class B airspace is never shown on sectional charts"],1,"Class B airspace is depicted with solid blue lines, often as concentric rings or irregular shapes, each layer labeled with its floor and ceiling altitudes."),
   Q("airspace19","airspace","A VFR pilot wanting to transit Class B airspace without stopping at the primary airport may sometimes be able to use a charted:",["Restricted corridor requiring no coordination at all","VFR transition route or flyway, following the procedures depicted on the chart or published by the facility","Military Training Route","Any altitude of their choosing with no coordination"],1,"Some Class B airspace areas publish VFR flyways or transition routes that allow VFR traffic to move through or around the area following specific published procedures; pilots should always check current charts and local procedures."),
-  Q("airspace20","airspace","NOTAMs (Notices to Airmen) are used to inform pilots of:",["Permanent regulatory changes only","Temporary conditions, hazards, or changes that could affect flight safety, such as runway closures or new TFRs","Only weather forecasts","Only fuel prices"],1,"NOTAMs provide timely information about temporary or time-critical conditions, such as runway closures, equipment outages, or new temporary flight restrictions, that could affect a flight's safety."),
+  Q("airspace20","airspace","NOTAMs (Notices to Air Missions, formerly Notices to Airmen) are used to inform pilots of:",["Permanent regulatory changes only","Temporary conditions, hazards, or changes that could affect flight safety, such as runway closures or new TFRs","Only weather forecasts","Only fuel prices"],1,"NOTAMs provide timely information about temporary or time-critical conditions, such as runway closures, equipment outages, or new temporary flight restrictions, that could affect a flight's safety."),
   Q("airspace21","airspace","Class B, C, and D airspace designations are typically centered on:",["The busiest, most complex airports with air traffic control services","Only military bases","Rural, uncontrolled airfields","National parks"],0,"Classes B, C, and D airspace are established around airports based on traffic volume and complexity, with Class B around the busiest airports and Class D around smaller towered airports."),
   Q("airspace22","airspace","When flying near, but not in, Class B airspace, a VFR pilot should be especially alert for:",["No special concern is needed","Heavy traffic converging toward the Class B primary airport, including large transport aircraft","Only military traffic","Only weather balloons"],1,"Airspace adjacent to Class B often sees significant traffic funneling toward the primary airport, so pilots should maintain extra vigilance even when remaining outside the Class B boundaries."),
   Q("airspace23","airspace","Controlled airspace is defined as airspace where:",["ATC provides some level of service, such as separation for IFR traffic and, in some classes, VFR traffic","No pilot may fly without a clearance","Only military aircraft may operate","Radio communication is prohibited"],0,"Controlled airspace, Classes A through E, is where ATC provides varying levels of service, from full positive control in Class A to more limited services in Class E; uncontrolled airspace is Class G."),
@@ -1111,7 +1142,7 @@ var PPL_QUESTIONS = [
   Q("wx3","wx","Unstable air is generally characterized by:",["Stratus clouds and poor visibility","Smooth, steady winds","Cumulus-type clouds, good visibility, and turbulence","Fog and drizzle"],2,"Unstable air favors vertical development, producing cumulus clouds, turbulence, and typically good visibility away from showers."),
   Q("wx4","wx","The passage of a fast-moving cold front is typically marked by:",["A gradual wind shift and warming","An abrupt wind shift, a temperature drop, and a possibility of thunderstorms","Clear skies for the next 48 hours","Rising dewpoint with no cloud change"],1,"Cold fronts often bring a sharp wind shift and falling temperatures behind the front; if the air is moist and unstable, showers or thunderstorms can form along the boundary."),
   Q("wx5","wx","Density altitude increases, reducing aircraft performance, with increases in:",["Barometric pressure only","Temperature, humidity, and field elevation","Field elevation alone","Wind speed"],1,"High temperature, high humidity, and high field elevation all raise density altitude, which reduces engine power, lift, and propeller efficiency."),
-  Q("wx6","wx","In a METAR, the group 10008KT indicates:",["Wind from 100 degrees true at 8 knots","Wind from 100 degrees magnetic at 8 knots","Visibility of 10 miles with a wind of 08 knots","Temperature 10, dewpoint 8"],1,"METAR wind direction is reported in degrees magnetic, so 10008KT means wind from 100 degrees magnetic at 8 knots."),
+  Q("wx6","wx","In a METAR, the group 10008KT indicates:",["Wind from 100 degrees true at 8 knots","Wind from 100 degrees magnetic at 8 knots","Visibility of 10 miles with a wind of 08 knots","Temperature 10, dewpoint 8"],0,"METAR and TAF wind direction is reported in degrees TRUE, so 10008KT means wind from 100 degrees true at 8 knots. Winds given by the tower or on ATIS are in degrees magnetic, matching the runway numbers."),
   Q("wx7","wx","The standard atmosphere lapse rate for temperature is approximately:",["1 degree C per 1,000 feet","2 degrees C per 1,000 feet","5 degrees C per 1,000 feet","10 degrees C per 1,000 feet"],1,"Standard temperature decreases about 2 degrees Celsius (3.5 degrees Fahrenheit) for every 1,000 feet of altitude gained."),
   Q("wx8","wx","A Terminal Aerodrome Forecast (TAF) typically covers a forecast period of about:",["6 hours","12 hours","24 to 30 hours","72 hours"],2,"TAFs are issued several times a day and forecast conditions at an airport for roughly 24 to 30 hours."),
   Q("wx9","wx","A microburst is a hazard primarily because it produces:",["A slow, predictable headwind increase","A strong, localized downdraft with rapidly shifting wind shear near the surface","Only light turbulence above 10,000 feet","A steady crosswind with no vertical component"],1,"Microbursts produce an intense downdraft that spreads out at the surface, creating a strong headwind followed by a strong tailwind, a severe wind-shear hazard on approach or departure."),
@@ -1232,10 +1263,10 @@ var PPL_QUESTIONS = [
   Q("nav2","nav","A VOR radial is best described as a magnetic course that is oriented:",["FROM the station","TO the station only","Perpendicular to the station","Only usable within 5 miles of the station"],0,"A VOR radial is a magnetic course measured outward FROM the station; there are 360 radials, one for each degree."),
   Q("nav3","nav","The TO/FROM indicator on a VOR receiver shows:",["Whether the aircraft is on the correct heading","Whether the selected course, if flown, would take the aircraft to or from the station","The aircraft's groundspeed","The distance to the station"],1,"TO/FROM simply tells the pilot whether flying the selected course would lead toward or away from the station; it does not indicate heading or track directly."),
   Q("nav4","nav","Magnetic variation is best described as:",["The angle between true north and magnetic north at a given location","Compass error caused by the aircraft's own equipment","The difference between indicated and true airspeed","A correction applied for wind drift"],0,"Variation is the angular difference between true north and magnetic north, which changes with location; deviation, by contrast, is compass error caused by the aircraft's own magnetic influences."),
-  Q("nav5","nav","Starting from true course, the correct order of corrections used to arrive at a compass heading is:",["Apply variation to get magnetic course, then deviation to get compass heading","Apply deviation first, then variation","Apply wind correction only, ignoring variation and deviation","Apply magnetic variation twice"],0,"True course, corrected for wind to get true heading, is adjusted by variation to get magnetic heading, then by deviation to get the compass heading to fly."),
+  Q("nav5","nav","Starting from true course, the correct order of corrections used to arrive at a compass heading is:",["Correct for wind to get true heading, then variation to get magnetic heading, then deviation to get compass heading","Apply deviation first, then variation, then wind","Apply wind correction only, ignoring variation and deviation","Apply magnetic variation twice"],0,"True course, corrected for wind, gives true heading; adding or subtracting variation gives magnetic heading; correcting that for deviation, from the compass correction card, gives the compass heading to fly."),
   Q("nav6","nav","Pilotage is navigation primarily by:",["Reference to visible landmarks","Radio navigation aids alone","GPS satellite signals alone","Dead reckoning calculations alone"],0,"Pilotage means navigating by visually matching ground features to a chart, as opposed to dead reckoning, which relies on computed heading, time, speed, and wind."),
   Q("nav7","nav","WAAS (Wide Area Augmentation System) primarily improves GPS navigation by:",["Increasing fuel efficiency","Improving accuracy and integrity, enabling approaches with vertical guidance","Eliminating the need for a sectional chart","Providing onboard weather radar imagery"],1,"WAAS augments GPS signals to improve accuracy and provide integrity monitoring, enabling GPS approaches with vertical guidance, such as LPV approaches."),
-  Q("nav8","nav","At an uncontrolled civilian land airport, a rotating beacon showing alternating white and green flashes indicates:",["A lighted heliport","A military airport","A lighted civilian land airport","A seaplane base"],2,"Alternating white and green flashes mark a lighted civilian land airport; other combinations (such as white-yellow for water airports) identify other facility types."),
+  Q("nav8","nav","An airport rotating beacon showing alternating white and green flashes indicates:",["A lighted heliport","A military airport","A lighted civilian land airport","A seaplane base"],2,"Alternating white and green flashes mark a lighted civilian land airport; other combinations (such as white-yellow for water airports) identify other facility types."),
   Q("nav9","nav","Aviation widely uses Coordinated Universal Time, or Zulu time, primarily to:",["Simplify fuel calculations","Avoid confusion among pilots and controllers operating across different time zones","Replace the need for a clock","Calculate magnetic variation"],1,"Using a single time reference, UTC (Zulu), avoids confusion that would arise from pilots and controllers in different local time zones communicating about schedules and times."),
   Q("nav10","nav","A wind correction angle is applied to the:",["True airspeed, to obtain groundspeed","True course, to determine the heading needed to compensate for wind drift","Altimeter setting","Magnetic variation value"],1,"The wind correction angle is added to or subtracted from the course to determine the heading the pilot must fly to track the intended course over the ground despite wind drift."),
   Q("nav11","nav","On a sectional chart, an airport symbol depicted in blue, rather than magenta, indicates:",["A restricted airport","An airport with an operating control tower","A private airport","A seaplane base"],1,"Blue airport symbols on a sectional chart denote airports with an operating control tower; magenta denotes non-towered airports."),
@@ -1257,7 +1288,7 @@ var PPL_QUESTIONS = [
   Q("nav27","nav","A VFR pilot using pilotage to navigate cross-country should choose checkpoints that are spaced:",["Exactly 100 miles apart regardless of terrain","Close enough together to confirm progress regularly, without being so close that they clutter the plan","Only at the departure and destination airports, with no intermediate points","Randomly, with no particular spacing consideration"],1,"Checkpoints should be spaced closely enough to regularly confirm the flight's progress and catch navigation errors early, without being so frequent that tracking them becomes a distraction from flying the airplane."),
   Q("nav28","nav","A time, speed, and distance calculation in dead reckoning navigation is used primarily to estimate:",["The aircraft's fuel price","How long it will take to cover a given distance at a known groundspeed, or vice versa","The magnetic variation at a location","The aircraft's stall speed"],1,"Time, speed, and distance calculations let a pilot estimate time en route for a given distance and groundspeed, a core skill in dead reckoning navigation."),
   Q("nav29","nav","Drift, the lateral displacement of an aircraft from its intended course caused by wind, is corrected for by:",["Ignoring the wind entirely","Applying a wind correction angle to the heading so the aircraft's actual track over the ground matches the intended course","Flying at a different altitude only","Changing the destination"],1,"A wind correction angle offsets the heading from the course by an amount calculated to counteract wind drift, so the aircraft's actual ground track follows the intended course despite the wind."),
-  Q("nav30","nav","Sectional charts are updated and reissued on a cycle of approximately every:",["28 days","6 months","2 years","10 years"],1,"Sectional charts are typically revised and reissued on a cycle of about every 6 months, so pilots should check that they are using a current edition before flight."),
+  Q("nav30","nav","Sectional charts are updated and reissued on a cycle of approximately every:",["28 days","56 days","6 months","2 years"],1,"Since 2021, FAA sectional and terminal area charts are revised every 56 days, so pilots should check that they are using a current edition before flight."),
   Q("nav31","nav","The term ground track refers to:",["The aircraft's actual path over the ground, as opposed to its heading through the air","The compass heading the pilot is flying","The aircraft's altitude","The runway the aircraft departed from"],0,"Ground track is the actual path the aircraft follows over the ground, which can differ from its heading through the air due to wind drift; course is the intended ground track, and track is the actual resulting path."),
 
   Q("human1","human","Early symptoms of hypoxia can include:",["Sharpened vision and increased alertness","Euphoria and impaired judgment, with cyanosis, or bluish skin, appearing in later stages","Immediate loss of consciousness with no warning","Increased appetite"],1,"Hypoxia often first produces a false sense of well-being and impaired judgment before more serious symptoms, such as cyanosis and eventual unconsciousness, develop."),
@@ -1306,7 +1337,7 @@ var PPL_QUESTIONS = [
   Q("instr16","instr","The outside air temperature, or OAT, gauge is useful to a pilot for, among other things:",["Determining carburetor icing probability and calculating true airspeed and density altitude","Setting the altimeter","Checking oil pressure","Tuning the radio"],0,"OAT readings help a pilot assess the risk of carburetor icing and are also an input for computing density altitude and true airspeed."),
   Q("instr17","instr","In an airplane with a constant-speed propeller, the manifold pressure gauge indicates:",["Engine RPM","The absolute pressure of the fuel-air mixture in the intake manifold, an indication of engine power output","Oil temperature","Outside air pressure only, unrelated to the engine"],1,"The manifold pressure gauge measures intake manifold pressure, which, together with RPM, is used to set and monitor engine power in a constant-speed propeller installation."),
   Q("instr18","instr","A stall warning system, such as a horn or light, is typically triggered by:",["A direct measurement of airspeed dropping below a set value","A sensor, such as a vane or pressure port, detecting the approach of the critical angle of attack, generally a few knots before the actual stall","The landing gear position","The flap position only"],1,"Most stall warning systems use a sensor near the wing's leading edge that detects the airflow changes as the wing nears its critical angle of attack, providing an audible or visual warning shortly before the actual stall."),
-  Q("instr19","instr","If the pitot tube becomes blocked but its associated drain hole remains open, the airspeed indicator in flight will tend to:",["Continue reading normally with no error","Act like an altimeter, with indicated airspeed increasing during a climb and decreasing during a descent, independent of actual speed","Immediately drop to zero and stay there","Read accurately only above 10,000 feet"],1,"With the pitot tube blocked but its drain hole open, trapped pressure causes the airspeed indicator to behave similarly to an altimeter, with indications rising during a climb and falling during a descent regardless of the airplane's actual airspeed."),
+  Q("instr19","instr","If both the pitot tube's ram-air opening and its drain hole become blocked while the static port stays open, the airspeed indicator in flight will tend to:",["Continue reading normally with no error","Act like an altimeter, with indicated airspeed increasing during a climb and decreasing during a descent, independent of actual speed","Immediately drop to zero and stay there","Read accurately only above 10,000 feet"],1,"With the ram-air opening and drain hole both blocked, the pressure trapped in the pitot line stays fixed, so the airspeed indicator acts like an altimeter: it reads higher in a climb and lower in a descent regardless of actual airspeed. If only the ram-air opening is blocked and the drain hole stays open, the trapped pressure bleeds off and the indication drops toward zero."),
   Q("instr20","instr","A glass cockpit, as opposed to a traditional set of analog instruments, typically presents flight information through:",["Mechanical gauges only","Electronic flat-panel displays integrating multiple sources of flight, engine, and navigation information","No visual display at all, audio only","A single analog altimeter"],1,"A glass cockpit uses electronic displays, often called a Primary Flight Display and Multi-Function Display, to integrate and present flight, engine, and navigation information in a digital format."),
   Q("instr21","instr","A Primary Flight Display (PFD) in a glass cockpit typically combines which traditional instruments into one display?",["Only the fuel gauge","Attitude, airspeed, altitude, heading, and often vertical speed and turn information","Only the tachometer","Only the compass"],1,"A PFD typically integrates the functions of the attitude indicator, airspeed indicator, altimeter, heading indicator, vertical speed indicator, and turn coordinator into a single electronic display."),
   Q("instr22","instr","An angle of attack (AOA) indicator, increasingly common in modern light aircraft, directly displays:",["The aircraft's groundspeed","How close the wing is to its critical angle of attack, regardless of airspeed or weight","The outside air temperature","The magnetic heading"],1,"An AOA indicator shows the wing's actual angle of attack, giving a more direct warning of an impending stall than airspeed alone, since stall is fundamentally a function of angle of attack, not airspeed."),
@@ -1332,10 +1363,10 @@ var PPL_QUESTIONS = [
   Q("comm14","comm","The recommended VFR traffic pattern entry at many non-towered airports is to join the pattern:",["On a long final approach","At a 45-degree angle to the downwind leg, at pattern altitude","Directly over midfield at pattern altitude with no other guidance","By flying straight into the base leg from any direction"],1,"A commonly recommended procedure is to enter the traffic pattern on a 45-degree angle to the downwind leg at pattern altitude, which helps pilots see and be seen by other pattern traffic."),
   Q("comm15","comm","A Flight Service Station (FSS) primarily provides pilots with services such as:",["Issuing takeoff and landing clearances","Weather briefings, flight plan filing and closing, and in-flight advisories","Air traffic separation in Class B airspace","Aircraft maintenance"],1,"Flight Service Stations provide pilot services including preflight weather briefings and filing and closing VFR flight plans; they do not provide air traffic control separation."),
   Q("comm16","comm","The phone number widely associated with obtaining a telephone weather briefing from Flight Service is commonly remembered as:",["1-800-WX-BRIEF","911","1-800-FLY-SAFE","122.95"],0,"1-800-WX-BRIEF is the long-standing phone number pilots use to reach Flight Service for a weather briefing or to file a flight plan by phone."),
-  Q("comm17","comm","In standard ATC phraseology, an altitude of 4,500 feet may correctly be spoken as:",["\"Four thousand five hundred\" only","\"Forty-five hundred\" only","Either \"four thousand five hundred\" or \"forty-five hundred\"","Neither form is considered standard phraseology"],2,"Standard phraseology allows altitudes to be stated either as, for example, \"four thousand five hundred\" or \"forty-five hundred,\" both of which are commonly used and understood."),
+  Q("comm17","comm","In standard ATC phraseology (AIM 4-2-9), an altitude of 4,500 feet is spoken as:",["\"Four thousand five hundred\"","\"Forty-five hundred\"","\"Four point five thousand\"","\"Four five zero zero\""],0,"Below 18,000 feet MSL, the AIM says to state the separate digits of the thousands plus the hundreds, so 4,500 is \"four thousand five hundred\" and 12,500 is \"one two thousand five hundred.\" \"Forty-five hundred\" is common in casual use but is not the standard form."),
   Q("comm18","comm","If a pilot only hears part of an ATC transmission due to another aircraft transmitting at the same time, a blocked transmission, the pilot should:",["Assume the full instruction and comply anyway","Advise ATC that the transmission was blocked and request it be repeated","Ignore it and continue as before","Switch to a different frequency without telling ATC"],1,"If a transmission is blocked or not fully understood, the pilot should tell the controller it was blocked, or simply say \"say again,\" rather than guessing at an incomplete or garbled instruction."),
   Q("comm19","comm","When a controller says \"radar service terminated,\" this generally means:",["The flight is now in distress","ATC will no longer provide radar-based traffic advisories or separation services for that segment of flight","The transponder has failed","The flight must land immediately"],1,"Radar service terminated tells the pilot that ATC will no longer be providing radar services, such as traffic advisories, for that portion of the flight, often issued as an aircraft leaves radar coverage or a particular type of airspace."),
-  Q("comm20","comm","The term roger in radio communications means:",["I will comply with your instruction","I have received and understood your last transmission, which does not mean yes or that the pilot will comply","Affirmative","Please repeat"],1,"Roger means only that the last transmission was received and understood; it does not indicate agreement or that the instruction will be complied with, which is instead conveyed by wilco or an explicit readback."),
+  Q("comm20","comm","The term roger in radio communications means:",["I will comply with your instruction","I have received all of your last transmission; it does not mean yes or that I will comply","Affirmative","Please repeat"],1,"Roger means only that the last transmission was received; it should not be used to answer a yes-or-no question. Agreement is \"affirmative\", and \"wilco\" means will comply."),
   Q("comm21","comm","Wilco in radio communications means:",["I did not understand your message","I will comply with your message","Please stand by","Negative"],1,"Wilco, short for will comply, indicates the pilot has received the message, understands it, and will comply with it."),
   Q("comm22","comm","When unable to comply with an ATC instruction, a pilot should:",["Simply ignore the instruction without comment","Advise ATC as soon as possible, stating unable and the reason if practical","Comply anyway regardless of safety","Switch to a different frequency without telling ATC"],1,"If a pilot cannot comply with an instruction, standard practice is to advise ATC promptly, stating unable and, if practical, a brief reason, so the controller can adjust accordingly."),
   Q("comm23","comm","ATIS broadcasts are typically identified by a phonetic alphabet letter, such as Information Alpha, that:",["Never changes once assigned","Changes each time the information is updated, so a pilot can confirm they have the latest version","Indicates the active runway only","Indicates the pilot's call sign"],1,"The ATIS identifier letter changes each time the broadcast is updated, allowing pilots and controllers to quickly confirm whether a pilot has the current information."),
@@ -1353,7 +1384,7 @@ var PPL_QUESTIONS = [
   Q("airport7","airport","Runway numbers are derived from the runway's:",["Length, in thousands of feet","Magnetic heading, rounded to the nearest 10 degrees with the last digit dropped","True heading divided by 2","Elevation above sea level"],1,"A runway's two-digit number represents its approximate magnetic heading, rounded to the nearest 10 degrees and with the final zero dropped, for example Runway 27 for a heading near 270 degrees."),
   Q("airport8","airport","A displaced threshold on a runway means:",["The entire runway is permanently closed","The pavement before the threshold may be used for taxiing, and sometimes takeoff, but not for landing","Only helicopters may use that portion","The runway number must be repainted"],1,"A displaced threshold moves the landing threshold farther down the runway, typically because of an obstacle; the pavement before it often remains usable for taxi and sometimes takeoff."),
   Q("airport9","airport","At a non-towered airport without a specifically assigned CTAF, pilots commonly self-announce position reports on:",["Ground control","MULTICOM frequency 122.9","121.5 exclusively","123.45 for all operations"],1,"122.9 MHz, the MULTICOM frequency, is commonly used at airports without a dedicated CTAF for pilots to self-announce position and intentions."),
-  Q("airport10","airport","At a towered airport, a pilot must receive explicit clearance before:",["Starting the engine","Taxiing onto or across any active runway","Checking the ATIS","Performing a preflight inspection"],1,"Crossing or entering an active runway at a towered airport requires explicit clearance from ATC, a critical safety item to prevent runway incursions."),
+  Q("airport10","airport","At a towered airport, a pilot must receive explicit clearance before:",["Starting the engine","Entering or crossing any runway, active or not","Checking the ATIS","Performing a preflight inspection"],1,"At a towered airport an explicit ATC clearance is required to enter or cross any runway, whether or not it is in use; this has been FAA policy since 2010 to prevent runway incursions."),
   Q("airport11","airport","A red airport sign with white lettering, such as one marking a runway holding position, indicates:",["General taxi directions","A mandatory instruction that must not be crossed without clearance","A non-movement area boundary with no restrictions","A VOR receiver checkpoint"],1,"Red signs with white inscriptions denote mandatory instructions, most commonly runway holding position signs, which a pilot must not cross without an explicit ATC clearance at a towered airport."),
   Q("airport12","airport","A yellow airport sign with black lettering or arrows is generally used to show:",["Mandatory holding instructions","Direction or information, such as the designation of taxiways leading out of an intersection","Only runway numbers","Restricted airspace boundaries"],1,"Yellow signs with black inscriptions are direction signs, showing the designation of taxiways leading out of an intersection, or information signs."),
   Q("airport13","airport","A black sign with a yellow inscription at an airport typically indicates:",["A mandatory runway holding position","A location sign, confirming the taxiway or runway the aircraft is currently on","A frequency change reminder","A fuel truck parking area"],1,"Black signs with yellow inscriptions are location signs, confirming the taxiway or runway the aircraft is currently on, helping pilots maintain positional awareness while taxiing."),
@@ -1364,9 +1395,9 @@ var PPL_QUESTIONS = [
   Q("airport18","airport","High density altitude at a high-elevation airport has which practical effect on takeoff and landing operations?",["No effect on airport operations","Longer takeoff rolls, reduced climb performance, and typically a higher groundspeed on landing","Shorter takeoff rolls only","Only affects helicopters, not airplanes"],1,"At high-elevation airports with high density altitude, pilots can expect longer takeoff distances, reduced climb performance, and a higher true airspeed for a given indicated airspeed, which also means a faster groundspeed and longer landing roll."),
   Q("airport19","airport","Before taxiing onto an assigned taxi route at a towered airport, a pilot should:",["Begin taxiing immediately without any readback","Read back any runway hold-short instructions issued, to confirm understanding","Wait for a green light from the tower before taxiing anywhere","Request progressive taxi for every movement by default"],1,"Pilots are expected to read back runway hold-short instructions, and any other clearance involving a runway, to ATC to confirm they correctly understood the instruction, an important runway-incursion prevention practice."),
   Q("airport20","airport","A hot spot depicted on an airport diagram indicates:",["An area of frequent runway incursions or confusion, warranting extra pilot caution","A refueling area","A designated smoking area","A VIP parking area"],0,"Airport diagrams mark hot spots at locations with a history of runway incursions, confusing taxi layouts, or other safety concerns, alerting pilots to exercise extra caution there."),
-  Q("airport21","airport","Runway edge lights, used at night or in low visibility, are typically which color along most of the runway's length?",["Red","White, sometimes shown as yellow over the final portion to indicate limited remaining runway","Blue, which actually marks taxiways rather than runways","Green"],1,"Runway edge lights are generally white, though some systems show the lights as yellow over the last several thousand feet of runway to alert pilots that the remaining runway is limited."),
+  Q("airport21","airport","Runway edge lights, used at night or in low visibility, are typically which color along most of the runway's length?",["Red","White, sometimes shown as yellow over the final portion to indicate limited remaining runway","Blue, which actually marks taxiways rather than runways","Green"],1,"Runway edge lights are white; on instrument runways the last 2,000 feet, or half the runway length if less, show yellow in the direction of landing to warn that the remaining runway is limited."),
   Q("airport22","airport","Taxiway edge lights, as opposed to runway edge lights, are typically which color?",["White","Blue","Red","Green"],1,"Taxiway edge lights are blue, helping distinguish taxiways from runways, whose edge lights are white, at night or in low visibility."),
-  Q("airport23","airport","A runway's touchdown zone markings, a series of paired rectangular stripes, are intended to help pilots:",["Identify the exact midpoint of the runway and aim for a consistent touchdown area","Identify the runway's edge only","Identify the taxiway leading off the runway","Identify the location of the control tower"],0,"Touchdown zone markings provide distance information and help pilots identify and aim for a consistent touchdown area near the beginning of the runway."),
+  Q("airport23","airport","A runway's touchdown zone markings, a series of paired rectangular stripes, are intended to help pilots:",["Identify the touchdown zone and judge distance along the runway, in 500-foot increments","Identify the runway's edge only","Identify the taxiway leading off the runway","Identify the location of the control tower"],0,"Touchdown zone markings are pairs of rectangular bars placed in 500-foot increments from the threshold, identifying the touchdown zone and giving distance information for landing."),
   Q("airport24","airport","The term non-movement area at a towered airport refers to:",["An area where ATC clearance is always required before any movement","Ramp and parking areas not under direct ATC control, where pilots may generally taxi without a specific clearance","An area where aircraft are prohibited from ever moving","A restricted military area"],1,"Non-movement areas, typically ramps and parking areas, are not under direct ATC control; aircraft can generally move within them without a specific taxi clearance, though pilots should still exercise caution and follow local procedures."),
   Q("airport25","airport","A taxiway's hold short line, a pair of solid and dashed yellow lines, indicates the point where a pilot must:",["Always stop, regardless of any clearance already received","Stop and not proceed past without an ATC clearance or appropriate caution at a non-towered field","Speed up to cross the runway quickly","Turn around and taxi back"],1,"Hold short lines mark the point beyond which a pilot must not proceed without proper clearance or verification; the solid lines face the pilot who must hold, with the dashed lines on the runway side."),
   Q("airport26","airport","An ILS critical area, marked on some airport surfaces, is an area where aircraft or vehicles should avoid taxiing or parking:",["At any time, with no exceptions ever considered","Primarily when instrument approaches are in progress in low-visibility conditions, since objects there can interfere with the ILS signal","Only during VFR operations","Only at night"],1,"An ILS critical area protects the integrity of the localizer and glideslope signals; aircraft and vehicles are generally kept clear of it, particularly during instrument approaches in low-visibility conditions, to avoid signal interference."),
@@ -1469,7 +1500,7 @@ var GK_QUESTIONS = [
   Q("anatdir21","anatdir","In standard anatomical position, is the thumb located medially or laterally relative to the little finger?",["Medially","Laterally","Neither, the hand has no medial or lateral reference","Directly superior"],1,"In standard anatomical position, with palms facing forward, the thumb is on the lateral, or outer, side of the hand relative to the little finger, which is more medial."),
   Q("anatdir22","anatdir","The term plantar, used to describe a surface of the foot, refers to:",["The top of the foot","The sole, or bottom, of the foot","The side of the foot","The heel only"],1,"Plantar refers to the sole of the foot, the surface that contacts the ground, just as palmar refers to the palm of the hand."),
 
-  Q("contocean1","contocean","How many continents are traditionally recognized in the most widely used model?",["5","6 or 7, depending on the model used","9","12"],1,"Different models group continents differently; the model commonly used in English-speaking countries lists 7 continents, though some models combine Europe and Asia into Eurasia, yielding 6 or fewer."),
+  Q("contocean1","contocean","How many continents are there in the model most commonly taught in English-speaking countries?",["5","7 (some models count 6, joining Europe and Asia or the Americas)","9","12"],1,"The model commonly taught in English-speaking countries lists 7 continents: Africa, Antarctica, Asia, Australia, Europe, North America and South America. Other models combine Europe and Asia into Eurasia, or North and South America, giving 6."),
   Q("contocean2","contocean","Which is the largest continent by land area?",["Africa","Asia","North America","Antarctica"],1,"Asia is the largest continent by both land area and population."),
   Q("contocean3","contocean","Which continent is the second largest by land area?",["Africa","Europe","South America","Antarctica"],0,"Africa is the second-largest continent by land area, after Asia."),
   Q("contocean4","contocean","Which ocean is the largest by area?",["Atlantic Ocean","Indian Ocean","Pacific Ocean","Arctic Ocean"],2,"The Pacific Ocean is the largest and deepest of Earth's oceans, covering more area than all the land on Earth combined."),
@@ -1525,7 +1556,7 @@ var GK_QUESTIONS = [
   Q("countries8","countries","Which is the smallest country in the world by land area?",["Monaco","San Marino","Vatican City","Liechtenstein"],2,"Vatican City, an independent city-state within Rome, Italy, is the smallest country in the world by both area and population."),
   Q("countries9","countries","Japan is located:",["On the Asian mainland","As an island nation off the eastern coast of mainland Asia","In the Pacific near Australia","In the Indian Ocean"],1,"Japan is an island nation consisting of four main islands and thousands of smaller ones, located off the eastern coast of mainland Asia."),
   Q("countries10","countries","South Africa is located at which part of the African continent?",["The northern tip","The southern tip","The exact center","The western coast only"],1,"South Africa occupies the southernmost region of the African continent."),
-  Q("countries11","countries","Which country shares the longest international land border with the United States?",["Mexico","Canada","Both are roughly equal","Cuba"],1,"The border between the United States and Canada is the longest international land border in the world, longer than the U.S.-Mexico border."),
+  Q("countries11","countries","Which country shares the longest international land border with the United States?",["Mexico","Canada","Both are roughly equal","Cuba"],1,"The U.S.–Canada border, about 8,900 kilometers including Alaska's section, is the longest international border in the world, nearly three times the length of the U.S.–Mexico border."),
   Q("countries12","countries","Indonesia, one of the world's most populous countries, is best described geographically as:",["A single large landmass with no islands","An archipelago made up of thousands of islands","A landlocked country","Part of mainland Europe"],1,"Indonesia is the world's largest island country, an archipelago made up of over 17,000 islands."),
   Q("countries13","countries","Which African country has the largest population?",["Nigeria","Egypt","South Africa","Kenya"],0,"Nigeria is the most populous country in Africa and one of the most populous in the world."),
   Q("countries14","countries","China and India are both located on which continent?",["Europe","Asia","Africa","Australia"],1,"Both China and India are major countries located in Asia, the world's largest and most populous continent."),
@@ -1534,7 +1565,7 @@ var GK_QUESTIONS = [
   Q("countries17","countries","The United Kingdom consists of England, Scotland, Wales, and:",["Northern Ireland","The Republic of Ireland","Iceland","Normandy"],0,"The United Kingdom is made up of England, Scotland, Wales, and Northern Ireland; the Republic of Ireland is a separate, independent country."),
   Q("countries18","countries","Which country is the only one to border both France and Spain?",["Portugal","Andorra","Belgium","Switzerland"],1,"The small country of Andorra, located in the Pyrenees mountains, is sandwiched between France to the north and Spain to the south."),
   Q("countries19","countries","Canada's capital city is:",["Toronto","Vancouver","Ottawa","Montreal"],2,"Ottawa, in the province of Ontario, is the capital of Canada, though Toronto is the country's largest city."),
-  Q("countries20","countries","Which country spans 11 time zones, more than any other country in the world?",["United States","Russia","China","Canada"],1,"Russia's vast east-west extent spans 11 time zones, more than any other country."),
+  Q("countries20","countries","Which country spans 11 time zones across its continuous territory, the most of any country's mainland?",["United States","Russia","China","Canada"],1,"Russia spans 11 time zones across its continuous territory. France has even more (12) only when its overseas territories around the world are counted."),
   Q("countries21","countries","New Zealand is located in which general region of the world?",["The South Pacific Ocean, southeast of Australia","The North Atlantic Ocean","The Caribbean Sea","The Mediterranean Sea"],0,"New Zealand is an island country in the southwestern Pacific Ocean, southeast of Australia."),
   Q("countries22","countries","Which of these countries is traditionally classified as part of Scandinavia?",["Norway","Germany","Poland","The Netherlands"],0,"Scandinavia traditionally refers to Norway, Sweden, and Denmark, sometimes broadened to include Finland and Iceland as part of the wider Nordic countries; Germany, Poland, and the Netherlands are not part of Scandinavia."),
 
@@ -1546,7 +1577,7 @@ var GK_QUESTIONS = [
   Q("muscles6","muscles","When a muscle contracts and shortens, pulling two bones closer together, this is commonly described as:",["Extension","Flexion","Rotation","Abduction"],1,"Flexion generally describes a movement that decreases the angle between two body parts, such as bending the elbow, often caused by muscle contraction pulling bones closer together."),
   Q("muscles7","muscles","Extension, the opposite of flexion, generally describes a movement that:",["Decreases the angle at a joint","Increases the angle at a joint, straightening a limb","Rotates a limb","Moves a limb away from the midline"],1,"Extension typically increases the angle at a joint, such as straightening the elbow or knee."),
   Q("muscles8","muscles","Many skeletal muscles work in pairs, where one muscle contracts while its counterpart relaxes; this arrangement is known as:",["Isolated muscle action","Antagonistic muscle pairs","Synergistic failure","Reflex arcs"],1,"Antagonistic muscle pairs, such as the biceps and triceps, work in opposition: as one contracts to produce movement, the other relaxes, and vice versa for the opposite movement."),
-  Q("muscles9","muscles","The largest muscle in the human body by volume is generally considered to be the:",["Biceps","Gluteus maximus, in the buttocks","Bicep femoris","Deltoid"],1,"The gluteus maximus, in the buttocks, is generally considered the largest and one of the strongest muscles in the human body by volume."),
+  Q("muscles9","muscles","The largest muscle in the human body by volume is generally considered to be the:",["Biceps brachii","Gluteus maximus, in the buttocks","Biceps femoris","Deltoid"],1,"The gluteus maximus, in the buttocks, is generally considered the largest and one of the strongest muscles in the human body by volume."),
   Q("muscles10","muscles","Muscle fatigue during prolonged exercise is often related to:",["Excess oxygen in the muscle","Depletion of energy stores and buildup of metabolic byproducts in the muscle","Too much rest beforehand","Cold temperatures only"],1,"Muscle fatigue develops as energy stores such as glycogen are depleted and metabolic byproducts accumulate, reducing the muscle's ability to continue contracting effectively."),
   Q("muscles11","muscles","Isometric muscle contraction refers to a contraction in which:",["The muscle shortens significantly while producing force","The muscle produces force without significantly changing length, such as pushing against an immovable object","The muscle lengthens while producing no force","The muscle is completely relaxed"],1,"In an isometric contraction, the muscle generates tension and force without a significant change in muscle length, such as holding a static position or pushing against something immovable."),
   Q("muscles12","muscles","Regular strength training generally causes skeletal muscle fibers to:",["Decrease in number and size","Increase in size, a process called hypertrophy, among other adaptations","Convert entirely into bone","Have no measurable adaptation"],1,"Strength training generally leads to muscle hypertrophy, an increase in the size of individual muscle fibers, along with other neuromuscular adaptations that increase strength over time."),
@@ -1727,7 +1758,7 @@ Q("heart1","heart","The heart has how many chambers?",["Two","Three","Four","Six
   Q("repro7","repro","Puberty marks a period of development during which:",["The reproductive system matures and becomes capable of reproduction, alongside broader physical changes","No physical changes occur","Only the digestive system changes","Reproductive organs cease functioning"],0,"Puberty is the developmental period during which the reproductive system matures, becoming capable of reproduction, accompanied by broader physical and hormonal changes throughout the body."),
   Q("repro8","repro","The placenta, which develops during pregnancy, primarily functions to:",["Produce milk","Exchange nutrients, oxygen, and waste products between the mother and developing fetus","Store sperm","Regulate the mother's heart rate directly"],1,"The placenta is a temporary organ that develops during pregnancy, allowing the exchange of nutrients, oxygen, and waste products between the mother's blood supply and the developing fetus."),
   Q("repro9","repro","Testosterone and estrogen are both examples of:",["Digestive enzymes","Sex hormones that influence reproductive development and function","Types of blood cells","Types of muscle tissue"],1,"Testosterone and estrogen are sex hormones that play central roles in reproductive development, secondary sexual characteristics, and reproductive function, though both are present to varying degrees in all people."),
-  Q("repro10","repro","A typical human pregnancy, from conception to birth, lasts approximately:",["1 month","40 weeks, or about 9 months","2 years","6 weeks"],1,"A typical human pregnancy lasts approximately 40 weeks, or about 9 months, from the start of the last menstrual period to birth, though this can vary somewhat."),
+  Q("repro10","repro","A typical full-term human pregnancy lasts approximately:",["1 month","40 weeks, or about 9 months","2 years","6 weeks"],1,"A typical human pregnancy lasts approximately 40 weeks, or about 9 months, from the start of the last menstrual period to birth, though this can vary somewhat."),
   Q("repro11","repro","The term gestation refers to:",["The process of childbirth itself","The period of development of an embryo or fetus within the uterus, from conception to birth","A type of reproductive hormone","A stage of puberty only"],1,"Gestation refers to the period during which an embryo or fetus develops within the uterus, from conception until birth."),
   Q("repro12","repro","Secondary sexual characteristics, which develop during puberty, are physical traits that:",["Are directly involved in producing reproductive cells","Develop under the influence of sex hormones but are not directly involved in reproduction, such as voice changes or body hair patterns","Only develop in one sex, never the other","Are unrelated to hormones"],1,"Secondary sexual characteristics, such as changes in voice, body hair patterns, and other physical traits, develop under the influence of sex hormones during puberty but are not themselves directly involved in the reproductive process."),
   Q("repro13","repro","Both male and female reproductive systems are regulated by signals originating from:",["The reproductive organs alone, with no outside input","The brain, particularly the hypothalamus and pituitary gland, which signal the reproductive organs via hormones","The digestive system","The skeletal system"],1,"The hypothalamus and pituitary gland in the brain release hormones that regulate the activity of the reproductive organs, coordinating processes such as the menstrual cycle and sperm production."),
@@ -1924,7 +1955,6 @@ var views = {
   quizSelect: document.getElementById("view-quiz-select"),
   subjectHome: document.getElementById("view-subject-home"),
   quiz: document.getElementById("view-quiz"),
-  learn: document.getElementById("view-learn"),
   results: document.getElementById("view-results"),
   japanese: document.getElementById("view-japanese"),
   cooking: document.getElementById("view-cooking"),
@@ -1938,7 +1968,7 @@ var backTarget = null;
 /* Views that are paced narrated lessons get the landscape corner-host "teaching mode" layout
    (see .wrap.teachMode CSS) instead of the portrait scene-player stack. Today: Japanese
    Pronunciation and Aoi's Day. Add future narrated-lesson views here too. */
-var TEACH_VIEWS = {japanese:1, daytrip:1, teacherLesson:1, learn:1};
+var TEACH_VIEWS = {japanese:1, daytrip:1, teacherLesson:1};
 var wrapEl = document.querySelector(".wrap");
 /* Single header line: title, with an optional small highlighted category tag right after it on
    the same line, instead of a separate kicker line sitting above the title (ate an extra row of
@@ -1987,7 +2017,10 @@ document.getElementById("btnBack").addEventListener("click", function(){
   else if (backTarget === "quizSelect"){ renderQuizSelect(); showView("quizSelect", {backTo:"hub"}); }
   else if (backTarget === "cooking"){ renderCookingSelect(); showView("cooking", {backTo:"hub"}); }
   else if (backTarget === "sales"){ renderSalesSelect(); showView("sales", {backTo:"hub"}); }
-  else if (backTarget === "teacher"){ showView("teacher", {backTo:"hub"}); }
+  else if (backTarget === "teacher"){ openTeacherLib(teacherSec); }
+  else if (backTarget === "teacherHome"){ openTeacherLib(null); }
+  else if (backTarget === "recipe" && activeRecipe){ openRecipe(activeRecipe.id); }
+  else if (backTarget === "salesDetail" && activeScenario){ openScenario(activeScenario.id); }
   else { renderHub(); showView("hub"); }
 });
 
@@ -2019,7 +2052,7 @@ function renderQuizSelect(){
   document.getElementById("hubGKSub").textContent = gkBuiltCount + " of " + MASTER_TOPICS.length + " topics built so far (" + SUBJECTS.gk.questions.length + " questions) \u2014 " + gkAnswered + " answered.";
 }
 
-document.getElementById("hubCardTeacher").addEventListener("click", startTeacherLesson);
+document.getElementById("hubCardTeacher").addEventListener("click", function(){ openTeacherLib(null); });
 document.getElementById("hubCardQuiz").addEventListener("click", function(){ renderQuizSelect(); showView("quizSelect", {backTo:"hub"}); });
 document.getElementById("hubCardSinging").addEventListener("click", function(){ renderJapanese(); showView("japanese", {backTo:"hub"}); });
 document.getElementById("hubCardCooking").addEventListener("click", function(){ renderCookingSelect(); showView("cooking", {backTo:"hub"}); });
@@ -2195,40 +2228,47 @@ function markLearnDone(catId, partIndex){
   if ((d[catId] || 0) < partIndex + 1){ d[catId] = partIndex + 1; try{ localStorage.setItem(learnKey(), JSON.stringify(d)); }catch(e){} }
 }
 var learn = null;
-function startLearn(catId, partIndex){
+/* Swaps the active quiz subject without showing its home screen (the Teacher library launches
+   subject lessons directly). */
+function useSubject(key){
+  if (activeSubject && activeSubject.key === key) return;
+  activeSubject = SUBJECTS[key];
+  answers = loadAnswers(activeSubject);
+  missCounts = loadMissCounts(activeSubject);
+}
+/* A study lesson plays in the same narrated player as the Claude Code lesson: an intro card, then
+   one card per point (the exam question with its answer marked) while Aoi explains it, then a
+   short quiz on exactly those points. */
+function startLearn(catId, partIndex, backTo){
   var parts = learnParts(catQuestions(activeSubject, catId));
   if (!parts.length) return;
   if (partIndex == null){ partIndex = learnDone(catId); if (partIndex >= parts.length) partIndex = 0; }
-  learn = {catId:catId, parts:parts, part:partIndex, i:0};
-  window.activeLessonAdvance = learnAdvance;
-  showView("learn", {backTo:"subjectHome"});
-  renderLearnPoint(true);
+  learn = {catId:catId, parts:parts, part:partIndex, backTo: backTo || (learn && learn.catId === catId && learn.backTo) || "subjectHome"};
+  var pts = parts[partIndex], name = CATNAME[catId], icon = CAT_ICON[catId] || "book";
+  var beats = [{
+    text: "Lesson " + (partIndex + 1) + " of " + parts.length + ": " + name + ". " + pts.length + " key points, then I'll ask you about them. Tap me or Next to move on.",
+    voice: "learn_intro", pose: "present_r", eyes: "eyes_happy",
+    visual: '<div class="lcard">' + lessonHero(icon, name, activeSubject.name + " \u00b7 Lesson " + (partIndex + 1) + " of " + parts.length,
+      [pts.length + " points", pts.length + " questions"]) + '</div>'
+  }];
+  pts.forEach(function(q, i){
+    beats.push({ text: q.explain, pose: i % 2 ? "present_l" : "point_r", eyes: null, visual: examVisual(q, i, pts.length, name) });
+  });
+  playLesson({
+    title: name, tag: activeSubject.key === "ppl" ? "PPL" : "Learn", beats: beats, manual: true,
+    backTo: learn.backTo, nextLabel: "Finish lesson",
+    onEndTap: startLearnQuiz,
+    finish: function(vis){
+      vis.innerHTML = '<div class="lcard">' + lessonHero("check", "Lesson " + (partIndex + 1) + " done",
+        "Now " + pts.length + " questions on exactly what you just learned.", []) +
+        '<div class="lbtns"><button class="btn primary" id="lessonQuizBtn" type="button">Start questions</button></div></div>';
+      document.getElementById("lessonQuizBtn").addEventListener("click", startLearnQuiz);
+      if (window.AoiHost) window.AoiHost.line("learn_quiz");
+    }
+  });
 }
-function renderLearnPoint(first){
-  var pts = learn.parts[learn.part], q = pts[learn.i];
-  window.scrollTo(0, 0);
-  document.getElementById("learnCounter").textContent = "Point " + (learn.i + 1) + " / " + pts.length;
-  document.getElementById("learnProgressBar").style.width = pct((learn.i + 1) / pts.length * 100) + "%";
-  document.getElementById("learnPart").textContent = "Lesson " + (learn.part + 1) + " of " + learn.parts.length;
-  document.getElementById("learnCat").textContent = CATNAME[q.cat];
-  document.getElementById("learnPoint").textContent = q.explain;
-  document.getElementById("learnQ").textContent = q.q;
-  document.getElementById("learnA").textContent = q.choices[q.a];
-  document.getElementById("learnBack").disabled = learn.i === 0;
-  document.getElementById("learnNext").textContent = learn.i + 1 < pts.length ? "Next" : "Start questions";
-  if (window.AoiHost){
-    if (first) window.AoiHost.line("learn_intro");
-    else window.AoiHost.line("learn_next");
-  }
-}
-function learnAdvance(){
-  var pts = learn.parts[learn.part];
-  if (learn.i + 1 < pts.length){ learn.i++; renderLearnPoint(false); return; }
-  startSession("learn", learn.catId, pts.slice());
-  if (window.AoiHost) window.AoiHost.line("learn_quiz");
-}
-document.getElementById("learnNext").addEventListener("click", learnAdvance);
-document.getElementById("learnBack").addEventListener("click", function(){ if (learn.i > 0){ learn.i--; renderLearnPoint(false); } });
+function startLearnQuiz(){ startSession("learn", learn.catId, learn.parts[learn.part].slice()); }
+function learnBack(){ return (learn && learn.backTo === "teacher") ? "teacher" : "subjectHome"; }
 
 /* ---------- quiz engine ---------- */
 var session = null;
@@ -2257,7 +2297,7 @@ function startSession(type, catId, customQueue){
   if (type === "learn") session.learnPart = learn.part;
   quizTranscript = [];
   quizRenderTranscript();
-  showView("quiz", {backTo:"subjectHome"});
+  showView("quiz", {backTo: type === "learn" ? learnBack() : "subjectHome"});
   renderQuestion();
 }
 document.getElementById("btnExam").addEventListener("click", function(){ startSession("exam", null); });
@@ -2422,7 +2462,7 @@ function showResults(){
     rows.appendChild(row);
   });
 
-  showView("results", {backTo:"subjectHome"});
+  showView("results", {backTo: session.type === "learn" ? learnBack() : "subjectHome"});
 }
 
 /* ---------- reset with inline confirm ---------- */
@@ -2685,7 +2725,7 @@ var MOCK_ICON_SM = function(name, size){ return MOCK_ICONS[name].replace('<svg',
    original page (not a loose re-interpretation), wrapped in .mockScene so it reuses the shared
    CSS/icon system above -- any future narrated lesson's beats can build their own mockup cards
    the same way, using MOCK_ICONS and these same .phone/.two/.gh/.desk/.check/.diff classes. */
-var TUTOR_LESSON = [
+var CLAUDE_CODE_BEATS = [
   {
     text: "Hi, I'm Aoi! Today, let's look at Claude Code on your phone. It's easier than you think!",
     pose: "present_r", eyes: "eyes_happy", audio: "audio/tutorial/scene1_hello.mp3",
@@ -2770,6 +2810,12 @@ var TUTOR_LESSON = [
       '</div></div>'
   }
 ];
+/* The narrated lesson player. TUTOR_LESSON is whichever lesson is playing (its beats); LESSON holds
+   that lesson's settings: title/tag for the header, manual (no auto-advance: tap or Next), backTo,
+   nextLabel for the last beat's button, finish(visualEl) to draw a custom end screen, and onEndTap
+   for what tapping Aoi does on that end screen (default: replay). */
+var TUTOR_LESSON = CLAUDE_CODE_BEATS;
+var LESSON = {title:"Claude Code on Your Phone", tag:"Teacher", beats:CLAUDE_CODE_BEATS, manual:false, backTo:"teacher"};
 var tutorIdx = 0;
 var tutorTranscript = [];
 var $tutorAudio = new Audio();
@@ -2818,31 +2864,42 @@ function teacherFinish(){
   teacherEnded = true;
   setLessonPlaying(false);
   updateLessonDots(TUTOR_LESSON.length, TUTOR_LESSON.length);
-  document.getElementById("teacherVisual").innerHTML =
-    '<div class="jp-section" style="text-align:center;">' +
-      '<h3>Lesson complete</h3>' +
-      '<p class="hint">That\'s everything for this one. Tap her to go through it again, or head back and pick something else.</p>' +
-      '<button class="btn primary" id="teacherBackToHubBtn" type="button">Back to Hub</button>' +
-    '</div>';
-  var hubBtn = document.getElementById("teacherBackToHubBtn");
-  if (hubBtn) hubBtn.addEventListener("click", function(e){ e.stopPropagation(); renderHub(); showView("hub"); });
-  if (window.AoiHost) window.AoiHost.say("That's the whole lesson! Tap me to go through it again, or head back to try something else.", {pose:"present_r", eyes:"eyes_happy"});
+  updateLessonNav();
+  var vis = document.getElementById("teacherVisual");
+  window.scrollTo(0, 0);
+  if (LESSON.finish){ LESSON.finish(vis); return; }
+  vis.innerHTML = '<div class="lcard">' + lessonHero("check", "Lesson complete",
+      "That's everything for this one. Tap her to go through it again, or pick another module.", []) +
+    '<div class="lbtns"><button class="btn primary" id="teacherBackToLibBtn" type="button">More lessons</button></div></div>';
+  document.getElementById("teacherBackToLibBtn").addEventListener("click", function(){ openTeacherLib(teacherSec); });
+  if (window.AoiHost) window.AoiHost.line("lesson_done", {pose:"present_r", eyes:"eyes_happy"});
 }
 
 function teacherTapAdvance(){
   if (teacherEnded){
+    if (LESSON.onEndTap){ LESSON.onEndTap(); return; }
     tutorIdx = 0; tutorTranscript = []; teacherEnded = false;
-    setLessonPlaying(true); tutorRenderBeat();
+    setLessonPlaying(!LESSON.manual); tutorRenderBeat();
     return;
   }
   var wasPlaying = lessonPlaying;
   teacherAdvance();
   /* teacherAdvance() may itself call teacherFinish() (the last beat), which already sets the
-     paused/ended state via setLessonPlaying(false) -- don't immediately flip that back to
-     "playing" afterward just because it had been paused before the tap, or the header's play
-     button is left showing "Pause" on the end screen even though nothing is playing. */
-  if (!teacherEnded && !wasPlaying) setLessonPlaying(true);
+     paused/ended state -- don't flip that back to "playing". A manual lesson never starts
+     auto-advancing just because it was tapped. */
+  if (!teacherEnded && !wasPlaying && !LESSON.manual) setLessonPlaying(true);
 }
+
+function updateLessonNav(){
+  var prev = document.getElementById("lessonPrev"), next = document.getElementById("lessonNext");
+  document.getElementById("lessonNav").hidden = teacherEnded;
+  prev.disabled = tutorIdx === 0;
+  next.textContent = tutorIdx + 1 < TUTOR_LESSON.length ? "Next" : (LESSON.nextLabel || "Finish");
+}
+document.getElementById("lessonNext").addEventListener("click", teacherTapAdvance);
+document.getElementById("lessonPrev").addEventListener("click", function(){
+  if (tutorIdx > 0 && !teacherEnded){ clearLessonTimer(); tutorIdx--; tutorRenderBeat(); }
+});
 
 function setLessonPlaying(p){
   lessonPlaying = p;
@@ -2873,6 +2930,7 @@ function tutorRenderTranscript(){
 function tutorPlayCurrent(){
   var beat = TUTOR_LESSON[tutorIdx];
   $tutorAudio.pause();
+  if (!beat.audio){ $tutorAudio.onended = null; $tutorAudio.removeAttribute("src"); return; }
   $tutorAudio.src = beat.audio;
   $tutorAudio.onended = function(){ if (lessonPlaying) teacherAdvance(); };
   if (lessonPlaying) $tutorAudio.play().catch(function(){});
@@ -2881,13 +2939,16 @@ function tutorPlayCurrent(){
 function tutorRenderBeat(){
   var beat = TUTOR_LESSON[tutorIdx];
   document.getElementById("teacherVisual").innerHTML = beat.visual || "";
+  window.scrollTo(0, 0);
   tutorTranscript.push(beat.text);
   tutorRenderTranscript();
-  if (window.AoiHost) window.AoiHost.say(beat.text, {pose: beat.pose || null, eyes: beat.eyes || null});
+  if (window.AoiHost) window.AoiHost.say(beat.text, {pose: beat.pose || null, eyes: beat.eyes || null, voice: beat.voice});
   tutorPlayCurrent();
   updateLessonDots(TUTOR_LESSON.length, tutorIdx);
   scheduleTeacherAdvance(beat.text.length);
   window.activeLessonAdvance = teacherTapAdvance;
+  updateLessonNav();
+  if (window.AoiHost && window.AoiHost.relayout) window.AoiHost.relayout();
 }
 
 document.getElementById("teacherReplayBtn").addEventListener("click", function(e){
@@ -2896,23 +2957,219 @@ document.getElementById("teacherReplayBtn").addEventListener("click", function(e
   scheduleTeacherAdvance(TUTOR_LESSON[tutorIdx].text.length);
 });
 
-function renderTeacherLesson(){
-  setHeader("Claude Code on Your Phone", "Teacher");
-  tutorIdx = 0;
-  tutorTranscript = [];
-  teacherEnded = false;
-  lessonPlaying = true;
+function playLesson(lesson){
+  LESSON = lesson; TUTOR_LESSON = lesson.beats;
+  tutorIdx = 0; tutorTranscript = []; teacherEnded = false;
+  clearLessonTimer();
+  showView("teacherLesson", {backTo: lesson.backTo || "teacher"});
+  setHeader(lesson.title, lesson.tag || "Teacher");
+  document.getElementById("teacherReplayBtn").hidden = !lesson.beats.some(function(b){ return b.audio; });
+  lessonPlaying = !lesson.manual;
+  var btn = document.getElementById("lessonPlayBtn");
+  btn.innerHTML = lessonPlaying ? "&#10074;&#10074;" : "&#9654;";
+  btn.setAttribute("aria-label", lessonPlaying ? "Pause" : "Play");
   tutorRenderBeat();
 }
-function renderTeacherPicker(){
-  setHeader("Learn with Aoi", "Teacher");
-}
 function startTeacherLesson(){
-  renderTeacherLesson();
-  showView("teacherLesson", {backTo:"hub"});
+  playLesson({title:"Claude Code on Your Phone", tag:"Teacher", beats:CLAUDE_CODE_BEATS, manual:false, backTo:"teacher"});
 }
-document.getElementById("teacherCardClaudeCode").addEventListener("click", startTeacherLesson);
-document.getElementById("teacherStartBtn").addEventListener("click", startTeacherLesson);
+
+/* ---------- icons + lesson visual builders ---------- */
+var ICON_PATHS = {
+  doc:'<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/>',
+  layers:'<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
+  cloud:'<path d="M7 18h10a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.1 9.2 4.5 4.5 0 0 0 7 18z"/>',
+  plane:'<path d="M10.5 3.5a1.5 1.5 0 0 1 3 0V9l8 5v2l-8-2.5V19l2 1.5V22L12 21l-3.5 1v-1.5l2-1.5v-5.5L2.5 16v-2l8-5z"/>',
+  gear:'<circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/>',
+  gauge:'<path d="M4 17a8 8 0 1 1 16 0"/><path d="M12 17l4-6"/><path d="M4 17h16"/>',
+  compass:'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5l-2 5-5 2 2-5z"/>',
+  person:'<circle cx="12" cy="7" r="3.5"/><path d="M5 21a7 7 0 0 1 14 0"/>',
+  dial:'<circle cx="12" cy="12" r="9"/><path d="M12 12l4-3"/><path d="M12 5v1.5M5 12h1.5M17.5 12H19"/>',
+  headset:'<path d="M4 15v-3a8 8 0 0 1 16 0v3"/><rect x="3" y="14" width="4" height="6" rx="1"/><rect x="17" y="14" width="4" height="6" rx="1"/>',
+  runway:'<path d="M8 21L10 3h4l2 18z"/><path d="M12 6v2M12 11v2M12 16v2"/>',
+  warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18a14 14 0 0 1 0-18z"/>',
+  heart:'<path d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/>',
+  bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>',
+  bone:'<path d="M8 16l8-8"/><circle cx="6" cy="18" r="2.4"/><circle cx="18" cy="6" r="2.4"/><circle cx="4.5" cy="15" r="1.6"/><circle cx="15" cy="4.5" r="1.6"/>',
+  lungs:'<path d="M12 4v8"/><path d="M12 10c-2-2-5-3-6 1-1 4-1 7 1 8s5-1 5-5"/><path d="M12 10c2-2 5-3 6 1 1 4 1 7-1 8s-5-1-5-5"/>',
+  pot:'<path d="M4 10h16v6a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M2 10h20"/><path d="M9 5v2M12 4v3M15 5v2"/>',
+  chat:'<path d="M4 5h16v10H10l-5 4v-4H4z"/>',
+  code:'<path d="M8 8l-4 4 4 4M16 8l4 4-4 4M14 5l-4 14"/>',
+  phone:'<rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/>',
+  book:'<path d="M4 4h6a3 3 0 0 1 3 3v14a2.5 2.5 0 0 0-2.5-2.5H4z"/><path d="M20 4h-6a3 3 0 0 0-3 3"/><path d="M20 4v14.5h-6.5A2.5 2.5 0 0 0 11 21"/>',
+  check:'<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>',
+  cell:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M6.5 8.5h.01M17 15.5h.01M8 16.5h.01"/>'
+};
+function ico(name){
+  var fill = name === "plane";
+  return '<svg viewBox="0 0 24 24" fill="' + (fill ? 'currentColor' : 'none') + '" stroke="' + (fill ? 'none' : 'currentColor') +
+    '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICON_PATHS[name] || ICON_PATHS.book) + '</svg>';
+}
+var CAT_ICON = {regs:"doc", airspace:"layers", wx:"cloud", aero:"plane", sys:"gear", perf:"gauge", nav:"compass", human:"person",
+  instr:"dial", comm:"headset", airport:"runway", emg:"warn",
+  organs:"person", anatdir:"person", contocean:"globe", skeleton:"bone", countries:"globe", muscles:"person", latlong:"compass",
+  brain:"bulb", heart:"heart", lungs:"lungs", digest:"person", kidney:"person", endocrine:"person", immune:"person", skin:"person",
+  repro:"person", senses:"person", cells:"cell"};
+function lessonHero(icon, title, sub, chips){
+  return '<div class="lhero"><span class="lic pop">' + ico(icon) + '</span><h3>' + esc_(title) + '</h3>' +
+    (sub ? '<p>' + esc_(sub) + '</p>' : '') +
+    (chips && chips.length ? '<div class="lchips">' + chips.map(function(c, i){
+      return '<span class="lchip pop" style="animation-delay:' + (0.15 + i * 0.12).toFixed(2) + 's">' + esc_(c) + '</span>'; }).join('') + '</div>' : '') +
+    '</div>';
+}
+function examVisual(q, i, n, name){
+  var L = ["A","B","C","D"];
+  var opts = q.choices.map(function(c, ci){
+    return '<div class="eopt pop ' + (ci === q.a ? 'ok' : 'no') + '" style="animation-delay:' + (0.12 + ci * 0.1).toFixed(2) + 's"><span class="k">' + L[ci] + '</span><span>' + esc_(c) + '</span></div>';
+  }).join("");
+  return '<div class="lcard"><div class="ctag">' + esc_(name) + ' \u00b7 Point ' + (i + 1) + ' of ' + n + '</div>' +
+    '<div class="examcard"><span class="elbl">How the test asks it</span><div class="eq">' + esc_(q.q) + '</div>' + opts + '</div></div>';
+}
+function shortStep(s){
+  var m = s.match(/^.*?[.!?](?=\s|$)/), first = m ? m[0] : s;
+  return first.length > 60 ? first.slice(0, 57).replace(/\s+\S*$/, "") + "\u2026" : first;
+}
+function trackVisual(tag, items, i){
+  return '<div class="lcard"><div class="ctag">' + esc_(tag) + '</div><ol class="steplist">' + items.map(function(t, k){
+    var cls = k < i ? "done" : (k === i ? "now pop" : "later");
+    return '<li class="' + cls + '"><span class="n">' + (k < i ? "\u2713" : (k + 1)) + '</span><span>' + esc_(k === i ? t : shortStep(t)) + '</span></li>';
+  }).join("") + '</ol></div>';
+}
+function chatAvailable(){ return !!(window.AoiChat && window.AoiChat.hasKey && window.AoiChat.hasKey()); }
+
+/* ---------- cooking: cook along with Aoi, one step at a time (no AI needed) ---------- */
+function startCookAlong(r, backTo){
+  activeRecipe = r;
+  var beats = [{
+    text: "Let's make " + r.title + "! First gather everything \u2014 tick each one off as you get it out.",
+    voice: "cook_start", pose: "present_l", eyes: "eyes_happy",
+    visual: '<div class="lcard"><div class="ctag">' + esc_(r.title) + ' \u00b7 Ingredients</div><div class="ingr">' +
+      r.ingredients.map(function(x){ return '<label><input type="checkbox"><span>' + esc_(x) + '</span></label>'; }).join("") + '</div></div>'
+  }];
+  r.steps.forEach(function(st, i){
+    beats.push({ text: st, pose: i % 2 ? "point_l" : "point_r", eyes: null,
+      visual: trackVisual(r.title + " \u00b7 Step " + (i + 1) + " of " + r.steps.length, r.steps, i) });
+  });
+  playLesson({ title: r.title, tag: "Cooking", beats: beats, manual: true, backTo: backTo || "recipe", nextLabel: "Done",
+    finish: function(vis){
+      vis.innerHTML = '<div class="lcard">' + lessonHero("pot", "Enjoy your " + r.title + "!", "That's every step. Tap her to cook it again.", []) +
+        '<div class="lbtns">' + (chatAvailable() ? '<button class="btn" id="cookAskBtn" type="button">Ask Aoi about it</button>' : '') +
+        '<button class="btn primary" id="cookMoreBtn" type="button">More recipes</button></div></div>';
+      var ask = document.getElementById("cookAskBtn");
+      if (ask) ask.addEventListener("click", function(){ window.AoiChat.openCooking(r); });
+      document.getElementById("cookMoreBtn").addEventListener("click", function(){ renderCookingSelect(); showView("cooking", {backTo:"hub"}); });
+      if (window.AoiHost) window.AoiHost.line("lesson_done", {pose:"present_r", eyes:"eyes_happy"});
+    }});
+}
+document.getElementById("teacherVisual").addEventListener("change", function(e){
+  var t = e.target;
+  if (t && t.type === "checkbox" && t.parentNode) t.parentNode.classList.toggle("got", t.checked);
+});
+
+/* ---------- sales: a coached walkthrough of one scenario, then practice ---------- */
+/* Every scenario's persona text opens with the customer's first name. */
+function scenarioName(sc){ return (sc.persona.match(/^[A-Z][a-z]+/) || ["The customer"])[0]; }
+function startSalesCoach(sc, backTo){
+  activeScenario = sc;
+  var name = scenarioName(sc);
+  function persona(showObj){
+    return '<div class="lcard"><div class="ctag">The customer</div><div class="persona">' +
+      '<div class="who"><span class="av">' + esc_(name.charAt(0)) + '</span><div><b>' + esc_(sc.title) + '</b><span>Selling: ' + esc_(sc.product) + '</span></div></div>' +
+      '<p>' + esc_(sc.persona) + '</p>' +
+      (showObj ? '<div class="obj pop"><b>Why ' + esc_(name) + ' would say no:</b> ' + esc_(sc.disposition.charAt(0).toUpperCase() + sc.disposition.slice(1)) + '.</div>' : '') + '</div></div>';
+  }
+  var beats = [
+    { text: "Meet your customer. " + sc.persona, voice: "sales_start", pose: "present_l", eyes: "eyes_think", visual: persona(false) },
+    { text: "Going in, " + name + " " + sc.disposition + ". That's the real objection \u2014 your job is to answer it, not talk past it.", pose: "point_r", eyes: "eyes_think", visual: persona(true) }
+  ];
+  sc.tips.forEach(function(t, i){
+    beats.push({ text: t, pose: i % 2 ? "point_l" : "point_r", eyes: null, visual: trackVisual("How to answer it \u00b7 Tip " + (i + 1) + " of " + sc.tips.length, sc.tips, i) });
+  });
+  playLesson({ title: sc.title, tag: "Sales", beats: beats, manual: true, backTo: backTo || "salesDetail", nextLabel: "Finish",
+    finish: function(vis){
+      vis.innerHTML = '<div class="lcard">' + lessonHero("chat", "Your turn", chatAvailable()
+          ? "Practise the pitch on " + name + " \u2014 Aoi plays the customer and won't fold just because you ask nicely."
+          : "Try the pitch out loud. To practise against Aoi playing " + name + ", chat needs to be on (Settings).", []) +
+        '<div class="lbtns">' + (chatAvailable() ? '<button class="btn primary" id="salesPracticeBtn" type="button">Practise with Aoi</button>' : '') +
+        '<button class="btn" id="salesMoreBtn" type="button">More scenarios</button></div></div>';
+      var pr = document.getElementById("salesPracticeBtn");
+      if (pr) pr.addEventListener("click", function(){ window.AoiChat.openSales(sc); });
+      document.getElementById("salesMoreBtn").addEventListener("click", function(){ renderSalesSelect(); showView("sales", {backTo:"hub"}); });
+      if (window.AoiHost) window.AoiHost.line("your_turn", {pose:"point_r", eyes:"eyes_happy"});
+    }});
+}
+
+/* ---------- Teacher library: sections -> modules -> narrated lessons (+ quizzes) ----------
+   Data-driven so new material is one entry: a section lists modules, and a module is anything
+   with a title, an icon, a progress/meta line and a start() that plays a lesson. */
+var teacherSec = null;
+function subjectModules(key){
+  var subj = SUBJECTS[key];
+  return subj.cats.map(function(c){
+    return {
+      title: c.name, icon: CAT_ICON[c.id] || "book",
+      progress: function(){
+        useSubject(key);
+        var parts = learnParts(catQuestions(subj, c.id)), done = Math.min(learnDone(c.id), parts.length);
+        return {pct: parts.length ? done / parts.length * 100 : 0, label: done >= parts.length ? "done" : done + "/" + parts.length + " lessons", done: done >= parts.length};
+      },
+      start: function(){ useSubject(key); startLearn(c.id, null, "teacher"); }
+    };
+  });
+}
+var TEACHER_SECTIONS = [
+  {id:"claude", title:"Claude Code", icon:"code", blurb:"Using Claude Code from your phone, narrated in Aoi's own voice.",
+   modules:function(){ return [{title:"Claude Code on Your Phone", icon:"phone", meta:CLAUDE_CODE_BEATS.length + " scenes \u00b7 voiced", start:startTeacherLesson}]; }},
+  {id:"ppl", title:"PPL Checkride", icon:"plane", blurb:"All 12 FAA knowledge areas. Each lesson teaches five points, then quizzes you on them.",
+   modules:function(){ return subjectModules("ppl"); }},
+  {id:"gk", title:"General Knowledge", icon:"globe", blurb:"The body, the planet and how things work, from your 105-topic list.",
+   modules:function(){ return subjectModules("gk"); }},
+  {id:"kitchen", title:"Kitchen", icon:"pot", blurb:"Cook along with Aoi, one step at a time.",
+   modules:function(){ return RECIPES.map(function(r){ return {title:r.title, icon:"pot", meta:r.time + " \u00b7 " + r.steps.length + " steps", start:function(){ startCookAlong(r, "teacher"); }}; }); }},
+  {id:"sales", title:"Sales", icon:"chat", blurb:"Meet a customer with a real reason to say no, learn how to answer it, then practise.",
+   modules:function(){ return SALES_SCENARIOS.map(function(sc){ return {title:sc.title, icon:"chat", meta:sc.tips.length + " tips + practice", start:function(){ startSalesCoach(sc, "teacher"); }}; }); }}
+];
+function openTeacherLib(secId){
+  teacherSec = secId;
+  renderTeacherLib();
+  showView("teacher", {backTo: secId ? "teacherHome" : "hub"});
+}
+function renderTeacherLib(){
+  var lib = document.getElementById("teacherLib");
+  lib.innerHTML = "";
+  var sec = null;
+  TEACHER_SECTIONS.forEach(function(x){ if (x.id === teacherSec) sec = x; });
+  if (!sec){
+    teacherSec = null;
+    setHeader("Learn with Aoi", "Teacher");
+    lib.innerHTML = '<div class="libhead"><p>Pick a section. Aoi teaches every module in small steps, and the study ones end with questions.</p></div>';
+    var list = document.createElement("div"); list.className = "seclist";
+    TEACHER_SECTIONS.forEach(function(x){
+      var b = document.createElement("button"); b.type = "button"; b.className = "hubcard seccard";
+      var n = x.modules().length;
+      b.innerHTML = '<span class="lic">' + ico(x.icon) + '</span><span class="stxt"><h3>' + esc_(x.title) + '</h3><p>' + esc_(x.blurb) + '</p>' +
+        '<span class="badge" style="align-self:flex-start;">' + n + (n === 1 ? " module" : " modules") + '</span></span>';
+      b.addEventListener("click", function(){ openTeacherLib(x.id); });
+      list.appendChild(b);
+    });
+    lib.appendChild(list);
+    return;
+  }
+  setHeader(sec.title, "Teacher");
+  lib.innerHTML = '<div class="libhead"><p>' + esc_(sec.blurb) + '</p></div>';
+  var grid = document.createElement("div"); grid.className = "grid catgrid";
+  sec.modules().forEach(function(m){
+    var b = document.createElement("button"); b.type = "button"; b.className = "card modcard";
+    var pr = m.progress ? m.progress() : null;
+    b.innerHTML = '<div class="mtop">' + ico(m.icon) + '<h3>' + esc_(m.title) + '</h3></div>' +
+      '<div class="meta"><span' + (pr && pr.done ? ' class="done"' : '') + '>' + esc_(pr ? pr.label : (m.meta || "")) + '</span></div>' +
+      (pr ? '<div class="bar"><i style="width:' + pct(pr.pct) + '%"></i></div>' : '');
+    b.addEventListener("click", m.start);
+    grid.appendChild(b);
+  });
+  lib.appendChild(grid);
+}
 
 /* ---------- hints ----------
    Built in, so they work with no AI and no key: the first two taps each cross out one wrong
@@ -2979,9 +3236,13 @@ document.getElementById("btnHint").addEventListener("click", requestHint);
 
 /* ---------- global wiring ---------- */
 document.getElementById("themeToggle").addEventListener("click", cycleTheme);
-document.getElementById("btnQuit").addEventListener("click", function(){ renderSubjectHome(); showView("subjectHome", {backTo:"quizSelect"}); });
+function leaveQuiz(){
+  if (session && session.type === "learn" && learnBack() === "teacher"){ openTeacherLib(teacherSec); return; }
+  renderSubjectHome(); showView("subjectHome", {backTo:"quizSelect"});
+}
+document.getElementById("btnQuit").addEventListener("click", leaveQuiz);
 document.getElementById("btnNext").addEventListener("click", nextQuestion);
-document.getElementById("btnHome").addEventListener("click", function(){ renderSubjectHome(); showView("subjectHome", {backTo:"quizSelect"}); });
+document.getElementById("btnHome").addEventListener("click", leaveQuiz);
 document.getElementById("btnRetake").addEventListener("click", function(){
   if (session.type === "learn"){
     var next = session.learnPart + 1 < learn.parts.length ? session.learnPart + 1 : 0;
@@ -3055,8 +3316,8 @@ function openRecipe(id){
   r.steps.forEach(function(s){ var li = document.createElement("li"); li.textContent = s; steps.appendChild(li); });
   showView("recipe", {backTo:"cooking"});
   if (window.AoiChoices) window.AoiChoices.show([
-    {label:"Yes", primary:true, onClick:function(){ if (window.AoiChat && window.AoiChat.openCooking) window.AoiChat.openCooking(activeRecipe); }},
-    {label:"Pass", onClick:function(){ window.AoiChoices.clear(); }}
+    {label:"Cook with me", primary:true, onClick:function(){ startCookAlong(activeRecipe, "recipe"); }},
+    {label:"Ask Aoi", onClick:function(){ if (window.AoiChat && window.AoiChat.openCooking) window.AoiChat.openCooking(activeRecipe); }}
   ]);
 }
 
@@ -3152,13 +3413,13 @@ function openScenario(id){
   activeScenario = s;
   setHeader(s.title, "Sales Practice");
   document.getElementById("salesTitle").textContent = s.title;
-  document.getElementById("salesSetup").textContent = "You're selling " + s.product + ". " + s.persona + " Going in, they " + s.disposition + ".";
+  document.getElementById("salesSetup").textContent = "You're selling " + s.product + ". " + s.persona + " Going in, " + scenarioName(s) + " " + s.disposition + ".";
   var tips = document.getElementById("salesTips"); tips.innerHTML = "";
   s.tips.forEach(function(t){ var li = document.createElement("li"); li.textContent = t; tips.appendChild(li); });
   showView("salesDetail", {backTo:"sales"});
   if (window.AoiChoices) window.AoiChoices.show([
-    {label:"Start", primary:true, onClick:function(){ if (window.AoiChat && window.AoiChat.openSales) window.AoiChat.openSales(activeScenario); }},
-    {label:"Skip", onClick:function(){ window.AoiChoices.clear(); }}
+    {label:"Coach me", primary:true, onClick:function(){ startSalesCoach(activeScenario, "salesDetail"); }},
+    {label:"Roleplay", onClick:function(){ if (window.AoiChat && window.AoiChat.openSales) window.AoiChat.openSales(activeScenario); }}
   ]);
 }
 
@@ -3962,7 +4223,13 @@ var LINES = {
   goals_added:"That's a great goal! Let's work on it together.",
   goals_done:"Goal achieved \u2014 congratulations!",
   exam_start:"Treat it like the real thing \u2014 sixty questions, let's go.",
-  missed_start:"Let's try the ones you missed again."
+  missed_start:"Let's try the ones you missed again.",
+  teach_lib:"Pick a section \u2014 I'll teach it bit by bit, then quiz you.",
+  teach_sec:"Pick a module and let's start.",
+  cook_start:"Let's cook! Gather everything first.",
+  sales_start:"Let me introduce your customer.",
+  lesson_done:"Lesson done! Nice work.",
+  your_turn:"Now it's your turn \u2014 give it a try!"
 };
 function reactId(correct, repeatMiss, streak){
   if (correct){
@@ -4010,7 +4277,7 @@ window.AoiHost = {
       else line(pick(HUB_LINES), { pose: 'present_r', eyes: null });
     }
     else if (name === 'quizSelect') line(pick(QUIZSELECT_LINES), { pose: 'point_r', eyes: null });
-    else if (name === 'teacher') line(pick(TEACHER_LINES), { pose: 'present_l', eyes: 'eyes_think' });
+    else if (name === 'teacher') line(document.getElementById('teacherLib').querySelector('.seclist') ? 'teach_lib' : 'teach_sec', { pose: 'present_l', eyes: 'eyes_happy' });
     else if (name === 'subjectHome') line(pick(SUBJECT_LINES), { pose: 'point_r', eyes: null });
     else if (name === 'cooking') line(pick(COOKING_LINES), { pose: 'present_l', eyes: 'eyes_happy' });
     else if (name === 'recipe') line(pick(RECIPE_LINES), { pose: 'point_l', eyes: 'eyes_happy' });

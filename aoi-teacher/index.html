@@ -953,6 +953,7 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
       </div>
     </div>
     <div class="settingsBody">
+      <p class="hint" id="settingsPhoneNote" hidden>On this phone, your key is saved once in the app's private storage and used for every chat and hint from then on. It's never put in a backup, and only ever sent to the Claude API.</p>
       <p class="hint" id="settingsSampleNote" hidden>You're viewing this inside Claude, so Aoi can already talk using your Claude account (Claude Sonnet 5.5) &mdash; no key needed. A key below is only used if you add one.</p>
       <p class="hint">Your API key is stored only in this browser (localStorage) on this device. It is never sent anywhere except directly from your browser to the provider's own API &mdash; not to Aoi Teacher's host, not to anyone else. Clearing it below removes it completely.</p>
 
@@ -4491,9 +4492,11 @@ function callClaude(messages){
   var body = { model: model, max_tokens: 4096, system: systemPrompt(), messages: messages };
   var req;
   if (model === DEFAULT_CLAUDE_MODEL){
+    /* Chat replies are short; low effort keeps them quick on a phone. */
+    body.output_config = { effort: 'low' };
     /* Server-side fallback: if a safety classifier declines on this model, the API reroutes the
        request instead of returning nothing. Retried once without it if the API rejects the option. */
-    var withFallback = { model: model, max_tokens: 4096, system: body.system, messages: messages, fallbacks: 'default' };
+    var withFallback = { model: model, max_tokens: 4096, system: body.system, messages: messages, output_config: body.output_config, fallbacks: 'default' };
     req = claudeRequest(key, withFallback, 'server-side-fallback-2026-07-01').catch(function(err){
       if (err && err.status === 400) return claudeRequest(key, body);
       throw err;
@@ -4676,6 +4679,21 @@ function openChat(context){
      native keyboard appeared to flash in ahead of the panel instead of after it. */
   if (hasKey()) setTimeout(function(){ $input.focus(); }, 300);
 }
+/* Inside the Android app there is no Claude account to borrow, so the first time it opens with no
+   key saved, Settings opens on the key field. The key is kept only in the app's own storage on
+   this phone (the app is built with backups off, so it is not copied to cloud backups either). */
+var IN_PHONE_APP = location.hostname === 'appassets.androidplatform.net';
+if (IN_PHONE_APP){
+  document.getElementById('settingsPhoneNote').hidden = false;
+  if (!hasOwnKey() && get('aoi_key_prompted_v1', '') !== '1'){
+    set('aoi_key_prompted_v1', '1');
+    setTimeout(function(){
+      openSettings();
+      setTimeout(function(){ $claudeKey.focus(); }, 320);
+      if (window.AoiHost) window.AoiHost.say("Paste your Claude API key once and I can chat with you. It stays on this phone.", {pose:'point_r', eyes:'eyes_happy'});
+    }, 2600);
+  }
+}
 function openSettings(){
   loadSettingsForm();
   showOverlayPanel($settings);
@@ -4793,8 +4811,12 @@ document.getElementById('settingsSaveBtn').addEventListener('click', function(){
   set(LS.customKey, $customKey.value.trim());
   set(LS.customModel, $customModel.value.trim());
   set(LS.voiceOn, $voiceOnToggle.checked ? '1' : '0');
+  var k = $claudeKey.value.trim();
+  $savedMsg.textContent = ($providerSelect.value === 'claude' && k && k.indexOf('sk-ant-') !== 0)
+    ? "Saved, but that doesn't look like a Claude API key (they start with sk-ant-)." : 'Saved.';
   $savedMsg.hidden = false;
   $noKey.hidden = hasKey();
+  if (hasOwnKey() && window.AoiHost) window.AoiHost.say("Got it \u2014 my AI is on now. Tap the chat button any time to talk.", {pose:'present_r', eyes:'eyes_happy'});
 });
 document.getElementById('settingsClearBtn').addEventListener('click', function(){
   del(LS.claudeKey); del(LS.customKey);

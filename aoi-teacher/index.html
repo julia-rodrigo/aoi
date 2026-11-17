@@ -3483,13 +3483,38 @@ function jpStopAudio(){
   try{ jpAudio.pause(); }catch(e){}
   if (jpSpeakingEl){ jpSpeakingEl.classList.remove("speaking"); jpSpeakingEl = null; }
 }
+/* Where the clips can't be served as separate files (the hosted preview has a cap on file
+   count), they ship as one script of base64 data, loaded only when a clip file fails. */
+var jpBundleWaiters = null;
+function jpBundle(cb){
+  if (window.JP_AUDIO_DATA){ cb(); return; }
+  if (jpBundleWaiters){ jpBundleWaiters.push(cb); return; }
+  jpBundleWaiters = [cb];
+  var sc = document.createElement("script");
+  sc.src = "grammar/jpaudio.js";
+  sc.onload = sc.onerror = function(){ var w = jpBundleWaiters; jpBundleWaiters = null; w.forEach(function(f){ f(); }); };
+  document.head.appendChild(sc);
+}
+function jpFallback(audio, shouldPlay){
+  var src = audio.getAttribute("src") || "", m = /audio\/jp\/([0-9a-f]{12}\.mp3)$/.exec(src);
+  if (!m) return false;
+  jpBundle(function(){
+    var d = window.JP_AUDIO_DATA && window.JP_AUDIO_DATA[m[1]];
+    if (!d || audio.getAttribute("src") !== src) return;
+    audio.src = "data:audio/mpeg;base64," + d;
+    if (shouldPlay()) audio.play().catch(function(){});
+  });
+  return true;
+}
+$tutorAudio.addEventListener("error", function(){ jpFallback($tutorAudio, function(){ return lessonPlaying || LESSON.audioPaced; }); });
 function jpPlay(clip, el){
   jpStopAudio();
   try{ $tutorAudio.pause(); pbAudio.pause(); }catch(e){}
   if (el){ el.classList.add("speaking"); jpSpeakingEl = el; }
-  jpAudio.onended = jpAudio.onerror = function(){ if (jpSpeakingEl === el) jpStopAudio(); };
+  jpAudio.onended = function(){ if (jpSpeakingEl === el) jpStopAudio(); };
+  jpAudio.onerror = function(){ if (!jpFallback(jpAudio, function(){ return jpSpeakingEl === el; }) && jpSpeakingEl === el) jpStopAudio(); };
   jpAudio.src = "audio/jp/" + clip;
-  jpAudio.play().catch(function(){ if (jpSpeakingEl === el) jpStopAudio(); });
+  jpAudio.play().catch(function(e){ if (e && e.name === "NotAllowedError" && jpSpeakingEl === el) jpStopAudio(); });
 }
 document.addEventListener("click", function(e){
   var t = e.target;

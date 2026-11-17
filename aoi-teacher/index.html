@@ -758,6 +758,11 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 .pkey.w{bottom:0; background:#fbfbfd; border:1.5px solid #9aa3b5; color:#5b6478; z-index:1; display:flex; align-items:flex-end; justify-content:center; padding-bottom:6px; font-size:11px; font-weight:700;}
 .pkey.b{height:60%; background:#1b1f2a; border:1px solid #000; z-index:2;}
 .pkey.hint{box-shadow:inset 0 -14px 0 var(--accent);}
+.pkey.w.lit{background:#9cc0ff;} .pkey.b.lit{background:#2f6bff;}
+.gfret.lit{background:#9cc0ff; color:#0b1d44;}
+.mkeys{position:sticky; top:0; z-index:6; background:var(--bg); padding:6px 0;}
+.mnote.hit{color:var(--good);}
+.mscore{margin:0; font-size:14px;} .mscore b{font-size:18px; color:var(--good);}
 .pkey.hit{background:var(--accent); color:var(--accent-fg);}
 .pkey.miss{background:#d9534f;}
 .edots{display:flex; flex-wrap:wrap; gap:5px;}
@@ -3885,7 +3890,13 @@ function musCtx(){
     var AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return null;
     MUS.ctx = new AC();
-    MUS.master = MUS.ctx.createGain(); MUS.master.gain.value = 0.9; MUS.master.connect(MUS.ctx.destination);
+    var comp = MUS.ctx.createDynamicsCompressor();
+    comp.threshold.value = -14; comp.knee.value = 10; comp.ratio.value = 4; comp.attack.value = 0.003; comp.release.value = 0.2;
+    MUS.master = MUS.ctx.createGain(); MUS.master.gain.value = 1.15;
+    MUS.master.connect(comp); comp.connect(MUS.ctx.destination);
+    /* iPhones mute in-page synth sound while the ring/silent switch is on silent; playing a tiny
+       silent clip through an <audio> element first moves the page to the media channel. */
+    try{ var un = new Audio("data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjE2LjEwMAAAAAAAAAAAAAAA//NwwAAAAAAAAAAAAEluZm8AAAAPAAAADAAABZwAMjIyMjIyMjJFRUVFRUVFRVhYWFhYWFhYampqampqampqfX19fX19fX2QkJCQkJCQkKKioqKioqKiorW1tbW1tbW1yMjIyMjIyMja2tra2tra2trt7e3t7e3t7f//////////AAAAAExhdmM2MC4zMQAAAAAAAAAAAAAAACQDNwAAAAAAAAWcHqGxZwAAAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NCxKMAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NAxKQAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/80LEowAAA0gAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/80DEpAAAA0gAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsSjAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NCxKMAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NAxKQAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/80LEowAAA0gAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVU="); un.play().catch(function(){}); }catch(e){}
   }
   if (MUS.ctx.state === "suspended") MUS.ctx.resume();
   return MUS.ctx;
@@ -3920,13 +3931,15 @@ function voicePiano(ctx, f, t, d){
   var o1 = ctx.createOscillator(), o2 = ctx.createOscillator(), o3 = ctx.createOscillator();
   var g2 = ctx.createGain(), g3 = ctx.createGain(), lp = ctx.createBiquadFilter(), g = ctx.createGain();
   o1.type = "triangle"; o1.frequency.value = f; o2.type = "sine"; o2.frequency.value = f * 2; o3.type = "sine"; o3.frequency.value = f * 3;
-  g2.gain.value = 0.3; g3.gain.value = 0.1;
+  g2.gain.value = 0.42; g3.gain.value = 0.16;
+  var o4 = ctx.createOscillator(), g4 = ctx.createGain(); o4.type = "sine"; o4.frequency.value = f * 4.02; g4.gain.value = 0.06;
+  o4.connect(g4); g4.connect(lp); o4.start(t); o4.stop(t + Math.max(d, 0.35) + 1.0); MUS.sources.push(o4);
   o1.connect(lp); o2.connect(g2); g2.connect(lp); o3.connect(g3); g3.connect(lp);
   lp.type = "lowpass"; lp.frequency.setValueAtTime(Math.min(9000, f * 9), t); lp.frequency.exponentialRampToValueAtTime(Math.max(300, f * 2), t + 1.2);
   lp.connect(g); g.connect(MUS.master);
   var end = t + Math.max(d, 0.35) + 0.9;
-  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.5, t + 0.006);
-  g.gain.exponentialRampToValueAtTime(0.16, t + 0.35); g.gain.exponentialRampToValueAtTime(0.0001, end);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.9, t + 0.005);
+  g.gain.exponentialRampToValueAtTime(0.32, t + 0.3); g.gain.exponentialRampToValueAtTime(0.0001, end);
   [o1, o2, o3].forEach(function(o){ o.start(t); o.stop(end + 0.05); MUS.sources.push(o); });
 }
 var KS_CACHE = {};
@@ -4201,37 +4214,53 @@ function musSeg(attr, opts, cur){
     return '<button type="button" data-' + attr + '="' + o[0] + '" class="' + (o[0] === cur ? 'on' : '') + '" aria-pressed="' + (o[0] === cur) + '">' + o[1] + '</button>';
   }).join("") + '</div>';
 }
-function openSheet(id){
+function openSheet(id, inst){
   var song = musSong(id); musStop();
-  musState = {mode:"sheet", song:song, notes:musParse(song.notes), inst:musPref.inst, bpm:song.bpm, playing:false};
-  showView("music", {backTo:"teacher"}); setHeader(song.jp, "Music");
+  musState = {mode:"sheet", song:song, notes:musParse(song.notes), inst:inst || musPref.inst, bpm:song.bpm, playing:false, hits:{}, score:null, from: inst ? inst : null};
+  showView("music", {backTo:"teacher"}); setHeader(song.jp, inst === "piano" ? "Piano" : inst === "guitar" ? "Guitar" : "Music");
   renderSheet();
-  if (window.AoiHost) window.AoiHost.say("Press play and follow the notes while I hum. Tap any note to hear it on its own.", {pose:"present_r", eyes:"eyes_happy"});
+  if (window.AoiHost) window.AoiHost.say(inst ? "Press play: the keys light up as I play. Tap along with me! Notes you hit in time turn green." :
+    "Press play and follow the notes while I hum. The keys light up too, so you can tap along.", {pose:"present_r", eyes:"eyes_happy"});
 }
 function renderSheet(){
   var S = musState, song = S.song;
+  var withNotes = S.notes.filter(function(n){ return n.p; }).length;
   musBody().innerHTML = '<div class="lcard mcard"><div class="ctag">' + esc_(song.title) + ' · ' + esc_(song.origin) + '</div>' +
+    (S.from ? musSeg("mmode", [["ear", "By ear"], ["along", "Play along"]], "along") : '') +
     '<div class="mctl"><button class="btn primary" type="button" data-mplay>' + (S.playing ? "&#9632; Stop" : "&#9654; Play") + '</button>' +
     '<span class="mtempo"><button class="pbtog" type="button" data-mtempo="-8" aria-label="Slower">&minus;</button><b>' + S.bpm + '</b><small>bpm</small><button class="pbtog" type="button" data-mtempo="8" aria-label="Faster">+</button></span></div>' +
     musSeg("minst", [["hum", "Aoi hums"], ["piano", "Piano"], ["guitar", "Guitar"]], S.inst) +
     musSeg("mnames", [["", "No names"], ["abc", "C D E"], ["doremi", "ドレミ"]], musPref.names) +
-    musStaff(S.notes, {perRow: window.innerWidth > 700 ? 4 : 2, names: musPref.names, time: song.time}) + '</div>';
+    (S.score != null ? '<p class="mscore">You hit <b>' + S.score + '</b> of ' + withNotes + ' notes in time.</p>' : '') +
+    '<div class="mkeys">' + (S.inst === "guitar" ? guitarBoard(-1) : pianoKeys(-1)) + '</div>' +
+    musStaff(S.notes, {perRow: window.innerWidth > 700 ? 4 : 2, names: musPref.names, time: song.time, mark: function(i){ return S.hits[i] ? "hit" : ""; }}) + '</div>';
 }
 function sheetPlay(){
   var S = musState;
   if (S.playing){ musStop(); S.playing = false; renderSheet(); return; }
-  S.playing = true; renderSheet();
-  var gs = musBody().querySelectorAll(".mnote");
+  S.playing = true; S.hits = {}; S.score = null; renderSheet();
+  var gs = musBody().querySelectorAll(".mnote"), spb = 60 / S.bpm, base = performance.now() + 120;
+  S.starts = S.notes.map(function(n){ return base + n.beat * spb * 1000; });
   musPlay(S.notes, S.inst, S.bpm, function(i){
     Array.prototype.forEach.call(gs, function(g){ g.classList.remove("on"); });
-    var g = gs[i]; if (!g) return;
+    var g = gs[i], n = S.notes[i];
+    if (n.p) musLight(noteMidi(n.p), n.len * spb * 1000 * 0.9);
+    if (!g) return;
     g.classList.add("on");
-    var svg = g.closest("svg"), r = svg.getBoundingClientRect();
-    if (r.top < 70 || r.bottom > window.innerHeight * 0.62) window.scrollTo(0, r.top + (window.pageYOffset || 0) - 120);
+    /* keep the playing bar just under the sticky keyboard */
+    var svg = g.closest("svg"), r = svg.getBoundingClientRect(), keys = musBody().querySelector(".mkeys");
+    var top = keys ? keys.getBoundingClientRect().bottom : 70;
+    if (r.top < top || r.bottom > window.innerHeight * 0.66) window.scrollTo(0, r.top + (window.pageYOffset || 0) - top - 8 + (keys ? 0 : -50));
   }).then(function(){
     if (!musState || musState !== S || !S.playing) return;
-    S.playing = false; renderSheet();
-    if (window.AoiHost) window.AoiHost.line("ok2");
+    S.playing = false;
+    var total = S.notes.filter(function(n){ return n.p; }).length, got = Object.keys(S.hits).length;
+    S.score = got ? got : null;
+    renderSheet();
+    if (!window.AoiHost) return;
+    if (!got) window.AoiHost.line("ok2");
+    else if (got / total >= 0.8) window.AoiHost.say("Wow, you hit " + got + " of " + total + " notes in time!", {voice:"ok4", pose:"present_r", eyes:"eyes_happy"});
+    else window.AoiHost.say("You hit " + got + " of " + total + ". Slow the tempo down and try again!", {voice:"ok2", pose:"present_l", eyes:"eyes_happy"});
   });
 }
 
@@ -4257,8 +4286,8 @@ function earPhrase(){ var S = musState; return S.phrases[S.ph] || []; }
 function earListen(){
   var S = musState; if (!S || !S.song) return;
   var ph = earPhrase(); if (!ph.length) return;
-  var slow = S.misses >= 3 ? 0.75 : 1;
-  musPlay(S.notes, S.inst, S.bpm * slow, null, ph[0], ph[ph.length - 1] + 1);
+  var slow = S.misses >= 3 ? 0.75 : 1, spb = 60 / (S.bpm * slow);
+  musPlay(S.notes, S.inst, S.bpm * slow, S.show ? function(i){ var n = S.notes[i]; if (n.p) musLight(noteMidi(n.p), n.len * spb * 900); } : null, ph[0], ph[ph.length - 1] + 1);
 }
 function renderEar(){
   var S = musState, ph = earPhrase(), head = "";
@@ -4272,43 +4301,57 @@ function renderEar(){
         return '<span class="edot' + (got ? ' got' : '') + (k === S.pos && S.hint >= 1 ? ' next' : '') + '">' + (show ? musNameOf(n.p, musPref.names || "abc") : "") + '</span>';
       }).join("");
       head = '<div class="lcard mcard"><div class="ctag">' + esc_(S.song.jp) + ' · phrase ' + (S.ph + 1) + ' of ' + S.phrases.length + '</div>' +
+        musSeg("mmode", [["ear", "By ear"], ["along", "Play along"]], "ear") +
         '<div class="edots">' + dots + '</div>' +
         '<div class="mctl"><button class="btn primary" type="button" data-mlisten>&#9654; Listen</button>' +
         '<button class="pbtog" type="button" data-mhint>Hint' + (S.hint ? ' (' + S.hint + ')' : '') + '</button>' +
-        '<button class="pbtog" type="button" data-mskip>Skip &#9656;</button></div></div>';
+        '<button class="pbtog" type="button" data-mskip>Skip &#9656;</button>' +
+        '<button class="pbtog" type="button" data-mshow aria-pressed="' + !!S.show + '">Show me</button></div></div>';
     }
   }
   var names = musSeg("mnames", [["", "No names"], ["abc", "C D E"], ["doremi", "ドレミ"]], musPref.names);
   musBody().innerHTML = head + '<div class="lcard mcard">' + names + (S.inst === "piano" ? pianoHtml() : guitarHtml()) + '</div>';
 }
-function pianoHtml(){
-  var S = musState, ph = earPhrase(), next = S.song && !S.done && S.hint >= 1 ? S.notes[ph[S.pos]] : null;
-  var nextMidi = next ? noteMidi(next.p) : -1, w = 100 / PIANO_WHITE.length, keys = "";
+function pianoKeys(hintMidi){
+  var w = 100 / PIANO_WHITE.length, keys = "";
   PIANO_WHITE.forEach(function(p, i){
     var m = noteMidi(p);
-    keys += '<button type="button" class="pkey w' + (m === nextMidi ? ' hint' : '') + '" data-key="' + m + '" style="left:' + (i * w) + '%;width:' + w + '%">' +
+    keys += '<button type="button" class="pkey w' + (m === hintMidi ? ' hint' : '') + '" data-key="' + m + '" style="left:' + (i * w) + '%;width:' + w + '%">' +
       '<span>' + (musPref.names ? musNameOf(p, musPref.names) : (p === "C4" ? "C4" : "")) + '</span></button>';
     if ("CDFGA".indexOf(p.charAt(0)) >= 0 && i < PIANO_WHITE.length - 1){
-      keys += '<button type="button" class="pkey b' + (m + 1 === nextMidi ? ' hint' : '') + '" data-key="' + (m + 1) + '" style="left:' + ((i + 1) * w - w * 0.3) + '%;width:' + (w * 0.6) + '%" aria-label="' + midiName(m + 1) + '"></button>';
+      keys += '<button type="button" class="pkey b' + (m + 1 === hintMidi ? ' hint' : '') + '" data-key="' + (m + 1) + '" style="left:' + ((i + 1) * w - w * 0.3) + '%;width:' + (w * 0.6) + '%" aria-label="' + midiName(m + 1) + '"></button>';
     }
   });
   return '<div class="piano">' + keys + '</div>';
 }
-function guitarHtml(){
-  var S = musState, ph = earPhrase(), next = S.song && !S.done && S.hint >= 1 ? noteMidi(S.notes[ph[S.pos]].p) : -1;
-  var spot = next >= 0 ? guitarSpot(next) : null, out = '<div class="gboard"><div class="grow gnums"><span></span>';
+function earNextMidi(){
+  var S = musState, ph = earPhrase();
+  return S.song && !S.done && S.hint >= 1 && ph[S.pos] != null ? noteMidi(S.notes[ph[S.pos]].p) : -1;
+}
+function pianoHtml(){ return pianoKeys(earNextMidi()); }
+function guitarBoard(hintMidi){
+  var spot = hintMidi >= 0 ? guitarSpot(hintMidi) : null, out = '<div class="gboard"><div class="grow gnums"><span></span>';
   for (var f = 0; f < GUITAR_FRETS; f++) out += '<span>' + (f === 0 ? "open" : f) + '</span>';
   out += '</div>';
   ["e", "B", "G", "D", "A", "E"].forEach(function(name, s){
     out += '<div class="grow"><span class="gname">' + name + '</span>';
     for (var f = 0; f < GUITAR_FRETS; f++){
       var m = GUITAR_OPEN[s] + f, isHint = spot && spot[0] === s && spot[1] === f;
-      out += '<button type="button" class="gfret' + (f === 0 ? ' open' : '') + (!musPref.names && (s === 2 || s === 3) && [3, 5, 7].indexOf(f) >= 0 ? ' dot' : '') + (isHint ? ' hint' : '') + '" data-key="' + m + '">' +
-        (musPref.names ? '<small>' + musNameOf(midiName(m), musPref.names) + '</small>' : '') + '</button>';
+      out += '<button type="button" class="gfret' + (f === 0 ? ' open' : '') + (!musPref.names && (s === 2 || s === 3) && [3, 5, 7].indexOf(f) >= 0 ? ' dot' : '') + (isHint ? ' hint' : '') +
+        '" data-key="' + m + '" data-sf="' + s + '-' + f + '">' + (musPref.names ? '<small>' + musNameOf(midiName(m), musPref.names) + '</small>' : '') + '</button>';
     }
     out += '</div>';
   });
   return out + '</div><p class="hint">Strings are drawn high e at the top, low E at the bottom, like guitar tab.</p>';
+}
+function guitarHtml(){ return guitarBoard(earNextMidi()); }
+/* Lights the key (or the easiest fret) for a note while it sounds. */
+function musLight(m, ms){
+  var root = musBody(), el = root.querySelector('.pkey[data-key="' + m + '"]');
+  if (!el){ var sp = guitarSpot(m); if (sp) el = root.querySelector('.gfret[data-sf="' + sp[0] + '-' + sp[1] + '"]'); }
+  if (!el) return;
+  el.classList.add("lit");
+  setTimeout(function(){ el.classList.remove("lit"); }, Math.max(150, ms));
 }
 /* The easiest place to play a pitch: the lowest fret on the highest string that has it. */
 function guitarSpot(m){
@@ -4317,8 +4360,21 @@ function guitarSpot(m){
 }
 function earPress(m, el){
   var S = musState;
-  musNote(S.inst, m, 0.01, 0.6);
+  musNote(S.inst === "hum" ? "piano" : S.inst, m, 0.01, 0.6);
   el.classList.add("hit"); setTimeout(function(){ el.classList.remove("hit"); }, 260);
+  if (S.mode === "sheet"){
+    if (!S.playing || !S.starts) return;
+    var now = performance.now();
+    for (var i = 0; i < S.notes.length; i++){
+      var n = S.notes[i];
+      if (n.p && !S.hits[i] && Math.abs(now - S.starts[i]) <= 280 && noteMidi(n.p) === m){
+        S.hits[i] = 1;
+        var g = musBody().querySelectorAll(".mnote")[i]; if (g) g.classList.add("hit");
+        break;
+      }
+    }
+    return;
+  }
   if (!S.song || S.done) return;
   var ph = earPhrase(), want = noteMidi(S.notes[ph[S.pos]].p);
   if (m === want){
@@ -4350,6 +4406,13 @@ document.getElementById("musicBody").addEventListener("click", function(e){
   if ((b = t.closest("[data-minst]"))){ musPref.inst = musState.inst = b.getAttribute("data-minst"); musSavePref(); musStop(); musState.playing = false; renderSheet(); return; }
   if ((b = t.closest("[data-mnames]"))){ musPref.names = b.getAttribute("data-mnames"); musSavePref(); musState.mode === "sheet" ? renderSheet() : renderEar(); return; }
   if (t.closest("[data-mlisten]")){ earListen(); return; }
+  if (t.closest("[data-mshow]")){ musState.show = !musState.show; renderEar(); if (musState.show) earListen(); return; }
+  if ((b = t.closest("[data-mmode]"))){
+    var sg = musState.song, inst = musState.mode === "sheet" ? musState.inst : musState.inst;
+    if (b.getAttribute("data-mmode") === "along" && musState.mode !== "sheet") openSheet(sg.id, inst);
+    else if (b.getAttribute("data-mmode") === "ear" && musState.mode === "sheet") openEar(inst === "guitar" ? "guitar" : "piano", sg.id);
+    return;
+  }
   if (t.closest("[data-mhint]")){ musState.hint = Math.min(2, musState.hint + 1); renderEar(); return; }
   if (t.closest("[data-mskip]")){ musState.pos = earPhrase().length - 1; earPress(noteMidi(musState.notes[earPhrase()[musState.pos]].p), t.closest("button")); return; }
   if (t.closest("[data-mall]")){ musPlay(musState.notes, musState.inst, musState.bpm); return; }
@@ -4501,12 +4564,12 @@ var TEACHER_SECTIONS = [
   {id:"music", title:"Music with Aoi", icon:"note", blurb:"Learn to read sheet music (with Japan's \u30c9\u30ec\u30df), then follow the notes of Japanese songs while Aoi hums them.",
    modules:function(){ return MUSIC_LESSONS.map(function(L){ return musModule(L, L.beats.length + " steps \u00b7 quiz", function(){ musStart(L); }); })
      .concat(MUSIC_SONGS.map(function(sg){ return {title:sg.jp, icon:"note", meta:"Follow the notes \u00b7 " + sg.title, start:function(){ openSheet(sg.id); }}; })); }},
-  {id:"piano", title:"Piano by Ear", icon:"note", blurb:"Japanese songs by ear: Aoi plays a phrase, you play it back on the keys. Hints when you need them.",
-   modules:function(){ return MUSIC_SONGS.map(function(sg){ return {title:sg.jp, icon:"note", meta:sg.title + " \u00b7 by ear", start:function(){ openEar("piano", sg.id); }}; })
+  {id:"piano", title:"Piano by Ear", icon:"note", blurb:"Japanese songs on the keys: play along as they light up, or learn them by ear phrase by phrase.",
+   modules:function(){ return MUSIC_SONGS.map(function(sg){ return {title:sg.jp, icon:"note", meta:sg.title + " \u00b7 by ear or play along", start:function(){ openEar("piano", sg.id); }}; })
      .concat([{title:"Free play", icon:"note", meta:"just the keys", start:function(){ openEar("piano", null); }}]); }},
   {id:"guitar", title:"Guitar", icon:"note", blurb:"Your first chords, then Japanese songs by ear on the fretboard.",
    modules:function(){ return [musModule({id:"gu_chords", title:"Your first chords"}, "6 chords \u00b7 quiz", chordsLesson)]
-     .concat(MUSIC_SONGS.map(function(sg){ return {title:sg.jp, icon:"note", meta:sg.title + " \u00b7 by ear", start:function(){ openEar("guitar", sg.id); }}; }))
+     .concat(MUSIC_SONGS.map(function(sg){ return {title:sg.jp, icon:"note", meta:sg.title + " \u00b7 by ear or play along", start:function(){ openEar("guitar", sg.id); }}; }))
      .concat([{title:"Free play", icon:"note", meta:"just the fretboard", start:function(){ openEar("guitar", null); }}]); }},
   {id:"claude", title:"Claude Code", icon:"code", blurb:"Using Claude Code from your phone, narrated in Aoi's own voice.",
    modules:function(){ return [{title:"Claude Code on Your Phone", icon:"phone", meta:CLAUDE_CODE_BEATS.length + " scenes \u00b7 voiced", start:startTeacherLesson}]; }},

@@ -34,6 +34,10 @@ main functions are being made solid first.
       389 voiced clips, 121 quiz questions; romaji on/off with tap-to-peek; colour-coded
       sentence roles and phrasebook versions, plus a Compare-all view
 - [ ] Native-speaker review of the new lessons, the original chants and the story retellings
+- [x] Stories in six versions (polite/casual x standard/Osaka/Kyoto), all voiced
+- [x] Learn from Songs: 9 public-domain songs explained line by line (words + grammar point)
+- [x] Japanese line for every Kitchen step, polite or casual, voiced, hideable
+- [x] Dictionary cross-check of every kanji reading (grammar/check_kanji.py; 939 checked)
 - [ ] More stories (Urashima Taro, The Crane's Return), and per-word audio in stories
 - [ ] Modern songs: lyrics are copyrighted, so only via a licensed source or the user's own
       copy pasted into chat for Aoi to explain

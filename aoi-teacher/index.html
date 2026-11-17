@@ -717,6 +717,13 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 .jgrid .jj{font-size:22px;} .jgrid .jwen{font-size:12px;}
 .jstory{display:flex; flex-direction:column; gap:6px;}
 .jmodes{display:flex; flex-direction:column; gap:6px;}
+.jbreak{display:flex; flex-wrap:wrap; gap:6px;}
+.jbw{display:inline-flex; flex-direction:column; padding:6px 9px; border:1.5px solid var(--line); background:var(--surface-2); font-size:12px; line-height:1.3;}
+.jbw b{font-family:"M PLUS Rounded 1c", var(--font-body); font-size:17px;}
+.jbw small{font-size:11px; color:var(--muted);}
+.jpoint{flex-basis:100%; margin:2px 0 0; padding:8px 10px; border-left:4px solid var(--accent); background:var(--surface-2); font-size:13px; line-height:1.45;}
+.jcook{padding:10px; border:1.5px dashed var(--accent);}
+.steplist li.jli{display:block; padding:0; border:none; background:none; list-style:none;}
 .jmodes .pbseg button{padding:5px 4px; font-size:12.5px;}
 .jmodes .pbseg button small{font-size:10px;}
 .jchip{display:flex; margin-bottom:-4px;}
@@ -3219,20 +3226,46 @@ function trackVisual(tag, items, i){
 function chatAvailable(){ return !!(window.AoiChat && window.AoiChat.hasKey && window.AoiChat.hasKey()); }
 
 /* ---------- cooking: cook along with Aoi, one step at a time (no AI needed) ---------- */
+/* Each recipe step also comes as a Japanese line (grammar/recipes_jp.py), polite or casual,
+   voiced by Aoi; it can be hidden for cooks who only want English. */
+function cookJpOn(){ try{ return localStorage.getItem("aoi_cook_jp_v1") !== "off"; }catch(e){ return true; } }
+function cookJpCard(J, i){
+  if (!J || !J.steps[i]) return "";
+  if (!cookJpOn()) return '<div class="lbtns"><button type="button" class="pbtog" data-cookjp>Show the Japanese</button></div>';
+  var st = J.steps[i], v = pbMode.f === "c" ? st.c : st.p;
+  return '<div class="lcard jcard jcook"><div class="jtop"><div class="ctag" lang="ja">\u65e5\u672c\u8a9e \u00b7 ' + esc_(J.title) + '</div>' + jpTogBtn() + '</div>' +
+    jpModes(true) + jpSentence(Object.assign({}, v, {vk: "s" + pbMode.f}), "now") +
+    '<div class="lbtns"><button type="button" class="pbtog" data-cookjp>Hide the Japanese</button></div></div>';
+}
+/* Puts the Japanese card right under the step being cooked, not below the whole list. */
+function cookWithJp(track, card){
+  if (!card) return track;
+  var at = track.indexOf('</li>', track.indexOf('class="now pop"'));
+  return at < 0 ? track + card : track.slice(0, at + 5) + '<li class="jli">' + card + '</li>' + track.slice(at + 5);
+}
 function startCookAlong(r, backTo){
   activeRecipe = r;
+  var J = window.JP_LEARN && JP_LEARN.recipes[r.id];
+  jpRebuild = function(){ return cookBeats(r, J); };
+  playLesson({ title: r.title, tag: "Cooking", beats: cookBeats(r, J), manual: true, audioPaced: !!J, backTo: backTo || "recipe", nextLabel: "Done",
+    finish: function(vis){ cookFinish(r, vis); }});
+  jpApplyRomaji();
+}
+function cookBeats(r, J){
   var beats = [{
     text: "Let's make " + r.title + "! First gather everything \u2014 tick each one off as you get it out.",
     voice: "cook_start", pose: "present_l", eyes: "eyes_happy",
-    visual: '<div class="lcard"><div class="ctag">' + esc_(r.title) + ' \u00b7 Ingredients</div><div class="ingr">' +
+    visual: '<div class="lcard"><div class="ctag">' + esc_(r.title) + (J ? ' \u00b7 <span lang="ja">' + esc_(J.title) + '</span>' : '') + ' \u00b7 Ingredients</div><div class="ingr">' +
       r.ingredients.map(function(x){ return '<label><input type="checkbox"><span>' + esc_(x) + '</span></label>'; }).join("") + '</div></div>'
   }];
   r.steps.forEach(function(st, i){
-    beats.push({ text: st, pose: i % 2 ? "point_l" : "point_r", eyes: null,
-      visual: trackVisual(r.title + " \u00b7 Step " + (i + 1) + " of " + r.steps.length, r.steps, i) });
+    var jv = J && J.steps[i] && cookJpOn() ? (pbMode.f === "c" ? J.steps[i].c : J.steps[i].p) : null;
+    beats.push({ text: st, pose: i % 2 ? "point_l" : "point_r", eyes: null, audio: jv ? "audio/jp/" + jv.a : null,
+      visual: cookWithJp(trackVisual(r.title + " \u00b7 Step " + (i + 1) + " of " + r.steps.length, r.steps, i), cookJpCard(J, i)) });
   });
-  playLesson({ title: r.title, tag: "Cooking", beats: beats, manual: true, backTo: backTo || "recipe", nextLabel: "Done",
-    finish: function(vis){
+  return beats;
+}
+function cookFinish(r, vis){
       vis.innerHTML = '<div class="lcard">' + lessonHero("pot", "Enjoy your " + r.title + "!", "That's every step. Tap her to cook it again.", []) +
         '<div class="lbtns">' + (chatAvailable() ? '<button class="btn" id="cookAskBtn" type="button">Ask Aoi about it</button>' : '') +
         '<button class="btn primary" id="cookMoreBtn" type="button">More recipes</button></div></div>';
@@ -3240,7 +3273,6 @@ function startCookAlong(r, backTo){
       if (ask) ask.addEventListener("click", function(){ window.AoiChat.openCooking(r); });
       document.getElementById("cookMoreBtn").addEventListener("click", function(){ renderCookingSelect(); showView("cooking", {backTo:"hub"}); });
       if (window.AoiHost) window.AoiHost.line("lesson_done", {pose:"present_r", eyes:"eyes_happy"});
-    }});
 }
 document.getElementById("teacherVisual").addEventListener("change", function(e){
   var t = e.target;
@@ -3529,6 +3561,10 @@ document.addEventListener("click", function(e){
   if (t.closest("[data-jptog]")){ jpToggleRomaji(); return; }
   var md = t.closest("[data-jmode]");
   if (md){ jpSetMode(md.getAttribute("data-jmode"), md.getAttribute("data-v")); return; }
+  if (t.closest("[data-cookjp]")){
+    try{ localStorage.setItem("aoi_cook_jp_v1", cookJpOn() ? "off" : "on"); }catch(e){}
+    jpRebuildCurrent(); return;
+  }
   var w = t.closest(".jw");
   var c = t.closest("[data-clip]");
   if (w && !jpRomaji){
@@ -3547,7 +3583,7 @@ function jpWord(jp, kana, ro, role, chg){
 function jpBare(s){ return s.replace(/[、。！？「」『』…\s]/g, ""); }
 function jpSentence(ex, cls){
   var words = ex.s.map(function(w){ return jpWord(w[0], w[1] !== jpBare(w[0]) ? w[1] : "", w[3], w[2], w[4]); }).join("");
-  if (ex.src) cls = (cls ? cls + ' ' : '') + pbVerCls(pbMode.d + pbMode.f);
+  if (ex.src) cls = (cls ? cls + ' ' : '') + pbVerCls(ex.vk || (pbMode.d + pbMode.f));
   return '<div class="jsent' + (cls ? ' ' + cls : '') + '" data-clip="' + ex.a + '"><span class="jspk" aria-hidden="true">&#128266;</span>' +
     '<div class="jline">' + words + '</div><div class="jen">' + esc_(ex.en) + '</div>' +
     (ex.note ? '<div class="jnote">' + esc_(ex.note) + '</div>' : '') + '</div>';
@@ -3662,14 +3698,14 @@ function jpTopicReview(L){
    its remembered choice; songs keep their words as written. */
 var jpCurrentRead = null;
 function jpVer(line){ return line.v ? line.v[pbMode.d + pbMode.f] : line; }
-function jpModes(){
+function jpModes(formOnly){
   var f = pbMode.f, d = pbMode.d;
   function b(attr, v, label, small, on){
     return '<button type="button" data-jmode="' + attr + '" data-v="' + v + '" class="' + (on ? 'on' : '') + '" aria-pressed="' + (on ? 'true' : 'false') + '">' +
       label + '<small lang="ja">' + small + '</small></button>';
   }
   return '<div class="jmodes"><div class="pbseg">' + b("f", "p", "Polite", "です・ます", f === "p") + b("f", "c", "Casual", "タメ口", f === "c") + '</div>' +
-    '<div class="pbseg pb3">' + b("d", "s", "Standard", "標準語", d === "s") + b("d", "o", "Osaka", "大阪弁", d === "o") + b("d", "k", "Kyoto", "京都弁", d === "k") + '</div></div>';
+    (formOnly ? '</div>' : '<div class="pbseg pb3">' + b("d", "s", "Standard", "標準語", d === "s") + b("d", "o", "Osaka", "大阪弁", d === "o") + b("d", "k", "Kyoto", "京都弁", d === "k") + '</div></div>');
 }
 function jpReadBeats(L){
   var song = L.kind === "song", modes = song ? "" : jpModes();
@@ -3682,20 +3718,31 @@ function jpReadBeats(L){
     var s = jpVer(line), prev = "";
     var chip = line.v ? pbChip(pbMode.d + pbMode.f) : "";
     beats.push({text: line.en || s.en, pose: i % 2 ? "present_l" : "present_r", eyes: null, audio: "audio/jp/" + s.a,
-      visual: jpCard(L.title + " \u00b7 line " + (i + 1) + " of " + L.lines.length, modes + prev + (chip ? '<div class="jchip">' + chip + '</div>' : '') + jpSentence(s, "now"))});
+      visual: jpCard(L.title + " \u00b7 line " + (i + 1) + " of " + L.lines.length, modes + prev + (chip ? '<div class="jchip">' + chip + '</div>' : '') + jpSentence(s, "now") + jpBreak(s))});
   });
   return beats;
+}
+/* A song line's key words and one point about its grammar or culture. */
+function jpBreak(s){
+  if (!s.words && !s.point) return "";
+  return '<div class="jbreak">' + (s.words || []).map(function(w){
+    return '<span class="jbw"><b lang="ja">' + esc_(w[0]) + '</b>' + (w[1] ? '<small lang="ja">' + esc_(w[1]) + '</small>' : '') + '<span>' + esc_(w[2]) + '</span></span>';
+  }).join("") + (s.point ? '<p class="jpoint">' + esc_(s.point) + '</p>' : '') + '</div>';
 }
 function jpReadReview(L){
   return '<div class="ctag">' + esc_(L.title) + ' \u00b7 the whole ' + (L.kind === "song" ? "song" : "story") + '</div>' +
     (L.kind === "song" ? "" : jpModes()) + '<div class="jstory">' +
     L.lines.map(function(line){ return jpSentence(jpVer(line)); }).join("") + '</div>';
 }
+var jpRebuild = null; /* set by a lesson whose beats depend on the chosen version */
 function jpSetMode(attr, v){
   if (attr === "f") pbMode.f = v; else pbMode.d = v;
   pbSave();
-  if (!jpCurrentRead || views.teacherLesson.hidden) return;
-  var beats = jpReadBeats(jpCurrentRead);
+  jpRebuildCurrent();
+}
+function jpRebuildCurrent(){
+  if (!jpRebuild || views.teacherLesson.hidden) return;
+  var beats = jpRebuild();
   LESSON.beats = beats; TUTOR_LESSON = beats;
   if (teacherEnded){ LESSON.finish(document.getElementById("teacherVisual")); jpApplyRomaji(); return; }
   tutorTranscript.pop();
@@ -3718,8 +3765,8 @@ function jpStart(id){
   jpStopAudio();
   if (L.beats) jpPlayLesson(L, jpGrammarBeats(L));
   else if (L.words) jpPlayLesson(L, jpTopicBeats(L), {review: function(){ return jpTopicReview(L); }});
-  else { jpCurrentRead = L; jpPlayLesson(L, jpReadBeats(L), {auto: true, tag: L.kind === "song" ? "Song" : "Story", review: function(){ return jpReadReview(L); }}); }
-  if (!L.lines) jpCurrentRead = null;
+  else { jpCurrentRead = L; jpRebuild = L.kind === "song" ? null : function(){ return jpReadBeats(L); }; jpPlayLesson(L, jpReadBeats(L), {auto: true, tag: L.kind === "song" ? "Song" : "Story", review: function(){ return jpReadReview(L); }}); }
+  if (!L.lines){ jpCurrentRead = null; jpRebuild = null; }
   jpApplyRomaji();
 }
 
@@ -3735,8 +3782,10 @@ var TEACHER_SECTIONS = [
      .concat([{title:"Verb & adjective charts", icon:"layers", meta:"9 charts \u00b7 tap to hear", start:jpChartsLesson}]); }},
   {id:"jpwords", title:"Japanese Words", icon:"chat", blurb:"Directions, ordering, animals, birds, insects, plants, magic, clothes, the face and body, and saying you're sick. Each ends with a chant and a quiz.",
    modules:function(){ return JP_LEARN.topics.map(function(L){ return jpModule(L, L.words.length + " words \u00b7 chant \u00b7 quiz", function(){ jpStart(L.id); }); }); }},
-  {id:"jpread", title:"Read with Aoi", icon:"book", blurb:"Old tales and traditional songs in easy Japanese. Hide the romaji to practise reading kanji; tap any word to peek.",
-   modules:function(){ return JP_LEARN.reads.map(function(L){ return jpModule(L, L.jp + " \u00b7 " + L.lines.length + " lines", function(){ jpStart(L.id); }); }); }},
+  {id:"jpread", title:"Read with Aoi", icon:"book", blurb:"Old tales in easy Japanese, each in six versions: polite or casual, standard, Osaka or Kyoto. Hide the romaji to practise reading kanji.",
+   modules:function(){ return JP_LEARN.reads.filter(function(L){ return L.kind === "story"; }).map(function(L){ return jpModule(L, L.jp + " \u00b7 " + L.lines.length + " lines \u00b7 6 versions", function(){ jpStart(L.id); }); }); }},
+  {id:"jpsongs", title:"Learn from Songs", icon:"heart", blurb:"Traditional Japanese songs taken apart line by line: what each word means and the grammar behind it. Aoi reads every line.",
+   modules:function(){ return JP_LEARN.reads.filter(function(L){ return L.kind === "song"; }).map(function(L){ return jpModule(L, L.jp + " \u00b7 " + L.lines.length + " lines", function(){ jpStart(L.id); }); }); }},
   {id:"claude", title:"Claude Code", icon:"code", blurb:"Using Claude Code from your phone, narrated in Aoi's own voice.",
    modules:function(){ return [{title:"Claude Code on Your Phone", icon:"phone", meta:CLAUDE_CODE_BEATS.length + " scenes \u00b7 voiced", start:startTeacherLesson}]; }},
   {id:"ppl", title:"PPL Checkride", icon:"plane", blurb:"All 12 FAA knowledge areas. Each lesson teaches five points, then quizzes you on them.",

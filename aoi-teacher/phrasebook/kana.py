@@ -29,6 +29,8 @@ def kana_romaji(kana):
             out += b + YOON[nxt]; i += 2; continue
         if nxt == 'ぇ' and c in ('ち', 'し', 'じ'):
             out += BASE[c][:-1] + 'e'; i += 2; continue
+        if nxt == 'ぃ' and c in ('て', 'で'):
+            out += BASE[c][0] + 'i'; i += 2; continue
         if nxt in ('ぁ', 'ぃ', 'ぇ', 'ぉ') and c == 'ふ':
             out += 'f' + BASE[nxt]; i += 2; continue
         out += BASE.get(c, ''); i += 1

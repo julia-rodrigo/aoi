@@ -13,6 +13,8 @@ cp -r ../../aoi-teacher/index.html ../../aoi-teacher/manifest.json ../../aoi-tea
       ../../aoi-teacher/sprites ../../aoi-teacher/audio app/src/main/assets/www/
 mkdir -p app/src/main/assets/www/phrasebook
 cp ../../aoi-teacher/phrasebook/phrasebook.js app/src/main/assets/www/phrasebook/
+mkdir -p app/src/main/assets/www/grammar
+cp ../../aoi-teacher/grammar/japanese.js app/src/main/assets/www/grammar/
 # Drafts and notes inside the audio folder are not app content.
 find app/src/main/assets/www -name '*.md' -delete
 python3 make_icons.py

@@ -29,6 +29,14 @@ main functions are being made solid first.
 - [x] Fact-check of the Japanese pronunciation lesson and Aoi's Day destinations (6 facts fixed,
       narration re-recorded)
 - [ ] Wire Aoi's Day narration audio (audio/daytrip) into the Aoi's Day lesson
+- [x] Japanese Grammar (6 lessons + 9 verb/adjective charts), Japanese Words (11 topics, each
+      with a chant), Read with Aoi (3 tales + 3 traditional songs), Accents & dialects intro;
+      389 voiced clips, 121 quiz questions; romaji on/off with tap-to-peek; colour-coded
+      sentence roles and phrasebook versions, plus a Compare-all view
+- [ ] Native-speaker review of the new lessons, the original chants and the story retellings
+- [ ] More stories (Urashima Taro, The Crane's Return), and per-word audio in stories
+- [ ] Modern songs: lyrics are copyrighted, so only via a licensed source or the user's own
+      copy pasted into chat for Aoi to explain
 
 ## Next: a model that helps with all of these
 

@@ -1,0 +1,111 @@
+"""Read with Aoi: short, easy retellings of old tales and traditional children's songs, for
+practising kanji. Same sentence format as words.py. The stories are folk tales (public domain),
+retold here in my own simple Japanese; the songs are traditional わらべうた and old school songs
+whose words are long out of copyright. Aoi reads the song words aloud; she doesn't sing them.
+"""
+from words import S
+
+STORIES = [
+ {"id": "js_kaguya", "title": "Kaguya-hime", "jp": "かぐや姫", "icon": "book", "kind": "story",
+  "blurb": "The Princess from the Moon, one of Japan's oldest stories.",
+  "lines": [
+   S("昔々、[むかしむかし] 竹を[たけを] 切る[きる] おじいさんが いました。", "mukashi mukashi, take o kiru ojīsan ga imashita", "Long, long ago, there was an old man who cut bamboo."),
+   S("ある日、[あるひ] 光る[ひかる] 竹の[たけの] 中に、[なかに] 小さな[ちいさな] 女の子が[おんなのこが] いました。", "aru hi, hikaru take no naka ni, chiisana onna no ko ga imashita", "One day, inside a shining bamboo stalk, there was a tiny girl."),
+   S("おじいさんと おばあさんは、 その子を[そのこを] かぐや姫と[かぐやひめと] 名付けました。[なづけました]", "ojīsan to obāsan wa, sono ko o Kaguya-hime to nazukemashita", "The old man and woman named her Kaguya-hime."),
+   S("かぐや姫は[かぐやひめは] とても 美しく[うつくしく] なりました。", "Kaguya-hime wa totemo utsukushiku narimashita", "Kaguya-hime grew up to be very beautiful."),
+   S("たくさんの 人が[ひとが] 結婚したいと[けっこんしたいと] 言いました。[いいました]", "takusan no hito ga kekkon shitai to iimashita", "Many people said they wanted to marry her."),
+   S("でも、 かぐや姫は[かぐやひめは] 難しい[むずかしい] 宝物を[たからものを] 頼んで、[たのんで] 断りました。[ことわりました]", "demo, Kaguya-hime wa muzukashii takaramono o tanonde, kotowarimashita", "But she asked each one for an impossible treasure, and turned them all down."),
+   S("かぐや姫は[かぐやひめは] 月を[つきを] 見て、[みて] 泣いていました。[ないていました]", "Kaguya-hime wa tsuki o mite, naite imashita", "Kaguya-hime would look at the moon and cry."),
+   S("「私は[わたしは] 月の[つきの] 都の[みやこの] 者です。」[ものです]", "“watashi wa tsuki no miyako no mono desu.”", "“I come from the capital on the Moon.”"),
+   S("満月の[まんげつの] 夜、[よる] 月から[つきから] 迎えが[むかえが] 来ました。[きました]", "mangetsu no yoru, tsuki kara mukae ga kimashita", "On the night of the full moon, people came from the Moon to fetch her."),
+   S("かぐや姫は[かぐやひめは] 月へ[つきへ] 帰っていきました。[かえっていきました]", "Kaguya-hime wa tsuki e kaette ikimashita", "And Kaguya-hime went home to the Moon.")],
+  "quiz": [["Where was Kaguya-hime found?", ["Inside a shining bamboo stalk", "In a peach", "Under the sea", "On a mountain"], 0, "光る竹の中に."],
+           ["竹 means…", ["bamboo", "moon", "tree", "flower"], 0, "竹 (take)."],
+           ["Where did Kaguya-hime come from?", ["The Moon", "The sea", "Kyoto", "A star"], 0, "月の都 = the capital on the Moon."],
+           ["月 is read…", ["つき (tsuki)", "ひ (hi)", "たけ (take)", "よる (yoru)"], 0, "月 = moon (also 'month')."],
+           ["昔々 means…", ["long, long ago", "one day", "at night", "tomorrow"], 0, "The Japanese 'once upon a time'."]]},
+
+ {"id": "js_akazukin", "title": "Little Red Riding Hood", "jp": "赤ずきん", "icon": "book", "kind": "story",
+  "blurb": "The European tale, in easy Japanese, with lots of face words.",
+  "lines": [
+   S("赤い[あかい] ずきんを かぶった 女の子が[おんなのこが] いました。", "akai zukin o kabutta onna no ko ga imashita", "There was a girl who wore a red hood."),
+   S("みんなは その子を[そのこを] 赤ずきんと[あかずきんと] 呼びました。[よびました]", "minna wa sono ko o Akazukin to yobimashita", "Everyone called her Little Red Riding Hood."),
+   S("ある日、[あるひ] 赤ずきんは[あかずきんは] 森の[もりの] おばあさんの 家へ[いえへ] 行きました。[いきました]", "aru hi, Akazukin wa mori no obāsan no ie e ikimashita", "One day, she set off to her grandmother's house in the woods."),
+   S("森で、[もりで] オオカミに 会いました。[あいました]", "mori de, ōkami ni aimashita", "In the woods, she met a wolf."),
+   S("オオカミは 先に[さきに] おばあさんの 家へ[いえへ] 行きました。[いきました]", "ōkami wa saki ni obāsan no ie e ikimashita", "The wolf went ahead to grandmother's house."),
+   S("「おばあさん、 どうして そんなに 耳が[みみが] 大きいの？」[おおきいの]", "“obāsan, dōshite sonna ni mimi ga ōkii no?”", "“Grandma, why are your ears so big?”"),
+   S("「お前の[おまえの] 声が[こえが] よく 聞こえるようにさ。」[きこえるようにさ]", "“omae no koe ga yoku kikoeru yō ni sa.”", "“All the better to hear you with.”"),
+   S("「どうして そんなに 口が[くちが] 大きいの？」[おおきいの]", "“dōshite sonna ni kuchi ga ōkii no?”", "“Why is your mouth so big?”"),
+   S("「お前を[おまえを] 食べるためさ！」[たべるためさ]", "“omae o taberu tame sa!”", "“All the better to eat you with!”"),
+   S("でも、 猟師が[りょうしが] 来て、[きて] 二人を[ふたりを] 助けました。[たすけました]", "demo, ryōshi ga kite, futari o tasukemashita", "But a hunter came and saved them both.")],
+  "quiz": [["赤 means…", ["red", "blue", "big", "hood"], 0, "赤い = red."],
+           ["Who did she meet in the woods?", ["オオカミ (a wolf)", "猟師 (a hunter)", "猫 (a cat)", "狐 (a fox)"], 0, "森でオオカミに会いました."],
+           ["森 means…", ["woods, forest", "house", "mountain", "river"], 0, "Three trees: 木 + 林 → 森."],
+           ["耳が大きい means…", ["big ears", "big mouth", "big eyes", "big nose"], 0, "耳 = ear, 大きい = big."],
+           ["Which verb is used for the hood?", ["かぶる", "着る", "はく", "食べる"], 0, "Hoods and hats: かぶる."]]},
+
+ {"id": "js_momotaro", "title": "Momotarō", "jp": "桃太郎", "icon": "book", "kind": "story",
+  "blurb": "The Peach Boy and his three animal friends.",
+  "lines": [
+   S("昔々、[むかしむかし] おばあさんが 川で[かわで] 洗濯を[せんたくを] していました。", "mukashi mukashi, obāsan ga kawa de sentaku o shite imashita", "Long ago, an old woman was washing clothes in the river."),
+   S("大きな[おおきな] 桃が[ももが] どんぶらこと 流れてきました。[ながれてきました]", "ōkina momo ga donburako to nagarete kimashita", "A huge peach came bobbing down the river, “donburako”."),
+   S("桃から[ももから] 元気な[げんきな] 男の子が[おとこのこが] 生まれました。[うまれました]", "momo kara genki na otoko no ko ga umaremashita", "Out of the peach came a lively baby boy."),
+   S("名前は[なまえは] 桃太郎です。[ももたろうです]", "namae wa Momotarō desu", "His name was Momotarō, Peach Boy."),
+   S("桃太郎は[ももたろうは] 鬼ヶ島へ[おにがしまへ] 鬼退治に[おにたいじに] 行きました。[いきました]", "Momotarō wa Onigashima e onitaiji ni ikimashita", "Momotarō set off to Ogre Island to defeat the ogres."),
+   S("きびだんごを あげて、 犬と[いぬと] 猿と[さると] キジが 仲間に[なかまに] なりました。", "kibidango o agete, inu to saru to kiji ga nakama ni narimashita", "He shared his millet dumplings, and a dog, a monkey and a pheasant joined him."),
+   S("みんなで 力を[ちからを] 合わせて、[あわせて] 鬼に[おにに] 勝ちました。[かちました]", "minna de chikara o awasete, oni ni kachimashita", "Working together, they beat the ogres."),
+   S("桃太郎は[ももたろうは] 宝物を[たからものを] 持って、[もって] 家に[いえに] 帰りました。[かえりました]", "Momotarō wa takaramono o motte, ie ni kaerimashita", "Momotarō went home with the treasure.")],
+  "quiz": [["桃 is…", ["a peach", "a dumpling", "a river", "an ogre"], 0, "桃 (momo)."],
+           ["Which animals joined Momotarō?", ["A dog, a monkey and a pheasant", "A cat, a fox and a crow", "A dog, a cat and a bear", "A rabbit, a monkey and a duck"], 0, "犬と猿とキジ."],
+           ["鬼 is…", ["an ogre, a demon", "a peach", "a friend", "an island"], 0, "鬼 (oni)."],
+           ["川 means…", ["river", "mountain", "sea", "house"], 0, "The kanji looks like flowing water."],
+           ["What did he share with the animals?", ["きびだんご (millet dumplings)", "桃 (peaches)", "お茶 (tea)", "宝物 (treasure)"], 0, "Kibidango, a speciality of Okayama."]]},
+]
+
+SONGS = [
+ {"id": "js_sakura", "title": "Sakura Sakura", "jp": "さくら さくら", "icon": "heart", "kind": "song",
+  "blurb": "The best-known Japanese folk song, in its old 1888 words.",
+  "intro": "These are the original words, in old-fashioned Japanese. 弥生 is the old name for the third month, when cherry trees bloom.",
+  "lines": [
+   S("さくら さくら", "sakura sakura", "Cherry blossoms, cherry blossoms,"),
+   S("弥生の[やよいの] 空は[そらは]", "yayoi no sora wa", "across the spring sky,"),
+   S("見渡す[みわたす] 限り[かぎり]", "miwatasu kagiri", "as far as the eye can see,"),
+   S("霞か[かすみか] 雲か[くもか]", "kasumi ka kumo ka", "is it mist, or is it clouds?"),
+   S("匂いぞ[においぞ] 出ずる[いずる]", "nioi zo izuru", "Their fragrance drifts out."),
+   S("いざや いざや", "iza ya iza ya", "Come now, come now,"),
+   S("見に[みに] ゆかん", "mi ni yukan", "let's go and see them!")],
+  "quiz": [["桜 / さくら is…", ["cherry blossom", "plum", "cloud", "sky"], 0, "Sakura."],
+           ["空 means…", ["sky", "cloud", "mist", "spring"], 0, "空 (sora)."],
+           ["雲 means…", ["cloud", "mist", "rain", "moon"], 0, "雲 (kumo)."],
+           ["見に means…", ["to go and see", "to smell", "to wait", "to sing"], 0, "見に行く = to go and see."]]},
+
+ {"id": "js_kagome", "title": "Kagome Kagome", "jp": "かごめ かごめ", "icon": "person", "kind": "song",
+  "blurb": "A circle game: guess who's standing behind you.",
+  "intro": "One child crouches in the middle with eyes covered; the others walk around singing. When the song stops, the child guesses who's right behind them.",
+  "lines": [
+   S("かごめ かごめ", "kagome kagome", "Kagome, kagome,"),
+   S("籠の[かごの] 中の[なかの] 鳥は[とりは]", "kago no naka no tori wa", "the bird inside the cage,"),
+   S("いつ いつ 出やる[でやる]", "itsu itsu deyaru", "when, oh when will it come out?"),
+   S("夜明けの[よあけの] 晩に[ばんに]", "yoake no ban ni", "In the evening of the dawn,"),
+   S("鶴と[つると] 亀が[かめが] 滑った[すべった]", "tsuru to kame ga subetta", "the crane and the turtle slipped."),
+   S("後ろの[うしろの] 正面[しょうめん] だあれ？", "ushiro no shōmen dāre?", "Who's right behind you?")],
+  "quiz": [["鳥 means…", ["bird", "cage", "turtle", "crane"], 0, "鳥 (tori)."],
+           ["鶴 and 亀 are…", ["a crane and a turtle", "a bird and a cat", "a fox and a dog", "a cage and a bird"], 0, "Both symbols of long life."],
+           ["後ろ means…", ["behind", "in front", "inside", "above"], 0, "後ろ (ushiro)."],
+           ["だあれ is a sing-song…", ["だれ (who)", "どこ (where)", "なに (what)", "いつ (when)"], 0, "誰 = who."]]},
+
+ {"id": "js_musunde", "title": "Musunde Hiraite", "jp": "むすんで ひらいて", "icon": "person", "kind": "song",
+  "blurb": "A hand-play song: close your hands, open them, clap.",
+  "intro": "Do the actions: make fists (結んで), open your hands (開いて), clap (手を打って), then raise them up (上に).",
+  "lines": [
+   S("結んで[むすんで] 開いて[ひらいて]", "musunde hiraite", "Close your hands, open them,"),
+   S("手を[てを] 打って[うって] 結んで[むすんで]", "te o utte musunde", "clap your hands, close them,"),
+   S("また 開いて[ひらいて] 手を[てを] 打って[うって]", "mata hiraite te o utte", "open them again, clap your hands,"),
+   S("その 手を[てを] 上に[うえに]", "sono te o ue ni", "and put those hands up high!"),
+   S("結んで[むすんで] 開いて[ひらいて]", "musunde hiraite", "Close your hands, open them,"),
+   S("手を[てを] 打って[うって] 結んで[むすんで]", "te o utte musunde", "clap your hands, close them.")],
+  "quiz": [["手 means…", ["hand", "foot", "head", "up"], 0, "手 (te)."],
+           ["開いて means…", ["open", "close", "clap", "raise"], 0, "開く (hiraku) = to open."],
+           ["上 means…", ["up, above", "down", "behind", "inside"], 0, "上 (ue) ↔ 下 (shita)."],
+           ["手を打つ means…", ["to clap", "to wave", "to close your hands", "to point"], 0, "打つ = to strike."]]},
+]

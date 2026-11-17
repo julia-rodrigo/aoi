@@ -235,6 +235,49 @@ TOPICS = [
            ["薬局 is…", ["a pharmacy", "a hospital", "an ambulance", "medicine"], 0, "薬 (medicine) + 局 (office)."]]},
 ]
 
+
+TOPICS += [
+ {"id": "jw_planets", "title": "Planets & the Sun", "icon": "globe",
+  "blurb": "The eight planets in Japanese, and where the days of the week come from.",
+  "words": [("太陽", "たいよう", "taiyō", "the Sun"), ("惑星", "わくせい", "wakusei", "planet"), ("水星", "すいせい", "suisei", "Mercury"),
+            ("金星", "きんせい", "kinsei", "Venus"), ("地球", "ちきゅう", "chikyū", "Earth"), ("火星", "かせい", "kasei", "Mars"),
+            ("木星", "もくせい", "mokusei", "Jupiter"), ("土星", "どせい", "dosei", "Saturn"), ("天王星", "てんのうせい", "tennōsei", "Uranus"),
+            ("海王星", "かいおうせい", "kaiōsei", "Neptune")],
+  "sents": [S("地球は[ちきゅうは] 太陽の[たいようの] 周りを[まわりを] 回ります。[まわります]", "chikyū wa taiyō no mawari o mawarimasu", "The Earth goes around the Sun."),
+            S("木星は[もくせいは] 一番[いちばん] 大きい[おおきい] 惑星です。[わくせいです]", "mokusei wa ichiban ōkii wakusei desu", "Jupiter is the biggest planet."),
+            S("土星には[どせいには] 輪が[わが] あります。", "dosei ni wa wa ga arimasu", "Saturn has rings."),
+            S("火星は[かせいは] 赤く[あかく] 見えます。[みえます]", "kasei wa akaku miemasu", "Mars looks red."),
+            S("曜日の[ようびの] 名前は[なまえは] 星から[ほしから] 来ています。[きています]", "yōbi no namae wa hoshi kara kite imasu", "The days of the week are named after the sky.",
+              "月 Moon, 火 Mars, 水 Mercury, 木 Jupiter, 金 Venus, 土 Saturn, 日 Sun: 月曜日 to 日曜日.")],
+  "rhyme": S("すい きん ち か もく ど てん かい！", "sui kin chi ka moku do ten kai!",
+             "Mercury, Venus, Earth, Mars, Jupiter, Saturn, Uranus, Neptune!", "A real chant Japanese children use to remember the planets in order. Often said すいきんちかもくどってんかい."),
+  "quiz": [["地球 is…", ["Earth", "Mars", "the Sun", "the Moon"], 0, "地球 (chikyū)."],
+           ["Which planet is 木星?", ["Jupiter", "Saturn", "Mercury", "Venus"], 0, "木 = tree, also Thursday's 木曜日."],
+           ["The chant すいきんちかもくどってんかい lists…", ["the planets in order from the Sun", "the days of the week", "the seasons", "the stars of Orion"], 0, "水金地火木土天海."],
+           ["金曜日 (Friday) is named after…", ["Venus", "gold", "Jupiter", "the Sun"], 0, "金星 = Venus."],
+           ["惑星 means…", ["planet", "star", "moon", "comet"], 0, "わくせい."]]},
+
+ {"id": "jw_stars", "title": "Stars & Tanabata", "icon": "globe",
+  "blurb": "Star words, the Milky Way, and the Tanabata love story.",
+  "words": [("星", "ほし", "hoshi", "star"), ("星座", "せいざ", "seiza", "constellation"), ("北極星", "ほっきょくせい", "hokkyokusei", "the North Star"),
+            ("北斗七星", "ほくとしちせい", "hokuto shichisei", "the Big Dipper"), ("天の川", "あまのがわ", "amanogawa", "the Milky Way"),
+            ("織姫", "おりひめ", "orihime", "Vega (the weaver princess)"), ("彦星", "ひこぼし", "hikoboshi", "Altair (the cowherd)"),
+            ("流れ星", "ながれぼし", "nagareboshi", "shooting star"), ("すばる", "", "subaru", "the Pleiades")],
+  "sents": [S("七夕は[たなばたは] 七月[しちがつ] 七日です。[なのかです]", "tanabata wa shichigatsu nanoka desu", "Tanabata is on the 7th of July."),
+            S("織姫と[おりひめと] 彦星は[ひこぼしは] 年に[ねんに] 一度[いちど] 会えます。[あえます]", "orihime to hikoboshi wa nen ni ichido aemasu",
+              "Orihime and Hikoboshi can meet once a year.", "The legend: the two stars, Vega and Altair, are lovers kept apart by the Milky Way."),
+            S("北極星は[ほっきょくせいは] 北の[きたの] 空で[そらで] 動きません。[うごきません]", "hokkyokusei wa kita no sora de ugokimasen", "The North Star doesn't move in the northern sky."),
+            S("オリオン座は[オリオンざは] 冬に[ふゆに] 見えます。[みえます]", "orion-za wa fuyu ni miemasu", "Orion can be seen in winter."),
+            S("流れ星に[ながれぼしに] 願いを[ねがいを] 言います。[いいます]", "nagareboshi ni negai o iimasu", "You make a wish on a shooting star.")],
+  "rhyme": S("北斗七星、[ほくとしちせい] 北極星、[ほっきょくせい] 天の川には[あまのがわには] 織姫[おりひめ] 彦星！[ひこぼし]",
+             "hokuto shichisei, hokkyokusei, amanogawa ni wa orihime hikoboshi!", "The Big Dipper, the North Star, and over the Milky Way, Orihime and Hikoboshi!"),
+  "quiz": [["天の川 is…", ["the Milky Way", "a river in Kyoto", "a shooting star", "the North Star"], 0, "Literally 'the river of heaven'."],
+           ["When is Tanabata?", ["7 July", "1 January", "25 December", "3 March"], 0, "七月七日."],
+           ["織姫 is the star…", ["Vega", "Sirius", "Polaris", "Betelgeuse"], 0, "And 彦星 is Altair."],
+           ["すばる is the Japanese name for…", ["the Pleiades", "Orion's belt", "the Big Dipper", "Mars"], 0, "Yes, like the car maker's six-star logo."],
+           ["北極星 doesn't seem to move because…", ["it sits almost exactly above the Earth's North Pole", "it's very close", "it's the brightest star", "it's a planet"], 0, "Everything else circles around it."]]},
+]
+
 # A narrated intro to Japan's dialects (examples voiced; Aoi speaks with standard intonation).
 DIALECT = {
  "id": "jw_dialects", "title": "Accents & dialects", "icon": "torii",

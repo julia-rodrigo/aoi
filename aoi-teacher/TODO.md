@@ -50,6 +50,30 @@ main functions are being made solid first.
 - [ ] Modern songs: lyrics are copyrighted, so only via a licensed source or the user's own
       copy pasted into chat for Aoi to explain
 
+## Your big list (asked on the birthday message)
+
+Done in round 1:
+- [x] Japanese setting in Settings: standard by default, Osaka or Kyoto, polite or casual
+- [x] More chords: sevenths, barre chords, J-rock power chords; chord library; barre and power-chord lessons
+- [x] J-pop progressions (王道, 小室, カノン, 丸サ, アクシス, doo-wop) with a band to strum, drum or play bass with
+- [x] Aoi Song: Aoi writes tunes over J-pop progressions and sings them in a mix of な, ら and ん (her own voice)
+- [x] Drums and Bass sections (basics lessons + play-along patterns)
+- [x] Science & World: planets to scale, real star charts, Pythagoras, compound growth, 15 minutes a day
+- [x] Japanese words: Planets & the Sun (すいきんちかもくどってんかい), Stars & Tanabata
+
+Next rounds:
+- [ ] Body and heart with real reference images (needs Wikimedia/NASA hosts allowed, or images you provide)
+- [ ] Animals: butterflies vs moths, insects vs spiders, dog and cat breeds (needs real photos for pictures)
+- [ ] Christmas and Japanese festivals (お正月, 節分, ひな祭り, 七夕, お盆, 七五三)
+- [ ] Housework, productivity and "best maid" skills; budgeting tips for parents; raising kids
+- [ ] Survival basics; self-defence basics and handstand progressions (safety first)
+- [ ] Marathon training plan with a run timer
+- [ ] Make a game in Godot; simple Python; using Claude Code to build an app like Aoi
+- [ ] Dragons, magical creatures, witches and wizards across world folklore
+- [ ] World map names, how crystals form, magic tricks
+- [ ] Let's draw Aoi (step-by-step, tracing her real sprite)
+- [ ] Every new module bilingual: Japanese words voiced by Aoi, in the chosen dialect where it applies
+
 ## Next: a model that helps with all of these
 
 Aoi should help track, remind and recommend across every area below, not only the quiz

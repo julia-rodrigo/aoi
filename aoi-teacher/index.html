@@ -763,6 +763,31 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 .mkeys{position:sticky; top:0; z-index:6; background:var(--bg); padding:6px 0;}
 .mnote.hit{color:var(--good);}
 .pbseg.pb4{grid-template-columns:repeat(4, 1fr);}
+.sci{width:100%; height:auto; display:block; color:var(--fg);}
+.sci-note{margin:2px 0 0; font-size:11px; color:var(--muted);}
+.scifacts{display:flex; align-items:baseline; gap:10px;} .scifacts b{font-size:24px; font-family:"M PLUS Rounded 1c", var(--font-body);} .scifacts span{font-weight:700;}
+.scitab{width:100%; border-collapse:collapse; font-size:13px;} .scitab th, .scitab td{border:1px solid var(--line); padding:6px 8px; text-align:left;} .scitab th{font-weight:700; color:var(--muted);}
+.scicalc{display:flex; flex-direction:column; gap:8px;} .scicalc label{display:flex; align-items:center; gap:8px; font-weight:700; font-size:14px;}
+.scicalc input{width:110px; font:inherit; font-size:15px; padding:6px 8px; border:1.5px solid var(--line); background:var(--surface); color:var(--fg);}
+.calcout p{margin:6px 0 0; font-size:14px;}
+.setHead{margin:14px 0 4px; font-size:13px; letter-spacing:.08em; text-transform:uppercase; color:var(--accent-2);}
+.pbseg.pb5{grid-template-columns:repeat(5, 1fr);} .pbseg.pb5 button{font-size:12px;}
+.dgrid{display:flex; flex-direction:column; gap:3px; overflow-x:auto;}
+.drow{display:grid; grid-template-columns:44px repeat(16, 1fr); gap:2px; align-items:center;}
+.drow span{font-size:11px; font-weight:700;}
+.dcell{height:22px; border:1px solid var(--line); background:var(--surface);}
+.dcell.beat{border-left:2px solid var(--muted);}
+.dcell.on{background:var(--accent);}
+.dcell.now{outline:2px solid var(--good); outline-offset:-2px;}
+.dcount i{font-style:normal; font-size:10px; text-align:center; color:var(--muted);}
+.dpads{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px;}
+.dpad{height:86px; font-family:inherit; font-size:18px; font-weight:800; border:3px solid var(--accent); background:var(--surface-2); color:var(--accent); cursor:pointer; touch-action:manipulation; user-select:none; -webkit-user-select:none;}
+.dpad.big{grid-column:1 / -1;}
+.dpad.ok{background:var(--good); color:var(--bg);} .dpad.off{background:#e8a33d; color:#1b1f2a;}
+.bassrow{grid-template-columns:22px repeat(8, 1fr);}
+.gfret.ok{background:var(--good); color:var(--bg);} .gfret.off{background:#e8a33d;}
+.bassnote span{font-size:28px; font-weight:800; padding:14px 0;}
+.mtable.bassnote{grid-template-columns:1fr;}
 .mlyric{fill:var(--fg); font-weight:700; font-family:"M PLUS Rounded 1c", var(--font-body);}
 .mnote.on .mlyric{fill:var(--accent);}
 .btn.rec{background:#d9534f; border-color:#d9534f;}
@@ -1187,12 +1212,26 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 
   <div id="settingsPanel" class="overlayPanel" hidden>
     <div class="panelHead">
-      <span class="panelTitle">Chat Settings</span>
+      <span class="panelTitle">Settings</span>
       <div class="panelHeadBtns">
         <button type="button" id="settingsCloseBtn" class="navbtn" aria-label="Close settings">&times;</button>
       </div>
     </div>
     <div class="settingsBody">
+      <div class="settingsField" id="setJp">
+        <label>Japanese Aoi teaches</label>
+        <div class="pbseg" role="radiogroup" aria-label="Formality">
+          <button type="button" data-setjp-f="p">Polite<small lang="ja">です・ます</small></button>
+          <button type="button" data-setjp-f="c">Casual<small lang="ja">タメ口</small></button>
+        </div>
+        <div class="pbseg pb3" role="radiogroup" aria-label="Dialect" style="margin-top:6px">
+          <button type="button" data-setjp-d="s">Standard<small lang="ja">標準語</small></button>
+          <button type="button" data-setjp-d="o">Osaka<small lang="ja">大阪弁</small></button>
+          <button type="button" data-setjp-d="k">Kyoto<small lang="ja">京都弁</small></button>
+        </div>
+        <p class="hint">Standard Japanese is the default and works everywhere. This sets the phrasebook, stories, songs and haiku; you can still switch on any screen.</p>
+      </div>
+      <h3 class="setHead">Chat</h3>
       <p class="hint" id="settingsPhoneNote" hidden>On this phone, your key is saved once in the app's private storage and used for every chat and hint from then on. It's never put in a backup, and only ever sent to the Claude API.</p>
       <p class="hint" id="settingsSampleNote" hidden>You're viewing this inside Claude, so Aoi can already talk using your Claude account (Claude Sonnet 5.5) &mdash; no key needed. A key below is only used if you add one.</p>
       <p class="hint">Your API key is stored only in this browser (localStorage) on this device. It is never sent anywhere except directly from your browser to the provider's own API &mdash; not to Aoi Teacher's host, not to anyone else. Clearing it below removes it completely.</p>
@@ -3608,6 +3647,19 @@ document.getElementById("pbPlayAll").addEventListener("click", pbPlayAll);
    romaji). Each Japanese line is split into words, and each word carries its kana and romaji, so
    the Romaji switch can hide the helpers for reading practice while a tap on any word brings
    them back for just that word. Aoi speaks the Japanese (audio/jp/), her caption gives the English. */
+/* The Japanese setting in Settings: the same choice the phrasebook and stories use. */
+function setJpRender(){
+  Array.prototype.forEach.call(document.querySelectorAll("[data-setjp-f]"), function(b){ var on = b.getAttribute("data-setjp-f") === pbMode.f; b.classList.toggle("on", on); b.setAttribute("aria-checked", on); });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-setjp-d]"), function(b){ var on = b.getAttribute("data-setjp-d") === pbMode.d; b.classList.toggle("on", on); b.setAttribute("aria-checked", on); });
+}
+document.getElementById("setJp").addEventListener("click", function(e){
+  var b = e.target.closest("button"); if (!b) return;
+  if (b.hasAttribute("data-setjp-f")) pbMode.f = b.getAttribute("data-setjp-f"); else pbMode.d = b.getAttribute("data-setjp-d");
+  pbSave(); setJpRender();
+  if (!views.phrasebook.hidden && pbSec) renderPhrasebook();
+  jpRebuildCurrent();
+});
+setJpRender();
 window.aoiHushHooks.push(function(){
   musStop(); pbStop(); jpStopAudio();
   if (lessonPlaying && !views.teacherLesson.hidden) setLessonPlaying(false);
@@ -3967,7 +4019,8 @@ function musLater(fn, ms){ MUS.timers.push(setTimeout(fn, Math.max(0, ms))); }
 var HUM_SAMPLES = {
   hum_low:  {file:"audio/hum/hum_low.wav",  hz:237.1,  loopStart:0.15265, loopEnd:0.93871},
   hum_high: {file:"audio/hum/hum_high.wav", hz:300.0,  loopStart:0.15281, loopEnd:1.04113},
-  la:       {file:"audio/hum/la.wav",       hz:358.54, loopStart:0.15048, loopEnd:0.93984}
+  la:       {file:"audio/hum/la.wav",       hz:358.54, loopStart:0.15048, loopEnd:0.93984},
+  na:       {file:"audio/hum/na.wav",       hz:319.57, loopStart:0.15048, loopEnd:0.67932}
 };
 var humLoading = false;
 function humLoad(ctx){
@@ -4047,7 +4100,11 @@ function voiceGuitar(ctx, f, t, d){
   g.gain.setValueAtTime(0.85, t); g.gain.setValueAtTime(0.85, t + Math.max(d, 0.4)); g.gain.exponentialRampToValueAtTime(0.0001, t + Math.max(d, 0.4) + 0.6);
   src.start(t); src.stop(t + Math.max(d, 0.4) + 0.65); MUS.sources.push(src);
 }
-var MUS_VOICES = {hum: voiceHum, la: voiceLa, piano: voicePiano, guitar: voiceGuitar};
+function voiceNa(ctx, f, t, d){
+  if (HUM_SAMPLES.na.buf){ voiceSample(ctx, HUM_SAMPLES.na, f, t, d); return; }
+  voiceLa(ctx, f, t, d);
+}
+var MUS_VOICES = {hum: voiceHum, la: voiceLa, na: voiceNa, aoi: voiceHum, piano: voicePiano, guitar: voiceGuitar};
 function musNote(inst, midi, when, dur){
   var ctx = musCtx(); if (!ctx) return;
   (MUS_VOICES[inst] || voiceHum)(ctx, midiFreq(midi), ctx.currentTime + (when || 0.02), dur || 0.6);
@@ -4076,7 +4133,7 @@ function musPlay(notes, inst, bpm, onNote, from, to){
     for (var i = from; i < to; i++){
       (function(i){
         var n = notes[i], at = t0 + (n.beat - start) * spb;
-        if (n.p) musNote(inst, noteMidi(n.p), at, n.len * spb * 0.92);
+        if (n.p) musNote(inst === "aoi" ? ({"\u306a": "na", "\u3089": "la"})[n.syl] || "hum" : inst, noteMidi(n.p), at, n.len * spb * 0.92);
         if (onNote) musLater(function(){ onNote(i); }, at * 1000);
       })(i);
     }
@@ -4174,12 +4231,14 @@ var MUSIC_SONGS = [
  {id:"yorokobi", title:"Yorokobi no Uta", jp:"よろこびの歌", origin:"Beethoven's Ode to Joy (1824); Japan sings it every December as 「第九」", bpm:100, time:"4/4",
   notes:"E4q E4q F4q G4q | G4q F4q E4q D4q / C4q C4q D4q E4q | E4q. D4e D4h / E4q E4q F4q G4q | G4q F4q E4q D4q / C4q C4q D4q E4q | D4q. C4e C4h"}
 ];
-function musSong(id){ var f = null; MUSIC_SONGS.concat(myTunes()).forEach(function(s){ if (s.id === id) f = s; }); return f; }
+function musSong(id){ var f = null; MUSIC_SONGS.concat(myTunes(), aoiSongs()).forEach(function(s){ if (s.id === id) f = s; }); return f; }
+function songChords(song){ return song && (song.chords || SONG_CHORDS[song.id]); }
 /* Notes for a song, with its words attached where it has them. */
 function musSongNotes(song){
   var notes = musParse(song.notes);
   if (song.lyrics){ var ly = song.lyrics.split(" "), k = 0;
-    notes.forEach(function(n){ if (!n.p) return; var w = ly[k++]; if (w && w !== "-") n.lyric = w; }); }
+    var last = "";
+    notes.forEach(function(n){ if (!n.p) return; var w = ly[k++]; if (w && w !== "-"){ n.lyric = w; last = w; } n.syl = last; }); }
   return notes;
 }
 var MUS_PREF_KEY = "aoi_music_pref_v1";
@@ -4308,13 +4367,13 @@ function musModule(L, meta, start){
 var musState = null;
 function musBody(){ return document.getElementById("musicBody"); }
 function musSeg(attr, opts, cur){
-  return '<div class="pbseg' + (opts.length === 3 ? ' pb3' : opts.length === 4 ? ' pb4' : '') + '">' + opts.map(function(o){
+  return '<div class="pbseg' + (opts.length === 3 ? ' pb3' : opts.length === 4 ? ' pb4' : opts.length === 5 ? ' pb5' : '') + '">' + opts.map(function(o){
     return '<button type="button" data-' + attr + '="' + o[0] + '" class="' + (o[0] === cur ? 'on' : '') + '" aria-pressed="' + (o[0] === cur) + '">' + o[1] + '</button>';
   }).join("") + '</div>';
 }
 function openSheet(id, inst){
   var song = musSong(id); musStop();
-  musState = {mode:"sheet", song:song, notes:musSongNotes(song), inst:inst || (song.lyrics ? "hum" : musPref.inst), bpm:song.bpm, playing:false, hits:{}, score:null, from: inst ? inst : null};
+  musState = {mode:"sheet", song:song, notes:musSongNotes(song), inst:inst || (song.aoi ? "aoi" : song.lyrics ? "hum" : musPref.inst), band: !!song.aoi, bpm:song.bpm, playing:false, hits:{}, score:null, from: inst ? inst : null};
   showView("music", {backTo:"teacher"}); setHeader(song.jp, inst === "piano" ? "Piano" : inst === "guitar" ? "Guitar" : "Music");
   renderSheet();
   if (window.AoiHost) window.AoiHost.say(inst ? "Press play: the keys light up as I play. Tap along with me! Notes you hit in time turn green." :
@@ -4324,10 +4383,11 @@ function renderSheet(){
   var S = musState, song = S.song;
   var withNotes = S.notes.filter(function(n){ return n.p; }).length;
   musBody().innerHTML = '<div class="lcard mcard"><div class="ctag">' + esc_(song.title) + ' · ' + esc_(song.origin) + '</div>' +
-    (S.from ? musSeg("mmode", S.inst === "guitar" && SONG_CHORDS[song.id] ? [["ear", "By ear"], ["along", "Play along"], ["strum", "Strum along"]] : [["ear", "By ear"], ["along", "Play along"]], "along") : '') +
+    (S.from ? musSeg("mmode", S.inst === "guitar" && songChords(song) ? [["ear", "By ear"], ["along", "Play along"], ["strum", "Strum along"]] : [["ear", "By ear"], ["along", "Play along"]], "along") : '') +
     '<div class="mctl"><button class="btn primary" type="button" data-mplay>' + (S.playing ? "&#9632; Stop" : "&#9654; Play") + '</button>' +
     '<span class="mtempo"><button class="pbtog" type="button" data-mtempo="-8" aria-label="Slower">&minus;</button><b>' + S.bpm + '</b><small>bpm</small><button class="pbtog" type="button" data-mtempo="8" aria-label="Faster">+</button></span></div>' +
-    musSeg("minst", [["hum", "Aoi hums"], ["la", "Aoi: \u201cla\u201d"], ["piano", "Piano"], ["guitar", "Guitar"]], S.inst) +
+    musSeg("minst", (song.aoi ? [["aoi", "Aoi sings"]] : [["hum", "Aoi hums"]]).concat([["la", "Aoi: \u201cla\u201d"], ["piano", "Piano"], ["guitar", "Guitar"]]), S.inst) +
+    (songChords(song) ? '<div class="mctl"><button class="pbtog" type="button" data-mband aria-pressed="' + !!S.band + '">Band: guitar, bass &amp; drums</button></div>' : '') +
     musSeg("mnames", [["", "No names"], ["abc", "C D E"], ["doremi", "ドレミ"]], musPref.names) +
     (S.score != null ? '<p class="mscore">You hit <b>' + S.score + '</b> of ' + withNotes + ' notes in time.</p>' : '') +
     '<div class="mkeys">' + (S.inst === "guitar" ? guitarBoard(-1) : pianoKeys(-1)) + '</div>' +
@@ -4341,6 +4401,15 @@ function sheetPlay(){
   S.playing = true; S.hits = {}; S.score = null; renderSheet();
   var gs = musBody().querySelectorAll(".mnote"), spb = 60 / S.bpm, base = performance.now() + 120;
   S.starts = S.notes.map(function(n){ return base + n.beat * spb * 1000; });
+  var bandTimers = [];
+  if (S.band && songChords(S.song)) setTimeout(function(){ /* after musPlay below has cleared old sounds */
+    if (musState !== S || !S.playing) return;
+    strumEvents(S.song.id).forEach(function(e){
+      var at = 0.12 + e.beat * spb, shape = CHORD_SHAPE[e.name] || CHORD_SHAPE.C;
+      [0, 2].forEach(function(off){ if (off < e.len) chordMidis(shape).forEach(function(m, j){ musNote("guitar", m, at + off * spb + j * 0.014, spb * 1.6); }); });
+      for (var q = 0; q < e.len; q++){ musNote("bass", bassRoot(e.name), at + q * spb, spb * 0.85); drumHit(q % 2 ? "S" : "K", at + q * spb, 0.8); drumHit("H", at + q * spb, 0.6); drumHit("H", at + (q + 0.5) * spb, 0.45); }
+    });
+  }, 0);
   musPlay(S.notes, S.inst, S.bpm, function(i){
     Array.prototype.forEach.call(gs, function(g){ g.classList.remove("on"); });
     var g = gs[i], n = S.notes[i];
@@ -4401,7 +4470,7 @@ function renderEar(){
         return '<span class="edot' + (got ? ' got' : '') + (k === S.pos && S.hint >= 1 ? ' next' : '') + '">' + (show ? musNameOf(n.p, musPref.names || "abc") : "") + '</span>';
       }).join("");
       head = '<div class="lcard mcard"><div class="ctag">' + esc_(S.song.jp) + ' · phrase ' + (S.ph + 1) + ' of ' + S.phrases.length + '</div>' +
-        musSeg("mmode", S.inst === "guitar" && SONG_CHORDS[S.song.id] ? [["ear", "By ear"], ["along", "Play along"], ["strum", "Strum along"]] : [["ear", "By ear"], ["along", "Play along"]], "ear") +
+        musSeg("mmode", S.inst === "guitar" && songChords(S.song) ? [["ear", "By ear"], ["along", "Play along"], ["strum", "Strum along"]] : [["ear", "By ear"], ["along", "Play along"]], "ear") +
         '<div class="edots">' + dots + '</div>' +
         '<div class="mctl"><button class="btn primary" type="button" data-mlisten>&#9654; Listen</button>' +
         '<button class="pbtog" type="button" data-mhint>Hint' + (S.hint ? ' (' + S.hint + ')' : '') + '</button>' +
@@ -4508,6 +4577,7 @@ document.getElementById("musicBody").addEventListener("click", function(e){
   if ((b = t.closest("[data-minst]"))){ musPref.inst = musState.inst = b.getAttribute("data-minst"); musSavePref(); musStop(); musState.playing = false; renderSheet(); return; }
   if ((b = t.closest("[data-mnames]"))){ musPref.names = b.getAttribute("data-mnames"); musSavePref(); musState.mode === "sheet" ? renderSheet() : renderEar(); return; }
   if (t.closest("[data-mlisten]")){ earListen(); return; }
+  if (t.closest("[data-mband]")){ musState.band = !musState.band; if (musState.playing){ musStop(); musState.playing = false; } renderSheet(); return; }
   if (t.closest("[data-recgo]")){ musState.rec = {on: true, taps: []}; renderEar(); return; }
   if (t.closest("[data-recstop]")){ musState.rec.on = false; renderEar(); return; }
   if (t.closest("[data-recsave]")){ recSave(); return; }
@@ -4576,7 +4646,7 @@ var SONG_CHORDS = {
 };
 function strumEvents(id){
   var ev = [];
-  SONG_CHORDS[id].split("|").forEach(function(bar, b){
+  songChords(musSong(id)).split("|").forEach(function(bar, b){
     var cs = bar.trim().split(/\s+/), len = 4 / cs.length;
     cs.forEach(function(c, k){ ev.push({bar: b, beat: b * 4 + k * len, len: len, name: c}); });
   });
@@ -4694,19 +4764,6 @@ function strum(shape){
   var ms = chordMidis(shape);
   ms.forEach(function(m, k){ musNote("guitar", m, 0.03 + k * 0.035, 1.4); });
 }
-function chordSvg(ch){
-  var s = '<svg class="chord" viewBox="0 0 120 140" role="img" aria-label="' + ch.name + ' chord, ' + ch.shape + '">';
-  s += '<text x="60" y="16" text-anchor="middle" font-size="17" font-weight="800" fill="currentColor">' + ch.name + '</text>';
-  for (var i = 0; i < 6; i++) s += '<line x1="' + (20 + i * 16) + '" x2="' + (20 + i * 16) + '" y1="36" y2="132" stroke="currentColor" stroke-width="1.3"/>';
-  for (var f = 0; f <= 4; f++) s += '<line x1="20" x2="100" y1="' + (36 + f * 24) + '" y2="' + (36 + f * 24) + '" stroke="currentColor" stroke-width="' + (f === 0 ? 4 : 1.3) + '"/>';
-  ch.shape.split("").forEach(function(c, i){
-    var x = 20 + i * 16;
-    if (c === "x") s += '<text x="' + x + '" y="31" text-anchor="middle" font-size="11" fill="currentColor">×</text>';
-    else if (c === "0") s += '<circle cx="' + x + '" cy="27" r="3.6" fill="none" stroke="currentColor" stroke-width="1.3"/>';
-    else s += '<circle cx="' + x + '" cy="' + (36 + (+c) * 24 - 12) + '" r="6.5" fill="var(--accent)"/>';
-  });
-  return s + '</svg>';
-}
 function chordsLesson(){
   musStop();
   var L = {id:"gu_chords", title:"Your first chords", quiz:L_CHORDS_QUIZ};
@@ -4803,6 +4860,669 @@ function mySongPlay(sg){
   jpApplyRomaji();
 }
 
+/* ---------- More chords, J-pop progressions, a band to play with, drums, bass, Aoi Song ---------- */
+/* Extra chord shapes, low E string first ("x" = don't play). Barre and power chords included. */
+var MORE_SHAPES = {
+  A:"x02220", Cmaj7:"x32000", G7:"320001", E7:"020100", A7:"x02020", D7:"xx0212", B7:"x21202", C7:"x32310",
+  Am7:"x02010", Dm7:"xx0211", Em7:"022030", F:"133211", Bm:"x24432", "F#m":"244222", Bb:"x13331", Gm7:"353333",
+  E5:"022xxx", A5:"x022xx", D5:"xx023x", G5:"355xxx", C5:"x355xx", F5:"133xxx"
+};
+Object.keys(MORE_SHAPES).forEach(function(n){ CHORD_SHAPE[n] = MORE_SHAPES[n]; });
+var CHORD_LIB = [
+  {group:"Open chords", names:["C", "G", "D", "A", "E", "Am", "Em", "Dm"]},
+  {group:"Sevenths: the J-pop colour", names:["Cmaj7", "Fmaj7", "Am7", "Dm7", "Em7", "G7", "E7", "A7", "D7", "B7", "C7"]},
+  {group:"Barre chords", names:["F", "Bm", "F#m", "Bb", "Gm7"]},
+  {group:"Power chords: J-rock", names:["E5", "A5", "D5", "G5", "C5", "F5"]}
+];
+/* Chord diagram that copes with barres and chords higher up the neck. */
+function chordSvg(ch){
+  var frets = ch.shape.split("").map(function(c){ return c === "x" ? -1 : +c; });
+  var played = frets.filter(function(f){ return f > 0; }), maxF = played.length ? Math.max.apply(null, played) : 0;
+  var base = maxF > 4 ? Math.min.apply(null, played) : 1;
+  var s = '<svg class="chord" viewBox="0 0 120 140" role="img" aria-label="' + esc_(ch.name) + ' chord, ' + ch.shape + '">';
+  s += '<text x="60" y="16" text-anchor="middle" font-size="17" font-weight="800" fill="currentColor">' + esc_(ch.name) + '</text>';
+  for (var i = 0; i < 6; i++) s += '<line x1="' + (20 + i * 16) + '" x2="' + (20 + i * 16) + '" y1="36" y2="132" stroke="currentColor" stroke-width="1.3"/>';
+  for (var f = 0; f <= 4; f++) s += '<line x1="20" x2="100" y1="' + (36 + f * 24) + '" y2="' + (36 + f * 24) + '" stroke="currentColor" stroke-width="' + (f === 0 && base === 1 ? 4 : 1.3) + '"/>';
+  if (base > 1) s += '<text x="104" y="53" font-size="11" fill="currentColor">' + base + 'fr</text>';
+  /* a barre: the lowest fret held across the lowest played string to the top string */
+  var low = played.length ? Math.min.apply(null, played) : 0, first = frets.indexOf(frets.filter(function(x){ return x >= 0; })[0]);
+  var barre = low > 0 && frets.filter(function(x){ return x === low; }).length >= 3 && frets[first] === low && frets[5] === low;
+  if (barre) s += '<rect x="' + (20 + first * 16 - 6) + '" y="' + (36 + (low - base + 1) * 24 - 18) + '" width="' + ((5 - first) * 16 + 12) + '" height="12" rx="6" fill="var(--accent)"/>';
+  frets.forEach(function(fr, i){
+    var x = 20 + i * 16;
+    if (fr < 0) s += '<text x="' + x + '" y="31" text-anchor="middle" font-size="11" fill="currentColor">×</text>';
+    else if (fr === 0) s += '<circle cx="' + x + '" cy="27" r="3.6" fill="none" stroke="currentColor" stroke-width="1.3"/>';
+    else if (!(barre && fr === low)) s += '<circle cx="' + x + '" cy="' + (36 + (fr - base + 1) * 24 - 12) + '" r="6.5" fill="var(--accent)"/>';
+  });
+  return s + '</svg>';
+}
+function chordBtn(n, big){ return '<button type="button" class="chordbtn' + (big ? ' big' : '') + '" data-chord="' + CHORD_SHAPE[n] + '">' + chordSvg({name: n, shape: CHORD_SHAPE[n]}) + '</button>'; }
+function chordLibrary(){
+  musStop();
+  var beats = [{text:"Here's a chord library. Tap any diagram to hear it. Open chords first, then sevenths, barre chords and J-rock power chords.", pose:"present_r", eyes:"eyes_happy",
+    visual: musCard("Chord library", lessonHero("note", "Chord library", CHORD_LIB.reduce(function(n, g){ return n + g.names.length; }, 0) + " chords", CHORD_LIB.map(function(g){ return g.group; })))}];
+  CHORD_LIB.forEach(function(g){
+    beats.push({text: g.group + ". Tap each one to strum it.", pose:"point_r", eyes:null,
+      visual: musCard("Chord library · " + g.group, '<div class="chordrow">' + g.names.map(function(n){ return chordBtn(n); }).join("") + '</div>')});
+  });
+  playLesson({title:"Chord library", tag:"Guitar", beats:beats, manual:true, backTo:"teacher", nextLabel:"Done"});
+}
+var GUITAR_LESSONS = [
+ {id:"gu_barre", title:"Barre chords", blurb:"One finger across all six strings: the key to every chord up the neck.",
+  beats:[
+   {text:"A barre chord uses your first finger like a capo, pressing every string at one fret. The bar in the diagram shows it.", chord:"F"},
+   {text:"F is the famous first barre chord. Roll your first finger slightly onto its bony side, keep your thumb behind the neck, and press close to the fret wire.", chord:"F"},
+   {text:"Bm is a barre from the A string at the 2nd fret. Skip the low E string.", chord:"Bm"},
+   {text:"The magic: slide one barre shape up the neck and it becomes a new chord. The F shape at fret 3 is G; at fret 5 it's A.", chord:"F#m"},
+   {text:"It's normal for barres to buzz at first. A few minutes a day builds the strength. Until then, Fmaj7 is a friendly stand-in for F.", chord:"Fmaj7"}],
+  quiz:[["In a barre chord, your first finger…", ["presses all the strings at one fret", "mutes all the strings", "plays only the low E", "taps the body"], 0, "Like a capo."],
+        ["The usual first barre chord is…", ["F", "C", "G", "Em"], 0, "133211."],
+        ["Slide the F barre shape up two frets and you get…", ["G", "E", "A", "F#"], 0, "F, F#, G: two frets."],
+        ["An easier stand-in for F is…", ["Fmaj7", "Bm", "E5", "C7"], 0, "xx3210."],
+        ["Buzzing at first is…", ["normal; strength comes with practice", "a broken guitar", "the right sound", "from strumming too softly"], 0, "Press near the fret wire."]]},
+ {id:"gu_power", title:"J-rock power chords", blurb:"Two or three notes, loud and punchy: the sound of J-rock.",
+  beats:[
+   {text:"A power chord is just a root note and its fifth, often with the octave on top. It's written with a 5, like E5.", chord:"E5"},
+   {text:"No third means it's neither major nor minor, so it stays clean even with heavy distortion. That's why rock bands love it.", chord:"A5"},
+   {text:"The shape moves anywhere: root on the low E or A string, fifth two frets up on the next string.", chord:"G5"},
+   {text:"Try E5, then G5, then A5. That shape slide is in countless rock riffs.", chord:"C5"},
+   {text:"For the J-rock drive, play fast down-strums with your palm resting lightly on the strings near the bridge. That's palm muting.", chord:"D5"}],
+  quiz:[["A power chord is made of…", ["the root and the fifth", "the root and the third", "every string open", "four different notes"], 0, "Plus the octave sometimes."],
+        ["Power chords suit distortion because…", ["they have no third", "they're quieter", "they use open strings", "they're barre chords"], 0, "Clean even when loud."],
+        ["E5 is written as…", ["022xxx", "x32010", "133211", "320003"], 0, "Low E, B, E."],
+        ["Palm muting means…", ["resting your palm on the strings near the bridge", "pressing all strings at one fret", "not strumming", "tapping the body"], 0, "A tight, chuggy sound."]]}
+];
+function guitarLesson(L){
+  musStop();
+  var beats = [{text: L.blurb + " Tap any diagram to hear it.", pose:"present_r", eyes:"eyes_happy", visual: musCard(L.title, lessonHero("note", L.title, L.blurb, [L.beats.length + " steps", L.quiz.length + " questions"]))}];
+  L.beats.forEach(function(b, i){
+    beats.push({text: b.text, pose: i % 2 ? "point_l" : "point_r", eyes:null, onShow: function(){ strum(CHORD_SHAPE[b.chord]); },
+      visual: musCard(L.title + " · " + (i + 1) + " of " + L.beats.length, chordBtn(b.chord, true))});
+  });
+  playLesson({title:L.title, tag:"Guitar", beats:beats, manual:true, backTo:"teacher", nextLabel:"Finish", onEndTap:function(){ musQuiz(L); },
+    finish:function(vis){
+      vis.innerHTML = '<div class="lcard">' + lessonHero("check", L.title + " done", L.quiz.length + " questions.", []) + '<div class="lbtns"><button class="btn primary" id="glQuiz" type="button">Start questions</button></div></div>';
+      document.getElementById("glQuiz").addEventListener("click", function(){ musQuiz(L); });
+    }});
+}
+
+/* --- J-pop chord progressions --- */
+var PROGRESSIONS = [
+ {id:"oudou", jp:"王道進行", ro:"Ōdō shinkō", en:"The Royal Road", roman:"IV△7 – V7 – iii7 – vi", chords:["Fmaj7", "G7", "Em7", "Am"],
+  about:"The sound of countless anime and J-pop choruses: hopeful and a little bittersweet."},
+ {id:"komuro", jp:"小室進行", ro:"Komuro shinkō", en:"The Komuro progression", roman:"vi – IV – V – I", chords:["Am", "F", "G", "C"],
+  about:"Named after producer Tetsuya Komuro, who used it in many 1990s hits. It starts sad and ends bright."},
+ {id:"canon", jp:"カノン進行", ro:"Kanon shinkō", en:"The Canon progression", roman:"I – V – vi – iii – IV – I – IV – V", chords:["C", "G", "Am", "Em", "F", "C", "F", "G"],
+  about:"From Pachelbel's Canon, written around 1700. Warm and familiar."},
+ {id:"marusa", jp:"丸サ進行", ro:"Marusa shinkō", en:"The Marusa progression", roman:"IV△7 – III7 – vi7 – v7 – I7", chords:["Fmaj7", "E7", "Am7", "Gm7", "C7"],
+  about:"Named after Shiina Ringo's song 丸の内サディスティック. Jazzy and cool; the same moves as Just the Two of Us."},
+ {id:"axis", jp:"アクシス進行", ro:"Akushisu shinkō", en:"The four-chord loop", roman:"I – V – vi – IV", chords:["C", "G", "Am", "F"],
+  about:"Heard in pop songs all over the world."},
+ {id:"doowop", jp:"ドゥーワップ進行", ro:"Dwūwappu shinkō", en:"The doo-wop loop", roman:"I – vi – IV – V", chords:["C", "Am", "F", "G"],
+  about:"The 1950s ballad sound, still everywhere."}
+];
+function progById(id){ var f = null; PROGRESSIONS.forEach(function(p){ if (p.id === id) f = p; }); return f; }
+var EASY_SWAP = {F:"Fmaj7", Bm:"D", Gm7:"G7"}; /* friendlier shapes when "Easy chords" is on */
+
+/* --- the band: drums, bass and guitar, synthesised --- */
+function noiseBuf(ctx){
+  if (MUS.noise) return MUS.noise;
+  var b = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate), d = b.getChannelData(0);
+  for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  return (MUS.noise = b);
+}
+function drumHit(kind, when, vol){
+  var ctx = musCtx(); if (!ctx) return;
+  var t = ctx.currentTime + (when || 0.01), v = vol == null ? 1 : vol, g = ctx.createGain(); g.connect(MUS.master);
+  if (kind === "K"){
+    var o = ctx.createOscillator(); o.type = "sine";
+    o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.14);
+    g.gain.setValueAtTime(1.0 * v, t); g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
+    o.connect(g); o.start(t); o.stop(t + 0.32); MUS.sources.push(o);
+  } else {
+    var n = ctx.createBufferSource(), hp = ctx.createBiquadFilter(); n.buffer = noiseBuf(ctx);
+    hp.type = "highpass"; hp.frequency.value = kind === "S" ? 1200 : 7000;
+    n.connect(hp); hp.connect(g);
+    var len = kind === "S" ? 0.18 : kind === "O" ? 0.3 : 0.05;
+    g.gain.setValueAtTime((kind === "S" ? 0.7 : 0.32) * v, t); g.gain.exponentialRampToValueAtTime(0.001, t + len);
+    n.start(t); n.stop(t + len + 0.02); MUS.sources.push(n);
+    if (kind === "S"){ var o2 = ctx.createOscillator(), g2 = ctx.createGain(); o2.frequency.value = 185; g2.gain.setValueAtTime(0.5 * v, t); g2.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+      o2.connect(g2); g2.connect(MUS.master); o2.start(t); o2.stop(t + 0.12); MUS.sources.push(o2); }
+  }
+}
+function voiceBass(ctx, f, t, d){
+  var o = ctx.createOscillator(), o2 = ctx.createOscillator(), lp = ctx.createBiquadFilter(), g = ctx.createGain();
+  o.type = "triangle"; o.frequency.value = f; o2.type = "sine"; o2.frequency.value = f;
+  lp.type = "lowpass"; lp.frequency.setValueAtTime(900, t); lp.frequency.exponentialRampToValueAtTime(300, t + 0.25);
+  o.connect(lp); o2.connect(lp); lp.connect(g); g.connect(MUS.master);
+  var end = t + Math.max(0.12, d);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.95, t + 0.008); g.gain.exponentialRampToValueAtTime(0.35, t + 0.2);
+  g.gain.setValueAtTime(0.35, end - 0.05); g.gain.exponentialRampToValueAtTime(0.0001, end + 0.05);
+  [o, o2].forEach(function(x){ x.start(t); x.stop(end + 0.08); MUS.sources.push(x); });
+}
+MUS_VOICES.bass = voiceBass;
+var PC = {C:0, D:2, E:4, F:5, G:7, A:9, B:11};
+function chordRootPc(name){ var m = /^([A-G])([#b]?)/.exec(name); return (PC[m[1]] + (m[2] === "#" ? 1 : m[2] === "b" ? 11 : 0)) % 12; }
+function bassRoot(name){ return 28 + ((chordRootPc(name) - 4 + 12) % 12); } /* E1 (28) up to D#2 */
+
+/* 16 steps a bar. K kick, S snare, H hi-hat, O open hi-hat. */
+var DRUM_PATTERNS = [
+ {id:"rock8", name:"8-beat rock", jp:"8ビート", K:"x.......x.x.....", S:"....x.......x...", H:"x.x.x.x.x.x.x.x.",
+  about:"The basic rock and J-pop beat: hi-hat on every eighth, kick on 1 and 3, snare on 2 and 4."},
+ {id:"jpop16", name:"16-beat J-pop", jp:"16ビート", K:"x.....x...x.....", S:"....x.......x...", H:"xxxxxxxxxxxxxxxx",
+  about:"Busy sixteenth-note hi-hats give bright J-pop its rush."},
+ {id:"four", name:"Four on the floor", jp:"四つ打ち", K:"x...x...x...x...", S:"....x.......x...", H:"..O...O...O...O.",
+  about:"A kick on every beat and an open hi-hat on the off-beats: dance music and idol pop."},
+ {id:"ballad", name:"Ballad half-time", jp:"バラード", K:"x.......x.......", S:"........x.......", H:"x...x...x...x...",
+  about:"Snare only on beat 3 makes the song feel slower and wider."}
+];
+function drumPat(id){ var f = DRUM_PATTERNS[0]; DRUM_PATTERNS.forEach(function(p){ if (p.id === id) f = p; }); return f; }
+/* Bass lines per bar, as [step, interval] pairs: 0 = root, 7 = fifth, 12 = octave. */
+var BASS_PATTERNS = [
+ {id:"roots", name:"Roots on the beat", steps:[[0,0],[4,0],[8,0],[12,0]], about:"Play the chord's root on every beat. The foundation of all bass."},
+ {id:"eighths", name:"Driving eighths", steps:[[0,0],[2,0],[4,0],[6,0],[8,0],[10,0],[12,0],[14,0]], about:"Root on every eighth note: the J-rock and punk drive."},
+ {id:"octave", name:"Octave bounce", steps:[[0,0],[2,12],[4,0],[6,12],[8,0],[10,12],[12,0],[14,12]], about:"Jump between the root and its octave: disco and city pop."},
+ {id:"fifth", name:"Root and fifth", steps:[[0,0],[4,7],[8,0],[12,7]], about:"Root, then the fifth above: country, folk and ballads."}
+];
+function bassPat(id){ var f = BASS_PATTERNS[0]; BASS_PATTERNS.forEach(function(p){ if (p.id === id) f = p; }); return f; }
+var BASS_OPEN = [43, 38, 33, 28]; /* G2 D2 A1 E1, top to bottom like tab */
+function bassSpot(m){ for (var f = 0; f <= 7; f++) for (var s = 3; s >= 0; s--) if (BASS_OPEN[s] + f === m) return [s, f]; return null; }
+
+/* The groove view: Aoi's band plays a progression; you take one part (strum, drums or bass). */
+function openGroove(opt){
+  musStop();
+  var p = progById(opt.prog || "axis");
+  musState = {mode:"groove", prog:p, you: opt.you || "strum", drum: opt.drum || "rock8", bass: opt.bass || "roots", bpm: opt.bpm || 92,
+    loops: 2, easy: true, playing:false, cur:0, step:-1, score:null, title: opt.title || (p.jp + " · " + p.en)};
+  showView("music", {backTo:"teacher"});
+  setHeader(musState.you === "drums" ? "Drums" : musState.you === "bass" ? "Bass" : p.jp, musState.you === "drums" ? "Drums" : musState.you === "bass" ? "Bass" : "Guitar");
+  renderGroove();
+  if (window.AoiHost) window.AoiHost.say(musState.you === "drums" ? "I'll play guitar and bass; you're on drums! Watch the grid and hit the pads." :
+    musState.you === "bass" ? "I'll play guitar and drums; you're on bass! Follow the lit frets." :
+    "I'll play bass and drums; you strum! Watch the chord change.", {pose:"present_r", eyes:"eyes_happy"});
+}
+function grooveChords(){ var S = musState; return S.prog.chords.map(function(c){ return S.easy && EASY_SWAP[c] ? EASY_SWAP[c] : c; }); }
+function renderGroove(){
+  var S = musState, ch = grooveChords(), dp = drumPat(S.drum), bp = bassPat(S.bass);
+  var cur = ch[S.cur % ch.length], next = ch[(S.cur + 1) % ch.length];
+  var part = S.you === "drums" ? drumGridHtml(dp) + '<div class="dpads">' + [["K", "Kick"], ["S", "Snare"], ["H", "Hi-hat"]].map(function(x){ return '<button type="button" class="dpad" data-drum="' + x[0] + '">' + x[1] + '</button>'; }).join("") + '</div>'
+    : S.you === "bass" ? bassBoardHtml()
+    : '<button type="button" class="strumpad" data-gstrum>Strum &#8595;</button>';
+  musBody().innerHTML = '<div class="lcard mcard"><div class="ctag">' + esc_(S.prog.jp) + ' · ' + esc_(S.prog.en) + ' · ' + esc_(S.prog.roman) + '</div>' +
+    '<p class="hint">' + esc_(S.prog.about) + '</p>' +
+    musSeg("gyou", [["strum", "You: strum"], ["drums", "You: drums"], ["bass", "You: bass"]], S.you) +
+    '<div class="mctl"><button class="btn primary" type="button" data-gplay>' + (S.playing ? "&#9632; Stop" : "&#9654; Play") + '</button>' +
+    '<span class="mtempo"><button class="pbtog" type="button" data-gtempo="-8" aria-label="Slower">&minus;</button><b>' + S.bpm + '</b><small>bpm</small><button class="pbtog" type="button" data-gtempo="8" aria-label="Faster">+</button></span>' +
+    '<button class="pbtog" type="button" data-geasy aria-pressed="' + S.easy + '">Easy chords</button></div>' +
+    (S.score ? '<p class="mscore">' + S.score + '</p>' : '') +
+    '<div class="strumnow"><div class="chnow">' + chordSvg({name: cur, shape: CHORD_SHAPE[cur]}) + '</div><div class="chnext"><small>next</small>' + chordSvg({name: next, shape: CHORD_SHAPE[next]}) + '</div></div>' +
+    part +
+    '<div class="ctag">Chord chart · one bar each</div><div class="cchart">' + ch.map(function(c, i){ return '<span class="cbar"><b class="cch' + (i === S.cur % ch.length ? ' on' : '') + '" data-gi="' + i + '">' + c + '</b></span>'; }).join("") + '</div>' +
+    (S.you === "drums" ? '<div class="ctag">Beat</div>' + musSeg("gdrum", DRUM_PATTERNS.slice(0, 2).map(function(d){ return [d.id, d.name]; }), S.drum) + musSeg("gdrum", DRUM_PATTERNS.slice(2).map(function(d){ return [d.id, d.name]; }), S.drum) + '<p class="hint">' + esc_(dp.about) + '</p>' : '') +
+    (S.you === "bass" ? '<div class="ctag">Bass line</div>' + musSeg("gbass", BASS_PATTERNS.slice(0, 2).map(function(d){ return [d.id, d.name]; }), S.bass) + musSeg("gbass", BASS_PATTERNS.slice(2).map(function(d){ return [d.id, d.name]; }), S.bass) + '<p class="hint">' + esc_(bp.about) + '</p>' : '') +
+    '</div>';
+}
+function drumGridHtml(dp){
+  var S = musState;
+  return '<div class="dgrid">' + [["H", "Hi-hat"], ["S", "Snare"], ["K", "Kick"]].map(function(r){
+    var row = r[0] === "H" ? dp.H.replace(/O/g, "x") : dp[r[0]];
+    return '<div class="drow"><span>' + r[1] + '</span>' + row.split("").map(function(c, i){
+      return '<i class="dcell' + (c === "x" || c === "O" ? ' on' : '') + (i % 4 === 0 ? ' beat' : '') + (i === S.step ? ' now' : '') + '" data-st="' + i + '"></i>'; }).join("") + '</div>';
+  }).join("") + '<div class="drow dcount"><span></span>' + "1e&a2e&a3e&a4e&a".split("").map(function(c){ return '<i>' + c + '</i>'; }).join("") + '</div></div>';
+}
+function bassBoardHtml(){
+  var out = '<div class="gboard bass"><div class="grow gnums bassrow"><span></span>';
+  for (var f = 0; f <= 7; f++) out += '<span>' + (f === 0 ? "open" : f) + '</span>';
+  out += '</div>';
+  ["G", "D", "A", "E"].forEach(function(name, s){
+    out += '<div class="grow bassrow"><span class="gname">' + name + '</span>';
+    for (var f = 0; f <= 7; f++){ var m = BASS_OPEN[s] + f;
+      out += '<button type="button" class="gfret' + (f === 0 ? ' open' : '') + '" data-bkey="' + m + '" data-bsf="' + s + '-' + f + '"><small>' + musNameOf(midiName(m), musPref.names || "abc") + '</small></button>'; }
+    out += '</div>';
+  });
+  return out + '</div><p class="hint">Bass strings are drawn G at the top, low E at the bottom, like bass tab.</p>';
+}
+function grooveLight(sel, ms){ var el = musBody().querySelector(sel); if (!el) return; el.classList.add("lit"); setTimeout(function(){ el.classList.remove("lit"); }, ms); }
+function groovePlay(){
+  var S = musState;
+  if (S.playing){ musStop(); S.playing = false; S.step = -1; renderGroove(); return; }
+  S.playing = true; S.score = null; S.cur = 0; S.hits = 0; S.expected = []; renderGroove();
+  var ch = grooveChords(), bars = ch.length * S.loops, spb = 60 / S.bpm, st = spb / 4, lead = 4 * spb, t0 = 0.15;
+  var dp = drumPat(S.drum), bp = bassPat(S.bass), base = performance.now() + t0 * 1000;
+  for (var c = 0; c < 4; c++) drumHit("H", t0 + c * spb, 0.9); /* count-in */
+  S.expected = [];
+  for (var b = 0; b < bars; b++){
+    var name = ch[b % ch.length], shape = CHORD_SHAPE[name], root = bassRoot(name), barT = t0 + lead + b * 4 * spb;
+    (function(b){ musLater(function(){ S.cur = b; var ccur = ch[b % ch.length], cnext = ch[(b + 1) % ch.length], box = musBody().querySelector(".strumnow");
+      if (box) box.innerHTML = '<div class="chnow">' + chordSvg({name: ccur, shape: CHORD_SHAPE[ccur]}) + '</div><div class="chnext"><small>next</small>' + chordSvg({name: cnext, shape: CHORD_SHAPE[cnext]}) + '</div>';
+      Array.prototype.forEach.call(musBody().querySelectorAll(".cch"), function(x){ x.classList.toggle("on", +x.getAttribute("data-gi") === b % ch.length); });
+    }, (barT - 0.02) * 1000); })(b);
+    for (var i = 0; i < 16; i++){
+      var at = barT + i * st, wall = base + (lead + b * 4 * spb + i * st) * 1000;
+      ["K", "S", "H"].forEach(function(k){
+        var cell = dp[k].charAt(i);
+        if (cell === "x" || cell === "O"){
+          if (S.you === "drums") S.expected.push({k: k, t: wall, hit: false});
+          else drumHit(cell === "O" ? "O" : k, at, k === "H" ? 0.8 : 1);
+        }
+      });
+      if (S.you === "drums") (function(i){ musLater(function(){ S.step = i; Array.prototype.forEach.call(musBody().querySelectorAll(".dcell"), function(x){ x.classList.toggle("now", +x.getAttribute("data-st") === i); }); }, at * 1000); })(i);
+    }
+    bp.steps.forEach(function(sv, k){
+      var at = barT + sv[0] * st, nextStep = k + 1 < bp.steps.length ? bp.steps[k + 1][0] : 16, m = root + sv[1];
+      if (S.you === "bass"){
+        S.expected.push({m: m, t: base + (lead + b * 4 * spb + sv[0] * st) * 1000, hit: false});
+        (function(m, at){ musLater(function(){ var sp = bassSpot(m); if (sp) grooveLight('.gfret[data-bsf="' + sp[0] + '-' + sp[1] + '"]', 220); }, at * 1000); })(m, at);
+      } else musNote("bass", m, at, (nextStep - sv[0]) * st * 0.9);
+    });
+    if (S.you !== "strum"){
+      [0, 4, 6, 10, 12, 14].forEach(function(s, k){ /* down, down-up, up-down-up */
+        var up = k === 2 || k === 4 || k === 5, ms = chordMidis(shape);
+        if (up) ms = ms.slice().reverse();
+        ms.forEach(function(m, j){ musNote("guitar", m, barT + s * st + j * 0.012, st * (s === 0 ? 3.5 : 1.8)); });
+      });
+    } else for (var q = 0; q < 4; q++) S.expected.push({t: base + (lead + b * 4 * spb + q * spb) * 1000, hit: false, beat: true});
+  }
+  musLater(function(){
+    if (musState !== S || !S.playing) return;
+    S.playing = false; S.step = -1;
+    var total = S.expected.length;
+    S.score = S.hits ? (S.you === "drums" ? "You hit " + S.hits + " of " + total + " drum notes in time." : S.you === "bass" ? "You played " + S.hits + " of " + total + " bass notes in time." : "You strummed " + S.hits + " of " + total + " beats.") : null;
+    renderGroove();
+    if (window.AoiHost) window.AoiHost.say(S.hits >= total * 0.7 ? "We sound like a real band!" : "Nice jam! Try it a little slower.", {voice: S.hits >= total * 0.7 ? "ok4" : "ok2", pose:"present_r", eyes:"eyes_happy"});
+  }, (t0 + lead + bars * 4 * spb + 0.6) * 1000);
+}
+function grooveScore(test, el, win){
+  var S = musState; if (!S.playing || !S.expected) return;
+  var now = performance.now(), best = null;
+  S.expected.forEach(function(e){ if (!e.hit && test(e) && Math.abs(now - e.t) <= (win || 140) && (!best || Math.abs(now - e.t) < Math.abs(now - best.t))) best = e; });
+  if (best){ best.hit = true; S.hits++; }
+  if (el){ el.classList.add(best ? "ok" : "off"); setTimeout(function(){ el.classList.remove("ok"); el.classList.remove("off"); }, 160); }
+}
+musBody().addEventListener("pointerdown", function(e){
+  var S = musState; if (!S || S.mode !== "groove" || !e.target.closest) return;
+  var b;
+  if ((b = e.target.closest("[data-gstrum]"))){ e.preventDefault(); var name = grooveChords()[S.cur % S.prog.chords.length];
+    chordMidis(CHORD_SHAPE[name]).forEach(function(m, k){ musNote("guitar", m, 0.005 + k * 0.02, 0.9); }); grooveScore(function(x){ return x.beat; }, b, 170); return; }
+  if ((b = e.target.closest("[data-drum]"))){ e.preventDefault(); var k = b.getAttribute("data-drum"); drumHit(k, 0.005, 1); grooveScore(function(x){ return x.k === k; }, b, 120); return; }
+  if ((b = e.target.closest("[data-bkey]"))){ e.preventDefault(); var m = +b.getAttribute("data-bkey"); musNote("bass", m, 0.005, 0.4); grooveScore(function(x){ return x.m === m; }, b, 150); return; }
+});
+musBody().addEventListener("click", function(e){
+  var S = musState, t = e.target, b; if (!S || S.mode !== "groove" || !t.closest) return;
+  if (t.closest("[data-gplay]")){ groovePlay(); return; }
+  if ((b = t.closest("[data-gtempo]"))){ if (S.playing){ musStop(); S.playing = false; } S.bpm = Math.max(50, Math.min(170, S.bpm + +b.getAttribute("data-gtempo"))); renderGroove(); return; }
+  if (t.closest("[data-geasy]")){ S.easy = !S.easy; renderGroove(); return; }
+  var stop = function(){ if (S.playing){ musStop(); S.playing = false; } S.score = null; };
+  if ((b = t.closest("[data-gyou]"))){ stop(); S.you = b.getAttribute("data-gyou"); renderGroove(); return; }
+  if ((b = t.closest("[data-gdrum]"))){ stop(); S.drum = b.getAttribute("data-gdrum"); renderGroove(); return; }
+  if ((b = t.closest("[data-gbass]"))){ stop(); S.bass = b.getAttribute("data-gbass"); renderGroove(); return; }
+});
+
+/* --- narrated basics for drums and bass --- */
+var BAND_LESSONS = [
+ {id:"dr_basics", title:"Drum kit basics", inst:"drums", blurb:"Kick, snare and hi-hat, and how to count a beat.",
+  beats:[
+   {text:"The kick drum is the big low thump, played with your foot. It's the heartbeat of the song.", hit:"K"},
+   {text:"The snare is the sharp crack in the middle, usually on beats 2 and 4. That's the backbeat.", hit:"S"},
+   {text:"The hi-hat is the ticking cymbal that keeps time, usually on every eighth note.", hit:"H"},
+   {text:"Drummers count sixteenths as one-e-and-a, two-e-and-a, and so on. Each square in the grid is one of those.", hit:"H"},
+   {text:"Put it together and you get the 8-beat: the basic rock and J-pop groove. Next, play it yourself!", pattern:"rock8"}],
+  quiz:[["The backbeat is the snare on beats…", ["2 and 4", "1 and 3", "every beat", "only beat 1"], 0, "The crack on 2 and 4."],
+        ["The kick drum is played with…", ["your foot", "a stick in your left hand", "a brush", "your hand"], 0, "The bass drum pedal."],
+        ["The hi-hat usually keeps…", ["steady time, often every eighth", "only the last beat", "the melody", "silence"], 0, "Tick, tick, tick."],
+        ["How do drummers count sixteenths?", ["1 e & a", "1 2 3 4 5 6", "do re mi", "one-two-three-four only"], 0, "One-e-and-a."]]},
+ {id:"ba_basics", title:"Bass basics", inst:"bass", blurb:"Four strings, root notes, and locking in with the kick.",
+  beats:[
+   {text:"The bass has four strings: E, A, D and G, an octave lower than a guitar's lowest four.", note:28},
+   {text:"The bass player's first job is the root: the note the chord is named after. C chord, play C.", note:36},
+   {text:"Lock in with the kick drum: when the kick hits, the bass usually plays too. Together they're the rhythm section.", note:33},
+   {text:"Then add movement: the octave above the root, or the fifth. Same chord, more bounce.", note:45},
+   {text:"Time to jam: Aoi plays guitar and drums, and you play the bass line on the fretboard.", note:31}],
+  quiz:[["A bass has how many strings, usually?", ["4", "6", "5", "3"], 0, "E A D G."],
+        ["The root of a G chord is…", ["G", "C", "D", "B"], 0, "The name of the chord."],
+        ["The bass and the kick drum together are…", ["the rhythm section", "the melody", "the chorus", "the solo"], 0, "The groove's engine."],
+        ["Bass strings, low to high, are…", ["E A D G", "G D A E", "C G D A", "E B G D"], 0, "Same as a guitar's lowest four."]]}
+];
+function bandLesson(L){
+  musStop();
+  var beats = [{text: L.blurb, pose:"present_r", eyes:"eyes_happy", visual: musCard(L.title, lessonHero("note", L.title, L.blurb, [L.beats.length + " steps", L.quiz.length + " questions"]))}];
+  L.beats.forEach(function(b, i){
+    var vis = b.pattern ? drumGridStatic(drumPat(b.pattern)) : b.hit ? '<div class="dpads"><button type="button" class="dpad big" data-lhit="' + b.hit + '">' + ({K:"Kick", S:"Snare", H:"Hi-hat"})[b.hit] + '</button></div>'
+      : '<div class="mtable bassnote"><span>' + midiName(b.note) + '</span></div>';
+    beats.push({text: b.text, pose: i % 2 ? "point_l" : "point_r", eyes:null, visual: musCard(L.title + " · " + (i + 1) + " of " + L.beats.length, vis),
+      onShow: function(){
+        if (b.pattern){ var dp = drumPat(b.pattern), ctx = musCtx(); if (!ctx) return; for (var bar = 0; bar < 2; bar++) for (var s = 0; s < 16; s++) ["K", "S", "H"].forEach(function(k){ if (dp[k].charAt(s) === "x") drumHit(k, 0.1 + (bar * 16 + s) * 0.16); }); }
+        else if (b.hit){ for (var k = 0; k < 4; k++) drumHit(b.hit, 0.05 + k * 0.4); }
+        else musNote("bass", b.note, 0.05, 1.2);
+      }});
+  });
+  playLesson({title:L.title, tag: L.inst === "drums" ? "Drums" : "Bass", beats:beats, manual:true, backTo:"teacher", nextLabel:"Finish", onEndTap:function(){ musQuiz(L); },
+    finish:function(vis){
+      vis.innerHTML = '<div class="lcard">' + lessonHero("check", L.title + " done", "Questions, or jump straight into a jam.", []) +
+        '<div class="lbtns"><button class="btn" id="blJam" type="button">Jam now</button><button class="btn primary" id="blQuiz" type="button">Start questions</button></div></div>';
+      document.getElementById("blQuiz").addEventListener("click", function(){ musQuiz(L); });
+      document.getElementById("blJam").addEventListener("click", function(){ openGroove({prog: L.inst === "drums" ? "axis" : "komuro", you: L.inst, bpm: 84}); });
+    }});
+}
+function drumGridStatic(dp){ var keep = musState; musState = {step: -1}; var h = drumGridHtml(dp); musState = keep; return h; }
+document.getElementById("teacherVisual").addEventListener("click", function(e){
+  var b = e.target.closest && e.target.closest("[data-lhit]");
+  if (b) drumHit(b.getAttribute("data-lhit"), 0.01, 1);
+});
+GUITAR_LESSONS.concat(BAND_LESSONS).forEach(function(L){
+  MUS_CATS.push({id:L.id, name:L.title}); CATNAME[L.id] = L.title; CAT_ICON[L.id] = "note";
+  L.quiz.forEach(function(q, i){ MUS_QUESTIONS.push(Q(L.id + "_" + i, L.id, q[0], q[1], q[2], q[3])); });
+});
+
+/* --- Aoi Song: Aoi writes a tune over a J-pop progression and hums it in a mix of
+   "na", "la" and "mm". Each song number always comes out the same (it's the random seed). --- */
+var AOISONG_KEY = "aoi_aoisongs_v1";
+function aoiSongList(){ try{ return JSON.parse(localStorage.getItem(AOISONG_KEY) || "[]"); }catch(e){ return []; } }
+function aoiSongSave(list){ try{ localStorage.setItem(AOISONG_KEY, JSON.stringify(list.slice(-40))); }catch(e){} }
+function seeded(n){ var a = (n * 2654435761) >>> 0; return function(){ a = (a + 0x6D2B79F5) >>> 0; var t = a; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+var SCALE = [60, 62, 64, 65, 67, 69, 71, 72, 74]; /* C4 to D5, C major */
+var CHORD_TONES = {C:[0,4,7], Cmaj7:[0,4,7,11], C7:[0,4,7,10], G:[7,11,2], G7:[7,11,2,5], Am:[9,0,4], Am7:[9,0,4,7], Em:[4,7,11], Em7:[4,7,11,2],
+  F:[5,9,0], Fmaj7:[5,9,0,4], Dm:[2,5,9], Dm7:[2,5,9,0], E7:[4,8,11,2], Gm7:[7,10,2,5], D:[2,6,9], E:[4,8,11], A:[9,1,4], Bm:[11,2,6]};
+var RHYTHMS = [[1,1,1,1], [2,1,1], [1,1,2], [1.5,0.5,1,1], [0.5,0.5,1,1,1], [1,0.5,0.5,2], [1,1,1.5,0.5]];
+function aoiSongGen(n, progId){
+  var rnd = seeded(n), p = progById(progId) || PROGRESSIONS[n % PROGRESSIONS.length];
+  var ch = p.chords.length >= 8 ? p.chords.slice(0, 8) : p.chords.concat(p.chords).slice(0, 8);
+  if (ch.length < 8) while (ch.length < 8) ch.push(p.chords[ch.length % p.chords.length]);
+  var tokens = [], lyr = [], prev = 64, sylls = ["な", "ら", "な", "ん"], durName = {0.5:"e", 1:"q", 1.5:"q.", 2:"h", 4:"w"};
+  ch.forEach(function(c, b){
+    var rh = b === 7 ? [2, 2] : b === 3 ? [1, 1, 2] : RHYTHMS[Math.floor(rnd() * RHYTHMS.length)];
+    var tones = CHORD_TONES[c] || [0, 4, 7], phraseSyl = sylls[Math.floor(b / 2)];
+    rh.forEach(function(len, k){
+      var cand;
+      if (k === 0 || (b === 7 && k === rh.length - 1)){
+        cand = SCALE.filter(function(m){ return tones.indexOf(m % 12) >= 0; });
+        if (b === 7 && k === rh.length - 1){ var roots = cand.filter(function(m){ return m % 12 === chordRootPc(c); }); if (roots.length) cand = roots; }
+      } else {
+        var i = SCALE.indexOf(prev); if (i < 0) i = 2;
+        var step = [-2, -1, -1, 1, 1, 2][Math.floor(rnd() * 6)];
+        cand = [SCALE[Math.max(0, Math.min(SCALE.length - 1, i + step))]];
+      }
+      cand.sort(function(a, z){ return Math.abs(a - prev) - Math.abs(z - prev); });
+      var m = cand[Math.min(cand.length - 1, Math.floor(rnd() * Math.min(2, cand.length)))];
+      prev = m;
+      tokens.push(midiName(m) + durName[len].charAt(0) + (durName[len].length > 1 ? "." : ""));
+      lyr.push(rnd() < 0.15 && phraseSyl !== "ん" ? (phraseSyl === "な" ? "ら" : "な") : phraseSyl);
+    });
+    if (b < 7) tokens.push(b % 2 === 1 ? "/" : "|");
+  });
+  return {id: "aoi_" + n, n: n, title: "Aoi Song " + n, jp: "アオイのうた " + n, origin: "Written by Aoi over " + p.jp + " (" + p.en + ")",
+    bpm: 84 + Math.floor(rnd() * 5) * 6, time: "4/4", notes: tokens.join(" "), lyrics: lyr.join(" "), chords: ch.join(" | "), aoi: true, prog: p.id};
+}
+function aoiSongs(){ return aoiSongList().map(function(x){ return aoiSongGen(x.n, x.prog); }); }
+function aoiSongNew(progId){
+  var list = aoiSongList(), n = list.length ? list[list.length - 1].n + 1 : 1;
+  list.push({n: n, prog: progId || PROGRESSIONS[(n - 1) % PROGRESSIONS.length].id}); aoiSongSave(list);
+  var sg = aoiSongGen(n, list[list.length - 1].prog);
+  if (window.AoiHost) window.AoiHost.say("I wrote a new song! It's called " + sg.title + ". I'll hum it for you.", {voice:"ok4", pose:"present_r", eyes:"eyes_happy"});
+  openSheet(sg.id, null);
+  setTimeout(function(){ if (musState && musState.song && musState.song.id === sg.id) sheetPlay(); }, 900);
+}
+
+/* ---------- Science & World: planets, stars, Pythagoras, compound growth, 15 minutes a day ----------
+   Every picture is drawn from real numbers, never freehand: planets at their true relative sizes
+   (NASA planetary fact sheet), constellations plotted from the stars' real coordinates (J2000
+   right ascension and declination) with a stereographic projection, and the maths diagrams
+   computed from the formulas themselves. Each lesson links to its Japanese words topic. */
+var PLANETS = [
+ {en:"Mercury", jp:"水星", km:4879, au:0.39, year:"88 days", day:"176 Earth days", col:"#9c9c9c",
+  fact:"The smallest planet and the closest to the Sun. A single day there, sunrise to sunrise, lasts longer than its year."},
+ {en:"Venus", jp:"金星", km:12104, au:0.72, year:"225 days", day:"117 Earth days", col:"#e3c16f",
+  fact:"The hottest planet, about 465 °C, because its thick carbon dioxide air traps heat. It spins backwards compared with most planets."},
+ {en:"Earth", jp:"地球", km:12756, au:1.00, year:"365.25 days", day:"24 hours", col:"#3b7dd8",
+  fact:"The only planet known to have liquid water on its surface and life."},
+ {en:"Mars", jp:"火星", km:6792, au:1.52, year:"687 days", day:"24 h 40 min", col:"#c1440e",
+  fact:"Red because of iron oxide (rust) in its dust. It has Olympus Mons, the tallest volcano known in the solar system."},
+ {en:"Jupiter", jp:"木星", km:142984, au:5.20, year:"11.9 years", day:"about 10 hours", col:"#d8b48a",
+  fact:"The biggest planet: more than eleven Earths would fit across it. Its Great Red Spot is a storm bigger than Earth."},
+ {en:"Saturn", jp:"土星", km:120536, au:9.58, year:"29.5 years", day:"about 10.7 hours", col:"#e3cf8f", rings:true,
+  fact:"Famous for its rings of ice and rock. It's so light for its size that, on average, it's less dense than water."},
+ {en:"Uranus", jp:"天王星", km:51118, au:19.2, year:"84 years", day:"about 17 hours", col:"#9fd6e0",
+  fact:"Tipped over by about 98 degrees, so it rolls around the Sun on its side."},
+ {en:"Neptune", jp:"海王星", km:49528, au:30.1, year:"165 years", day:"about 16 hours", col:"#3f66d6",
+  fact:"The farthest planet, with the fastest winds measured in the solar system, around 2,000 km/h."}
+];
+function planetRow(hi){
+  var W = 360, maxKm = 142984, x = 6, out = '<svg class="sci" viewBox="0 0 ' + W + ' 96" role="img" aria-label="The eight planets at their true relative sizes">';
+  var scale = 64 / maxKm, gap = 4, total = PLANETS.reduce(function(a, p){ return a + p.km * scale; }, 0) + gap * 7;
+  x = (W - total) / 2;
+  PLANETS.forEach(function(p, i){
+    var r = p.km * scale / 2, cx = x + r;
+    if (p.rings) out += '<ellipse cx="' + cx + '" cy="44" rx="' + (r * 2.1) + '" ry="' + (r * 0.45) + '" fill="none" stroke="#c9b27a" stroke-width="2.4" opacity=".8"/>';
+    out += '<circle cx="' + cx + '" cy="44" r="' + Math.max(r, 0.8) + '" fill="' + p.col + '"' + (i === hi ? ' stroke="var(--accent)" stroke-width="2.5"' : '') + '/>';
+    /* label the planet being discussed; in the overview, the four giants (the small ones get one label) */
+    if (i === hi || (hi < 0 && i >= 4)) out += (i === hi && i < 4 ? '<line x1="' + cx + '" y1="' + (44 + r + 2) + '" x2="' + cx + '" y2="72" stroke="var(--accent)"/>' : '') +
+      '<text x="' + cx + '" y="84" text-anchor="middle" font-size="10" fill="currentColor"' + (i === hi ? ' font-weight="800"' : '') + '>' + p.en + '</text>';
+    if (hi < 0 && i === 0) out += '<text x="' + (x + 6) + '" y="84" font-size="9" fill="currentColor">Mercury to Mars</text>';
+    x += r * 2 + gap;
+  });
+  return out + '</svg><p class="sci-note">Sizes to scale (diameters from NASA); colours are approximate.</p>';
+}
+function planetCard(i){
+  var p = PLANETS[i];
+  return planetRow(i) + '<div class="scifacts"><b lang="ja">' + p.jp + '</b><span>' + p.en + '</span></div>' +
+    '<table class="scitab"><tr><th>Width</th><td>' + p.km.toLocaleString("en") + ' km</td></tr><tr><th>From the Sun</th><td>' + p.au + ' AU</td></tr>' +
+    '<tr><th>One year</th><td>' + p.year + '</td></tr><tr><th>One day</th><td>' + p.day + '</td></tr></table>' +
+    '<p class="sci-note">1 AU is the Earth’s average distance from the Sun, about 150 million km.</p>';
+}
+
+/* Stars: [name, Japanese name or "", RA hours, Dec degrees, magnitude]. J2000 coordinates. */
+var STARS = {
+  betelgeuse:["Betelgeuse", "ベテルギウス", 5.9195, 7.407, 0.5], rigel:["Rigel", "リゲル", 5.2423, -8.202, 0.13],
+  bellatrix:["Bellatrix", "", 5.4189, 6.350, 1.64], saiph:["Saiph", "", 5.7959, -9.670, 2.06], alnitak:["Alnitak", "", 5.6793, -1.943, 1.77],
+  alnilam:["Alnilam", "", 5.6036, -1.202, 1.69], mintaka:["Mintaka", "", 5.5334, -0.299, 2.23], meissa:["Meissa", "", 5.5856, 9.934, 3.39],
+  sirius:["Sirius", "シリウス", 6.7525, -16.716, -1.46], procyon:["Procyon", "プロキオン", 7.6550, 5.225, 0.34],
+  dubhe:["Dubhe", "", 11.0621, 61.751, 1.79], merak:["Merak", "", 11.0307, 56.382, 2.37], phecda:["Phecda", "", 11.8972, 53.695, 2.44],
+  megrez:["Megrez", "", 12.2571, 57.033, 3.31], alioth:["Alioth", "", 12.9005, 55.960, 1.77], mizar:["Mizar", "", 13.3988, 54.925, 2.23],
+  alkaid:["Alkaid", "", 13.7923, 49.313, 1.86], polaris:["Polaris", "北極星", 2.5303, 89.264, 1.98],
+  caph:["Caph", "", 0.1530, 59.150, 2.28], schedar:["Schedar", "", 0.6751, 56.537, 2.24], navi:["Navi", "", 0.9451, 60.717, 2.47],
+  ruchbah:["Ruchbah", "", 1.4303, 60.235, 2.68], segin:["Segin", "", 1.9066, 63.670, 3.37],
+  vega:["Vega", "織姫星", 18.6156, 38.784, 0.03], altair:["Altair", "彦星", 19.8464, 8.868, 0.77], deneb:["Deneb", "デネブ", 20.6905, 45.280, 1.25],
+  sadr:["Sadr", "", 20.3705, 40.257, 2.23], albireo:["Albireo", "", 19.5120, 27.960, 3.05], gienah:["Gienah", "", 20.7702, 33.970, 2.48], deltacyg:["δ Cyg", "", 19.7496, 45.131, 2.87]
+};
+var SKY_CHARTS = [
+ {id:"orion", title:"Orion", jp:"オリオン座", center:[5.6, 0], stars:["betelgeuse","rigel","bellatrix","saiph","alnitak","alnilam","mintaka","meissa"],
+  lines:[["meissa","betelgeuse"],["meissa","bellatrix"],["betelgeuse","alnitak"],["bellatrix","mintaka"],["alnitak","alnilam"],["alnilam","mintaka"],["alnitak","saiph"],["mintaka","rigel"]],
+  text:"Orion the hunter rules winter evenings. The three stars in a row are his belt, called 三つ星 in Japanese. Red Betelgeuse was once called 平家星 and white Rigel 源氏星, after the two rival clans."},
+ {id:"wintertri", title:"Winter Triangle", jp:"冬の大三角", center:[6.3, -3], stars:["betelgeuse","sirius","procyon","bellatrix","rigel","alnitak","alnilam","mintaka","saiph"],
+  lines:[["betelgeuse","sirius"],["sirius","procyon"],["procyon","betelgeuse"]], dashed:true,
+  text:"Betelgeuse, Sirius and Procyon make the Winter Triangle. Sirius is the brightest star in the whole night sky."},
+ {id:"dipper", title:"Big Dipper & North Star", jp:"北斗七星と北極星", center:[9.5, 72], stars:["dubhe","merak","phecda","megrez","alioth","mizar","alkaid","polaris"],
+  lines:[["alkaid","mizar"],["mizar","alioth"],["alioth","megrez"],["megrez","phecda"],["phecda","merak"],["merak","dubhe"],["dubhe","megrez"]], pointer:["merak","dubhe","polaris"],
+  text:"Follow the two stars at the end of the Big Dipper's bowl, Merak then Dubhe, about five times their distance apart, and you reach Polaris, the North Star."},
+ {id:"cassiopeia", title:"Cassiopeia & North Star", jp:"カシオペヤ座", center:[1.2, 74], stars:["caph","schedar","navi","ruchbah","segin","polaris"],
+  lines:[["caph","schedar"],["schedar","navi"],["navi","ruchbah"],["ruchbah","segin"]],
+  text:"Cassiopeia is a W (or M) shape on the opposite side of the North Star from the Big Dipper, so one of them is always up."},
+ {id:"summertri", title:"Summer Triangle & Tanabata", jp:"夏の大三角", center:[19.7, 30], stars:["vega","altair","deneb","sadr","albireo","gienah","deltacyg"],
+  lines:[["deneb","sadr"],["sadr","albireo"],["gienah","sadr"],["sadr","deltacyg"]], tri:["vega","altair","deneb"],
+  text:"Vega (織姫星), Altair (彦星) and Deneb make the Summer Triangle. In the Tanabata legend, the Milky Way flows between the two lovers, Vega and Altair. Deneb sits in the swan, Cygnus."}
+];
+/* Stereographic projection around the chart centre; east is to the left, as on a real sky map. */
+function skyXY(ra, dec, c){
+  var r = Math.PI / 180, a = (ra - c[0]) * 15 * r, d = dec * r, d0 = c[1] * r;
+  var k = 2 / (1 + Math.sin(d0) * Math.sin(d) + Math.cos(d0) * Math.cos(d) * Math.cos(a));
+  return [-k * Math.cos(d) * Math.sin(a), k * (Math.cos(d0) * Math.sin(d) - Math.sin(d0) * Math.cos(d) * Math.cos(a))];
+}
+function skyChart(ch){
+  var pts = {}, xs = [], ys = [];
+  ch.stars.forEach(function(id){ var s = STARS[id], p = skyXY(s[2], s[3], ch.center); pts[id] = p; xs.push(p[0]); ys.push(p[1]); });
+  var minX = Math.min.apply(null, xs), maxX = Math.max.apply(null, xs), minY = Math.min.apply(null, ys), maxY = Math.max.apply(null, ys);
+  var W = 340, H = 300, pad = 34, sc = Math.min((W - 2 * pad) / (maxX - minX || 1), (H - 2 * pad) / (maxY - minY || 1));
+  function P(id){ var p = pts[id]; return [W / 2 + (p[0] - (minX + maxX) / 2) * sc, H / 2 - (p[1] - (minY + maxY) / 2) * sc]; }
+  var out = '<svg class="sci sky" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Star chart: ' + ch.title + '"><rect width="' + W + '" height="' + H + '" rx="6" fill="#0b1430"/>';
+  function line(a, b, style){ var p = P(a), q = P(b); out += '<line x1="' + p[0] + '" y1="' + p[1] + '" x2="' + q[0] + '" y2="' + q[1] + '" stroke="' + (style || "#7aa2ff") + '" stroke-width="1.4"' + (ch.dashed || style ? ' stroke-dasharray="4 3"' : '') + ' opacity=".85"/>'; }
+  ch.lines.forEach(function(l){ line(l[0], l[1]); });
+  if (ch.tri) [[0, 1], [1, 2], [2, 0]].forEach(function(e){ line(ch.tri[e[0]], ch.tri[e[1]], "#ffd36e"); });
+  if (ch.pointer){ var a = P(ch.pointer[0]), b = P(ch.pointer[2]); out += '<line x1="' + a[0] + '" y1="' + a[1] + '" x2="' + b[0] + '" y2="' + b[1] + '" stroke="#ffd36e" stroke-width="1.2" stroke-dasharray="3 4"/>'; }
+  ch.stars.forEach(function(id){
+    var s = STARS[id], p = P(id), r = Math.max(1.6, 5.2 - s[4] * 1.15);
+    out += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="' + r + '" fill="' + (id === "betelgeuse" ? "#ffb08a" : id === "rigel" ? "#cfe0ff" : "#ffffff") + '"/>';
+    if (s[4] < 2.5 || s[1]) out += '<text x="' + (p[0] + r + 3) + '" y="' + (p[1] + 3.5) + '" font-size="9.5" fill="#cfd8ff">' + s[0] + (s[1] ? ' <tspan fill="#ffd36e">' + s[1] + '</tspan>' : '') + '</text>';
+  });
+  return out + '</svg><p class="sci-note">Plotted from the stars’ real positions. Brighter stars are drawn bigger. North is up, east is left, as you’d see facing south (or north for the North Star charts).</p>';
+}
+
+/* Pythagoras: a right triangle with the squares on its sides, drawn to scale. */
+function pythSvg(a, b, grid){
+  var c = Math.sqrt(a * a + b * b), u = Math.min(150 / (a + b), 26), W = 340, H = 300;
+  var ox = W / 2 - (b * u) / 2 + 20, oy = 150; /* right-angle corner */
+  var A = [ox, oy], B = [ox + b * u, oy], C = [ox, oy - a * u];
+  function poly(pts, fill, op){ return '<polygon points="' + pts.map(function(p){ return p[0].toFixed(1) + "," + p[1].toFixed(1); }).join(" ") + '" fill="' + fill + '" fill-opacity="' + (op || 0.35) + '" stroke="currentColor" stroke-width="1.2"/>'; }
+  var out = '<svg class="sci" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Right triangle with sides ' + a + ', ' + b + ' and ' + c.toFixed(2) + '">';
+  out += poly([A, B, [B[0], B[1] + b * u], [A[0], A[1] + b * u]], "#3b7dd8"); /* square on b, below */
+  out += poly([A, C, [C[0] - a * u, C[1]], [A[0] - a * u, A[1]]], "#e3a33d"); /* square on a, left */
+  var dx = (B[0] - C[0]), dy = (B[1] - C[1]); /* square on c, outward */
+  out += poly([C, B, [B[0] + dy, B[1] - dx], [C[0] + dy, C[1] - dx]], "#2fa36b");
+  if (grid){
+    for (var i = 1; i < b; i++) out += '<line x1="' + (A[0] + i * u) + '" y1="' + A[1] + '" x2="' + (A[0] + i * u) + '" y2="' + (A[1] + b * u) + '" stroke="currentColor" opacity=".35"/><line x1="' + A[0] + '" y1="' + (A[1] + i * u) + '" x2="' + B[0] + '" y2="' + (A[1] + i * u) + '" stroke="currentColor" opacity=".35"/>';
+    for (i = 1; i < a; i++) out += '<line x1="' + (A[0] - i * u) + '" y1="' + C[1] + '" x2="' + (A[0] - i * u) + '" y2="' + A[1] + '" stroke="currentColor" opacity=".35"/><line x1="' + (A[0] - a * u) + '" y1="' + (A[1] - i * u) + '" x2="' + A[0] + '" y2="' + (A[1] - i * u) + '" stroke="currentColor" opacity=".35"/>';
+  }
+  out += poly([A, B, C], "var(--bg)", 1) + '<rect x="' + A[0] + '" y="' + (A[1] - 9) + '" width="9" height="9" fill="none" stroke="currentColor"/>';
+  out += '<text x="' + (A[0] - a * u / 2) + '" y="' + (A[1] - a * u / 2 + 4) + '" text-anchor="middle" font-size="12" font-weight="800" fill="currentColor">a² = ' + a * a + '</text>';
+  out += '<text x="' + (A[0] + b * u / 2) + '" y="' + (A[1] + b * u / 2 + 4) + '" text-anchor="middle" font-size="12" font-weight="800" fill="currentColor">b² = ' + b * b + '</text>';
+  out += '<text x="' + ((C[0] + B[0] + dy) / 2) + '" y="' + ((C[1] + B[1] - dx) / 2 + 4) + '" text-anchor="middle" font-size="12" font-weight="800" fill="currentColor">c² = ' + +(c * c).toFixed(2) + '</text>';
+  return out + '</svg>';
+}
+/* The rearrangement proof: four copies of the triangle in a square of side a + b leave a tilted square of area c². */
+function pythProofSvg(){
+  var a = 3, b = 4, u = 30, s = (a + b) * u, x0 = (340 - s) / 2, y0 = 10, W = 340;
+  var P = [[x0 + a * u, y0], [x0 + s, y0 + a * u], [x0 + b * u, y0 + s], [x0, y0 + b * u]];
+  var out = '<svg class="sci" viewBox="0 0 ' + W + ' ' + (s + 20) + '" role="img" aria-label="Four triangles in a square leave a tilted square">';
+  out += '<rect x="' + x0 + '" y="' + y0 + '" width="' + s + '" height="' + s + '" fill="#3b7dd8" fill-opacity=".25" stroke="currentColor"/>';
+  out += '<polygon points="' + P.map(function(p){ return p.join(","); }).join(" ") + '" fill="#2fa36b" fill-opacity=".45" stroke="currentColor" stroke-width="1.4"/>';
+  out += '<text x="' + (x0 + s / 2) + '" y="' + (y0 + s / 2 + 5) + '" text-anchor="middle" font-size="16" font-weight="800" fill="currentColor">c²</text>';
+  return out + '</svg>';
+}
+
+/* Compound growth, worked out month by month. */
+function growthCalc(monthly, ratePct, years){
+  var i = ratePct / 100 / 12, bal = 0, rows = [];
+  for (var m = 1; m <= years * 12; m++){ bal = bal * (1 + i) + monthly; if (m % 12 === 0) rows.push({year: m / 12, paid: monthly * m, bal: bal}); }
+  return rows;
+}
+function growthSvg(rows){
+  var W = 340, H = 200, max = rows[rows.length - 1].bal, bw = (W - 40) / rows.length;
+  var out = '<svg class="sci" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="Savings growth chart">';
+  rows.forEach(function(r, k){
+    var x = 30 + k * bw, hp = r.paid / max * (H - 40), hb = r.bal / max * (H - 40);
+    out += '<rect x="' + x + '" y="' + (H - 20 - hb) + '" width="' + (bw - 2) + '" height="' + hb + '" fill="#2fa36b"/>';
+    out += '<rect x="' + x + '" y="' + (H - 20 - hp) + '" width="' + (bw - 2) + '" height="' + hp + '" fill="#3b7dd8"/>';
+    if (rows.length <= 12 || (k + 1) % 5 === 0) out += '<text x="' + (x + bw / 2) + '" y="' + (H - 6) + '" text-anchor="middle" font-size="9" fill="currentColor">' + r.year + '</text>';
+  });
+  return out + '<text x="30" y="12" font-size="10" fill="currentColor"><tspan fill="#3b7dd8">■</tspan> what you put in  <tspan fill="#2fa36b">■</tspan> growth on top · years along the bottom</text></svg>';
+}
+function yen(n){ return "¥" + Math.round(n).toLocaleString("en"); }
+function growthBox(){
+  return '<div class="scicalc" data-calc="growth"><label>Each month <input type="number" data-g="m" value="10000" min="0" step="1000"> ¥</label>' +
+    '<label>Yearly growth <input type="number" data-g="r" value="5" min="0" max="20" step="0.5"> %</label>' +
+    '<label>Years <input type="number" data-g="y" value="20" min="1" max="50"></label><div class="calcout"></div></div>';
+}
+function minutesBox(){
+  return '<div class="scicalc" data-calc="minutes"><label>Minutes a day <input type="number" data-g="min" value="15" min="1" max="240"></label><div class="calcout"></div></div>';
+}
+function pythBox(){
+  return '<div class="scicalc" data-calc="pyth"><label>a <input type="number" data-g="a" value="3" min="1" max="12" step="1"></label>' +
+    '<label>b <input type="number" data-g="b" value="4" min="1" max="12" step="1"></label><div class="calcout"></div></div>';
+}
+function calcUpdate(box){
+  var kind = box.getAttribute("data-calc"), v = function(k){ var el = box.querySelector('[data-g="' + k + '"]'); return el ? Math.max(0, +el.value || 0) : 0; }, out = box.querySelector(".calcout");
+  if (kind === "growth"){
+    var rows = growthCalc(v("m"), Math.min(v("r"), 30), Math.min(Math.max(1, v("y")), 50)), last = rows[rows.length - 1];
+    out.innerHTML = growthSvg(rows) + '<p><b>' + yen(last.bal) + '</b> after ' + last.year + ' years: you put in ' + yen(last.paid) + ', and ' + yen(last.bal - last.paid) + ' is growth.</p>';
+  } else if (kind === "minutes"){
+    var m = v("min"), h = m * 365 / 60;
+    out.innerHTML = '<p><b>' + h.toFixed(h < 100 ? 1 : 0) + ' hours</b> a year. That’s about ' + (h / 24).toFixed(1) + ' whole days, or ' + Math.round(h / 3) + ' three-hour evenings.</p>';
+  } else if (kind === "pyth"){
+    var a = Math.min(12, Math.max(1, Math.round(v("a")))), b = Math.min(12, Math.max(1, Math.round(v("b")))), c = Math.sqrt(a * a + b * b);
+    out.innerHTML = pythSvg(a, b, false) + '<p>' + a + '² + ' + b + '² = ' + (a * a) + ' + ' + (b * b) + ' = ' + (a * a + b * b) + ', so c = √' + (a * a + b * b) + ' = <b>' + (Number.isInteger(c) ? c : c.toFixed(2)) + '</b></p>';
+  }
+}
+document.getElementById("teacherVisual").addEventListener("input", function(e){ var box = e.target.closest && e.target.closest("[data-calc]"); if (box) calcUpdate(box); });
+function calcInit(){ Array.prototype.forEach.call(document.querySelectorAll("#teacherVisual [data-calc]"), calcUpdate); }
+
+var SCIENCE = [
+ {id:"sc_planets", title:"The planets", icon:"globe", jpTopic:"jw_planets", blurb:"Our eight planets, to scale, with a fact about each.",
+  beats: [{text:"Eight planets go around the Sun. Here they are at their real sizes compared with each other.", visual: function(){ return planetRow(-1); }}]
+   .concat(PLANETS.map(function(p, i){ return {text: p.en + ": " + p.fact, visual: function(){ return planetCard(i); }}; }))
+   .concat([{text:"In Japanese, five planets are named after the old elements: water, metal, fire, wood and earth. They also give us the days of the week!", visual: function(){ return planetRow(-1) +
+     '<div class="mtable"><span>月 <b>Mon</b></span><span>火 <b>Tue</b></span><span>水 <b>Wed</b></span><span>木 <b>Thu</b></span><span>金 <b>Fri</b></span><span>土 <b>Sat</b></span><span>日 <b>Sun</b></span></div>'; }}]),
+  quiz:[["Which is the biggest planet?", ["Jupiter", "Saturn", "Neptune", "Earth"], 0, "More than eleven Earths across."],
+        ["Which planet is the hottest?", ["Venus", "Mercury", "Mars", "Jupiter"], 0, "Its thick air traps heat, about 465 °C."],
+        ["Mars looks red because of…", ["iron oxide (rust) in its dust", "fire", "red oceans", "the Sun's light"], 0, "Rusty dust."],
+        ["Which planet rolls around the Sun on its side?", ["Uranus", "Neptune", "Saturn", "Mercury"], 0, "Tilted about 98 degrees."],
+        ["How long is a year on Earth?", ["about 365 days", "24 hours", "88 days", "687 days"], 0, "365.25 days."],
+        ["Which planet is farthest from the Sun?", ["Neptune", "Uranus", "Pluto", "Saturn"], 0, "Pluto has been a dwarf planet since 2006."]]},
+ {id:"sc_stars", title:"Stars & constellations", icon:"globe", jpTopic:"jw_stars", blurb:"Find Orion, the North Star and the Tanabata stars, from their real positions.",
+  beats: SKY_CHARTS.map(function(ch){ return {text: ch.text, visual: function(){ return '<div class="scifacts"><b lang="ja">' + ch.jp + '</b><span>' + ch.title + '</span></div>' + skyChart(ch); }}; })
+   .concat([{text:"Constellations are patterns people imagine; the stars in them can be very different distances away. Light from Betelgeuse takes hundreds of years to reach us.", visual: function(){ return skyChart(SKY_CHARTS[0]); }}]),
+  quiz:[["Which constellation has three stars in a row called 三つ星?", ["Orion", "Cassiopeia", "the Big Dipper", "Cygnus"], 0, "Orion's belt."],
+        ["To find the North Star from the Big Dipper, follow…", ["the two end stars of its bowl", "its handle", "the brightest star", "Orion's belt"], 0, "Merak to Dubhe, about five times further."],
+        ["The brightest star in the night sky is…", ["Sirius", "Polaris", "Vega", "Betelgeuse"], 0, "Part of the Winter Triangle."],
+        ["The Tanabata lovers are the stars…", ["Vega and Altair", "Sirius and Procyon", "Rigel and Betelgeuse", "Dubhe and Merak"], 0, "織姫 and 彦星."],
+        ["Cassiopeia looks like…", ["a W or an M", "a triangle", "a cross", "a ladle"], 0, "Opposite the Big Dipper."]]},
+ {id:"sc_pyth", title:"Pythagoras", icon:"layers", jpTopic:null, blurb:"a² + b² = c²: the long side of any right triangle.",
+  beats:[
+   {text:"A right triangle has one square corner. The longest side, opposite that corner, is the hypotenuse, c.", visual: function(){ return pythSvg(3, 4, false); }},
+   {text:"Build a square on each side. Count them: 9 little squares plus 16 makes 25. The two small squares always add up to the big one.", visual: function(){ return pythSvg(3, 4, true); }},
+   {text:"Why? Fit four copies of the triangle inside a big square. The space left in the middle is exactly c squared. Rearrange them and it becomes a squared plus b squared.", visual: function(){ return pythProofSvg(); }},
+   {text:"Real life: a 5 metre ladder with its foot 3 metres from the wall reaches 4 metres up. And a TV's size is its diagonal: the hypotenuse!", visual: function(){ return pythSvg(4, 3, false); }},
+   {text:"In Japan it's called 三平方の定理, the three-squares theorem. Try your own numbers!", visual: function(){ return pythBox(); }}],
+  quiz:[["The hypotenuse is…", ["the longest side, opposite the right angle", "the shortest side", "the right angle", "the base"], 0, "Side c."],
+        ["If a = 3 and b = 4, c is…", ["5", "7", "6", "12"], 0, "9 + 16 = 25."],
+        ["If a = 6 and b = 8, c is…", ["10", "14", "12", "48"], 0, "36 + 64 = 100."],
+        ["Pythagoras works for…", ["right triangles", "all triangles", "only squares", "circles"], 0, "There must be a 90° corner."],
+        ["In Japanese it's called…", ["三平方の定理", "積立", "北斗七星", "王道進行"], 0, "さんへいほうのていり."]]},
+ {id:"sc_growth", title:"Compound growth", icon:"gauge", jpTopic:null, blurb:"How saving and investing grow, and why starting early matters.",
+  beats:[
+   {text:"Simple interest pays only on what you put in. Compound interest also pays on the interest you've already earned, so growth earns growth.", visual: function(){ return '<table class="scitab"><tr><th></th><th>Simple 5%</th><th>Compound 5%</th></tr><tr><th>Start</th><td>¥100,000</td><td>¥100,000</td></tr><tr><th>10 years</th><td>¥150,000</td><td>¥162,889</td></tr><tr><th>30 years</th><td>¥250,000</td><td>¥432,194</td></tr></table>'; }},
+   {text:"The rule of 72: divide 72 by the yearly growth rate to find roughly how many years it takes to double. At 6%, about 12 years.", visual: function(){ return '<div class="mtable"><span>3% <b>24 yrs</b></span><span>6% <b>12 yrs</b></span><span>8% <b>9 yrs</b></span><span>12% <b>6 yrs</b></span></div>'; }},
+   {text:"Small amounts add up. Try it: change the monthly amount, the growth rate and the years.", visual: function(){ return growthBox(); }},
+   {text:"Investments go up and down, and returns are never guaranteed. Fees and inflation matter too. This is a lesson in the maths, not financial advice."}],
+  quiz:[["Compound interest pays interest on…", ["what you put in and the interest already earned", "only what you put in", "nothing", "only the first year"], 0, "Growth earns growth."],
+        ["By the rule of 72, money growing at 8% a year doubles in about…", ["9 years", "72 years", "8 years", "20 years"], 0, "72 ÷ 8 = 9."],
+        ["Starting earlier usually means…", ["more time for growth to compound", "less growth", "no difference", "higher fees"], 0, "Time is the big ingredient."],
+        ["Are investment returns guaranteed?", ["No, they go up and down", "Yes, always 5%", "Yes, after a year", "Only in yen"], 0, "Not financial advice!"]]},
+ {id:"sc_15min", title:"15 minutes a day", icon:"bulb", jpTopic:null, blurb:"Why a little every day beats a lot once in a while.",
+  beats:[
+   {text:"Fifteen minutes a day is over 91 hours in a year: more than two working weeks of study, with no single long day.", visual: function(){ return minutesBox(); }},
+   {text:"Spacing works: memory fades quickly after we learn something, but each review slows the fading. Short daily sessions give you those reviews. Psychologists call it the spacing effect."},
+   {text:"Small gains compound too: getting 1% better each day multiplies to about 37 times over a year, because 1.01 to the power 365 is 37.8. It's a nice piece of maths, not a promise!", visual: function(){ return '<div class="mtable"><span>1.01<sup>30</sup> <b>1.3×</b></span><span>1.01<sup>100</sup> <b>2.7×</b></span><span>1.01<sup>365</sup> <b>37.8×</b></span></div>'; }},
+   {text:"Make it easy: same time each day, a tiny goal, and stop while it's still fun. That's why Aoi's lessons are short!"}],
+  quiz:[["15 minutes a day for a year is about…", ["91 hours", "15 hours", "365 hours", "9 hours"], 0, "15 × 365 = 5,475 minutes."],
+        ["The spacing effect says…", ["reviewing over time beats cramming", "cramming beats spacing", "sleep doesn't matter", "only long sessions work"], 0, "Spread it out."],
+        ["1.01 to the power 365 is about…", ["37.8", "3.65", "1.01", "365"], 0, "Compounding again."]]}
+];
+var SCI_CATS = [], SCI_QUESTIONS = [];
+SCIENCE.forEach(function(L){
+  SCI_CATS.push({id:L.id, name:L.title}); CATNAME[L.id] = L.title; CAT_ICON[L.id] = L.icon;
+  L.quiz.forEach(function(q, i){ SCI_QUESTIONS.push(Q(L.id + "_" + i, L.id, q[0], q[1], q[2], q[3])); });
+});
+SUBJECTS.sci = {key:"sci", name:"Science & World", cats:SCI_CATS, questions:SCI_QUESTIONS, storageKey:"sci_answers_v1"};
+function sciQuiz(L){
+  useSubject("sci");
+  learn = {catId:L.id, parts:[catQuestions(SUBJECTS.sci, L.id)], part:0, backTo:"teacher"};
+  startSession("learn", L.id, shuffle(learn.parts[0].slice()));
+}
+function sciStart(L){
+  musStop();
+  var beats = [{text: L.blurb, pose:"present_r", eyes:"eyes_happy", visual: musCard(L.title, lessonHero(L.icon, L.title, L.blurb, [L.beats.length + " steps", L.quiz.length + " questions"]))}];
+  L.beats.forEach(function(b, i){
+    beats.push({text: b.text, pose: i % 2 ? "point_l" : "point_r", eyes:null, visual: musCard(L.title + " · " + (i + 1) + " of " + L.beats.length, b.visual ? b.visual() : lessonHero(L.icon, L.title, "", [])), onShow: calcInit});
+  });
+  playLesson({title:L.title, tag:"Science", beats:beats, manual:true, backTo:"teacher", nextLabel:"Finish", onEndTap:function(){ sciQuiz(L); },
+    finish:function(vis){
+      vis.innerHTML = '<div class="lcard">' + lessonHero("check", L.title + " done", L.quiz.length + " questions" + (L.jpTopic ? ", or learn the words in Japanese." : "."), []) +
+        '<div class="lbtns">' + (L.jpTopic ? '<button class="btn" id="sciJp" type="button">In Japanese</button>' : '') + '<button class="btn primary" id="sciQuiz" type="button">Start questions</button></div></div>';
+      document.getElementById("sciQuiz").addEventListener("click", function(){ sciQuiz(L); });
+      if (L.jpTopic) document.getElementById("sciJp").addEventListener("click", function(){ jpStart(L.jpTopic); });
+    }});
+  calcInit();
+}
+
 var TEACHER_SECTIONS = [
   {id:"japan", title:"Japan Travel", icon:"torii", blurb:"Phrases for your trip, polite or casual, in standard Japanese, Osaka-ben or Kyoto-ben. Aoi says every one.",
    modules:function(){ var d = JP_LEARN.dialect;
@@ -4827,9 +5547,25 @@ var TEACHER_SECTIONS = [
      .concat(myTunes().map(function(sg){ return {title:sg.title, icon:"note", meta:"Your tune \u00b7 by ear or play along", start:function(){ openEar("piano", sg.id); }}; }))
      .concat([{title:"Free play & record", icon:"note", meta:"play anything, record a tune", start:function(){ openEar("piano", null); }}]); }},
   {id:"guitar", title:"Guitar", icon:"note", blurb:"Eight easy chords, then Japanese songs: strum along with the chord chart, play the tune on the fretboard, or learn it by ear.",
-   modules:function(){ return [musModule({id:"gu_chords", title:"Your first chords"}, "8 chords \u00b7 quiz", chordsLesson)]
+   modules:function(){ return [musModule({id:"gu_chords", title:"Your first chords"}, "8 chords \u00b7 quiz", chordsLesson),
+       {title:"Chord library", icon:"note", meta:"30 chords: sevenths, barre, power", start:chordLibrary}]
+     .concat(GUITAR_LESSONS.map(function(L){ return musModule(L, L.beats.length + " steps \u00b7 quiz", function(){ guitarLesson(L); }); }))
      .concat(MUSIC_SONGS.map(function(sg){ return {title:sg.jp, icon:"note", meta:sg.title + " \u00b7 by ear, play or strum along", start:function(){ openEar("guitar", sg.id); }}; }))
      .concat([{title:"Free play", icon:"note", meta:"just the fretboard", start:function(){ openEar("guitar", null); }}]); }},
+  {id:"jpop", title:"J-pop Chords & Aoi Song", icon:"note", blurb:"The chord progressions behind J-pop and anime songs. Jam with Aoi's band, then let her write you a song.",
+   modules:function(){ return PROGRESSIONS.map(function(pg){ return {title:pg.jp, icon:"note", meta:pg.en + " \u00b7 " + pg.chords.join(" "), start:function(){ openGroove({prog: pg.id, you: "strum"}); }}; })
+     .concat([{title:"Aoi writes a song", icon:"heart", meta:"a new tune over a J-pop progression", start:function(){ aoiSongNew(); }}])
+     .concat(aoiSongs().map(function(sg){ return {title:sg.title, icon:"heart", meta:sg.jp + " \u00b7 " + progById(sg.prog).jp, start:function(){ openSheet(sg.id); }}; })); }},
+  {id:"drums", title:"Drums", icon:"note", blurb:"Kick, snare and hi-hat: learn the beats, then drum along with Aoi's band.",
+   modules:function(){ return [musModule(BAND_LESSONS[0], BAND_LESSONS[0].beats.length + " steps \u00b7 quiz", function(){ bandLesson(BAND_LESSONS[0]); })]
+     .concat(DRUM_PATTERNS.map(function(d){ return {title:d.name, icon:"note", meta:d.jp + " \u00b7 play along", start:function(){ openGroove({prog: "axis", you: "drums", drum: d.id, bpm: d.id === "jpop16" ? 84 : 92}); }}; })); }},
+  {id:"bass", title:"Bass", icon:"note", blurb:"Root notes, octaves and fifths: hold down the groove with Aoi's band.",
+   modules:function(){ return [musModule(BAND_LESSONS[1], BAND_LESSONS[1].beats.length + " steps \u00b7 quiz", function(){ bandLesson(BAND_LESSONS[1]); })]
+     .concat(BASS_PATTERNS.map(function(d){ return {title:d.name, icon:"note", meta:"bass line \u00b7 play along", start:function(){ openGroove({prog: "komuro", you: "bass", bass: d.id, bpm: 84}); }}; })); }},
+  {id:"science", title:"Science & World", icon:"globe", blurb:"Planets to scale, real star charts, Pythagoras, compound growth and the power of 15 minutes a day. Every picture is drawn from real data.",
+   modules:function(){ return SCIENCE.map(function(L){ return {title:L.title, icon:L.icon, meta:L.beats.length + " steps \u00b7 quiz" + (L.jpTopic ? " \u00b7 Japanese" : ""),
+     progress:function(){ useSubject("sci"); var d = learnDone(L.id) >= 1; return {pct: d ? 100 : 0, label: d ? "done \u2713" : L.beats.length + " steps \u00b7 quiz", done: d}; },
+     start:function(){ sciStart(L); }}; }); }},
   {id:"claude", title:"Claude Code", icon:"code", blurb:"Using Claude Code from your phone, narrated in Aoi's own voice.",
    modules:function(){ return [{title:"Claude Code on Your Phone", icon:"phone", meta:CLAUDE_CODE_BEATS.length + " scenes \u00b7 voiced", start:startTeacherLesson}]; }},
   {id:"ppl", title:"PPL Checkride", icon:"plane", blurb:"All 12 FAA knowledge areas. Each lesson teaches five points, then quizzes you on them.",

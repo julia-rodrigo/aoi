@@ -11,6 +11,8 @@ rm -rf app/src/main/assets/www
 mkdir -p app/src/main/assets/www
 cp -r ../../aoi-teacher/index.html ../../aoi-teacher/manifest.json ../../aoi-teacher/icons \
       ../../aoi-teacher/sprites ../../aoi-teacher/audio app/src/main/assets/www/
+mkdir -p app/src/main/assets/www/phrasebook
+cp ../../aoi-teacher/phrasebook/phrasebook.js app/src/main/assets/www/phrasebook/
 # Drafts and notes inside the audio folder are not app content.
 find app/src/main/assets/www -name '*.md' -delete
 python3 make_icons.py

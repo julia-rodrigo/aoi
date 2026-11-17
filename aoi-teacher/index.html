@@ -6,7 +6,7 @@
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icons/favicon.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon-180.png">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;700&family=Press+Start+2P&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=Sora:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;700&family=Press+Start+2P&display=swap">
 <style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <style>
 /* Aoi Teacher: the real Aoi scene-player chrome (header + progress dots + card + dialogue bubble + portrait),
@@ -590,6 +590,37 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 .persona p{margin:0; font-size:13.5px; line-height:1.45;}
 .persona .obj{border-left:3px solid var(--bad); padding:7px 10px; background:var(--surface); font-size:13.5px; line-height:1.4;}
 
+/* ---------- Japan travel phrasebook ---------- */
+.pbmodes{display:flex; flex-direction:column; gap:8px;}
+.pbmodes[hidden]{display:none;}
+.pbseg{display:grid; grid-template-columns:1fr 1fr; border:2px solid var(--accent);}
+.pbseg.pb3{grid-template-columns:repeat(3,1fr);}
+.pbseg button{font-family:var(--font-body); font-weight:700; font-size:13.5px; padding:7px 4px; border:none; background:transparent; color:var(--accent); cursor:pointer; display:flex; flex-direction:column; align-items:center; gap:1px;}
+.pbseg button small{font-family:"M PLUS Rounded 1c", var(--font-body); font-weight:500; font-size:10.5px; opacity:.8;}
+.pbseg button.on{background:var(--accent); color:var(--accent-fg);}
+.pbbar{display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;}
+.pbbar .btn.primary{flex:1 1 140px; padding:10px 14px;}
+.pbtog{font-family:var(--font-body); font-weight:700; font-size:12.5px; padding:8px 12px; border:1.5px solid var(--line); background:var(--surface); color:var(--fg); cursor:pointer;}
+.pbtog[aria-pressed="true"]{border-color:var(--accent); background:var(--surface-2); color:var(--accent);}
+.pbhint{margin:8px 0 0; font-size:12px; line-height:1.45; color:var(--muted);}
+.pblist{display:flex; flex-direction:column; gap:8px; margin-top:10px;}
+.pbcard{display:flex; flex-direction:column; align-items:stretch; gap:2px; text-align:left; padding:11px 12px; border:1.5px solid var(--line); background:var(--surface); color:var(--fg); cursor:pointer; font-family:inherit; width:100%;}
+.pbcard.speaking{border:2px solid var(--accent); background:var(--surface-2);}
+.pbtop{display:flex; align-items:center; justify-content:space-between; gap:8px;}
+.pbchip{font-size:10px; font-weight:700; letter-spacing:.07em; text-transform:uppercase; padding:3px 8px; background:var(--surface-2); color:var(--accent-2);}
+.pbchip.f-p{color:#3b5ba9; background:#e4eaf8;}
+.pbchip.f-c{color:#2f7d6d; background:#e1f1ec;}
+:root[data-theme="dark"] .pbchip.f-p{color:#93acf0; background:#1f2840;}
+:root[data-theme="dark"] .pbchip.f-c{color:#6fcfb8; background:#18322c;}
+.pbspk{font-size:15px; opacity:.75;}
+.pbcard.speaking .pbspk{opacity:1; animation:aoiblink .6s steps(1) infinite;}
+.pbjp{font-family:"M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Noto Sans JP", var(--font-body); font-weight:800; font-size:21px; line-height:1.35; margin-top:4px; overflow-wrap:anywhere;}
+.pbjp mark{background:var(--surface-2); color:var(--accent); padding:0 2px;}
+.pbkana{font-family:"M PLUS Rounded 1c", var(--font-body); font-weight:500; font-size:13px; color:var(--muted);}
+.pbro{font-style:italic; font-size:13.5px; color:var(--muted);}
+.pben{font-weight:700; font-size:14px; margin-top:3px;}
+.pbnote{font-size:12px; line-height:1.4; color:var(--muted); margin-top:3px;}
+
 /* The chat button rides on her top-left corner (placed by layoutAoi()), so it reads as "talk to
    her" and never sits over the text box or a right-aligned button like Next. */
 #chatFab{ width:36px; height:36px; font-size:15px; left:var(--fab-x, 8px); top:var(--fab-y, 60vh); right:auto; bottom:auto; z-index:51; }
@@ -643,6 +674,10 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
       <button class="hubcard" id="hubCardDaytrip" type="button">
         <span class="badge" style="align-self:flex-start;">Aoi's Day</span>
         <h3 id="daytripHubTitle">Where Aoi Went Today</h3>
+      </button>
+      <button class="hubcard" id="hubCardJapan" type="button">
+        <span class="badge" style="align-self:flex-start;">Japan Travel</span>
+        <h3>Speak Japanese on Your Trip</h3>
       </button>
       <button class="hubcard" id="hubCardSales" type="button">
         <span class="badge" style="align-self:flex-start;">Sales Practice</span>
@@ -757,6 +792,28 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
       <h3>Aoi's technique tips for this one</h3>
       <ul id="salesTips"></ul>
     </div>
+  </div>
+
+  <!-- JAPAN TRAVEL PHRASEBOOK: one situation's phrases, in the chosen formality and dialect -->
+  <div id="view-phrasebook" hidden>
+    <div class="pbmodes" id="pbModes">
+      <div class="pbseg" id="pbForm" role="radiogroup" aria-label="Formality">
+        <button type="button" data-v="p">Polite<small lang="ja">です・ます</small></button>
+        <button type="button" data-v="c">Casual<small lang="ja">タメ口</small></button>
+      </div>
+      <div class="pbseg pb3" id="pbDial" role="radiogroup" aria-label="Dialect">
+        <button type="button" data-v="s">Standard<small lang="ja">標準語</small></button>
+        <button type="button" data-v="o">Osaka<small lang="ja">大阪弁</small></button>
+        <button type="button" data-v="k">Kyoto<small lang="ja">京都弁</small></button>
+      </div>
+    </div>
+    <div class="pbbar">
+      <button class="btn primary" id="pbPlayAll" type="button">&#9654; Play all</button>
+      <button class="pbtog" id="pbSlow" type="button" aria-pressed="false">&#128034; Slow</button>
+      <button class="pbtog" id="pbTwice" type="button" aria-pressed="false">&#8635; Twice</button>
+    </div>
+    <p class="pbhint" id="pbHint"></p>
+    <div class="pblist" id="pbList"></div>
   </div>
 
   <!-- QUIZ SELECT -->
@@ -1057,6 +1114,7 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 
 </div>
 
+<script src="phrasebook/phrasebook.js"></script>
 <script>
 
 function Q(id, cat, q, choices, a, explain){ return {id:id, cat:cat, q:q, choices:choices, a:a, explain:explain}; }
@@ -1963,7 +2021,8 @@ var views = {
   daily: document.getElementById("view-daily"),
   daytrip: document.getElementById("view-daytrip"),
   sales: document.getElementById("view-sales"),
-  salesDetail: document.getElementById("view-sales-detail")
+  salesDetail: document.getElementById("view-sales-detail"),
+  phrasebook: document.getElementById("view-phrasebook")
 };
 var backTarget = null;
 /* Views that are paced narrated lessons get the landscape corner-host "teaching mode" layout
@@ -2010,6 +2069,7 @@ function showView(name, opts){
      corner-host layout, same pattern as body.lessonLocked just above -- Japanese Pronunciation and
      the Teacher lesson (also TEACH_VIEWS) are untouched, and so is Aoi's Day's own portrait view. */
   document.body.classList.toggle("daytripMode", name === "daytrip");
+  if (name !== "phrasebook") pbStop();
   if (window.AoiHost && window.AoiHost.onView) window.AoiHost.onView(name);
   document.getElementById("cardZone").scrollTop = 0; window.scrollTo(0, 0);
 }
@@ -2059,6 +2119,7 @@ document.getElementById("hubCardSinging").addEventListener("click", function(){ 
 document.getElementById("hubCardCooking").addEventListener("click", function(){ renderCookingSelect(); showView("cooking", {backTo:"hub"}); });
 document.getElementById("hubCardDaily").addEventListener("click", function(){ renderDaily(); showView("daily", {backTo:"hub"}); });
 document.getElementById("hubCardDaytrip").addEventListener("click", function(){ renderDaytrip(); showView("daytrip", {backTo:"hub"}); });
+document.getElementById("hubCardJapan").addEventListener("click", function(){ openTeacherLib("japan"); });
 document.getElementById("hubCardSales").addEventListener("click", function(){ renderSalesSelect(); showView("sales", {backTo:"hub"}); });
 
 document.getElementById("hubCardPPL").addEventListener("click", function(){ openSubject("ppl"); });
@@ -3000,6 +3061,7 @@ var ICON_PATHS = {
   phone:'<rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18.5h2"/>',
   book:'<path d="M4 4h6a3 3 0 0 1 3 3v14a2.5 2.5 0 0 0-2.5-2.5H4z"/><path d="M20 4h-6a3 3 0 0 0-3 3"/><path d="M20 4v14.5h-6.5A2.5 2.5 0 0 0 11 21"/>',
   check:'<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>',
+  torii:'<path d="M2.5 5.5c3 .8 16 .8 19 0"/><path d="M4.5 9h15"/><path d="M7 6v15M17 6v15"/><path d="M12 6v3"/>',
   cell:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M6.5 8.5h.01M17 15.5h.01M8 16.5h.01"/>'
 };
 function ico(name){
@@ -3119,7 +3181,142 @@ function subjectModules(key){
     };
   });
 }
+/* ---------- Japan travel phrasebook ----------
+   Data: phrasebook/phrasebook.js (generated from phrasebook/phrases.py, which build.py checks).
+   Each phrase has six versions, polite/casual x standard/Osaka/Kyoto; the two switches pick one,
+   and the choice is remembered. Tapping a card plays Aoi's recorded voice for that exact version
+   (Japanese) while her caption shows the English; "Play all" goes through the list on its own. */
+var PB_KEY = "aoi_pb_mode_v1";
+var pbMode = (function(){
+  try{ var m = JSON.parse(localStorage.getItem(PB_KEY) || "{}");
+    return {f: m.f === "c" ? "c" : "p", d: (m.d === "o" || m.d === "k") ? m.d : "s", slow: !!m.slow, twice: !!m.twice}; }
+  catch(e){ return {f:"p", d:"s", slow:false, twice:false}; }
+})();
+function pbSave(){ try{ localStorage.setItem(PB_KEY, JSON.stringify(pbMode)); }catch(e){} }
+var pbSec = null, pbAudio = new Audio(), pbRun = 0, pbPlayingAll = false;
+var PB_DIAL = {s:"Standard", o:"Osaka", k:"Kyoto"}, PB_FORM = {p:"Polite", c:"Casual"};
+var PB_HINT = {
+  s: "Standard Japanese works anywhere in Japan. Highlighted parts are what make it polite or casual.",
+  o: "Osaka-ben, the dialect of Osaka. Highlighted parts are the Kansai words and endings. Aoi reads them with standard intonation; real Osaka speech has a livelier melody.",
+  k: "Kyoto-ben: softer than Osaka, with はる for politeness. Polite Kyoto uses traditional forms (どす, おす), marked as such. Aoi reads with standard intonation."
+};
+function pbVer(ph){ return pbSec.hear ? ph.v.x : ph.v[pbMode.d + pbMode.f]; }
+function pbClip(ph, v){ return "audio/phrases/" + (pbSec.hear ? "hear_" + ph.id : ph.id + "_" + v.src) + ".mp3"; }
+function pbMark(text, hl){
+  var ranges = [];
+  (hl || []).forEach(function(h){ var i = text.indexOf(h); if (i >= 0) ranges.push([i, i + h.length]); });
+  ranges.sort(function(a, b){ return a[0] - b[0]; });
+  var out = "", pos = 0;
+  ranges.forEach(function(r){ if (r[0] < pos) return; out += esc_(text.slice(pos, r[0])) + "<mark>" + esc_(text.slice(r[0], r[1])) + "</mark>"; pos = r[1]; });
+  return out + esc_(text.slice(pos));
+}
+function pbSameNote(v){
+  if (pbSec.hear || v.src.charAt(0) === pbMode.d) return "";
+  if (v.src.charAt(0) === "s") return "Kansai people say this the standard way.";
+  return "Same in Osaka and Kyoto.";
+}
+function openPhrasebook(secId){
+  JP_TRAVEL.forEach(function(x){ if (x.id === secId) pbSec = x; });
+  showView("phrasebook", {backTo:"teacher"});
+  setHeader(pbSec.title, "Japan");
+  renderPhrasebook();
+  if (window.AoiHost) window.AoiHost.say(pbSec.blurb + " Tap a phrase and I'll say it.", {pose:"present_r", eyes:"eyes_happy"});
+}
+function renderPhrasebook(){
+  document.getElementById("pbModes").hidden = !!pbSec.hear;
+  [["pbForm", pbMode.f], ["pbDial", pbMode.d]].forEach(function(x){
+    Array.prototype.forEach.call(document.getElementById(x[0]).children, function(b){
+      var on = b.getAttribute("data-v") === x[1];
+      b.classList.toggle("on", on); b.setAttribute("aria-checked", on ? "true" : "false");
+    });
+  });
+  document.getElementById("pbSlow").setAttribute("aria-pressed", pbMode.slow ? "true" : "false");
+  document.getElementById("pbTwice").setAttribute("aria-pressed", pbMode.twice ? "true" : "false");
+  document.getElementById("pbHint").textContent = pbSec.hear ? pbSec.blurb : PB_HINT[pbMode.d];
+  var list = document.getElementById("pbList");
+  list.innerHTML = "";
+  pbSec.phrases.forEach(function(ph, i){
+    var v = pbVer(ph);
+    var chip = pbSec.hear ? '<span class="pbchip">' + esc_(ph.where) + '</span>'
+      : '<span class="pbchip f-' + pbMode.f + '">' + PB_FORM[pbMode.f] + ' · ' + PB_DIAL[pbMode.d] + '</span>';
+    var note = [v.note, pbSameNote(v)].filter(Boolean).join(" ");
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "pbcard"; b.setAttribute("data-i", i);
+    b.innerHTML = '<span class="pbtop">' + chip + '<span class="pbspk" aria-hidden="true">&#128266;</span></span>' +
+      '<span class="pbjp" lang="ja">' + pbMark(v.jp, v.hl) + '</span>' +
+      (v.kana ? '<span class="pbkana" lang="ja">' + esc_(v.kana) + '</span>' : '') +
+      '<span class="pbro">' + esc_(v.ro) + '</span>' +
+      '<span class="pben">' + esc_(ph.en) + '</span>' +
+      (note ? '<span class="pbnote">' + esc_(note) + '</span>' : '');
+    b.addEventListener("click", function(){ pbStop(); pbSay(i); });
+    list.appendChild(b);
+  });
+  if (window.AoiHost && window.AoiHost.relayout) window.AoiHost.relayout();
+}
+/* Plays one phrase and resolves when it has finished (or failed to play). */
+function pbSay(i){
+  var ph = pbSec.phrases[i], v = pbVer(ph);
+  var cards = document.querySelectorAll("#pbList .pbcard");
+  Array.prototype.forEach.call(cards, function(c){ c.classList.remove("speaking"); });
+  var card = cards[i];
+  if (card) card.classList.add("speaking");
+  if (window.AoiHost) window.AoiHost.say("“" + ph.en + "” — " + v.ro, {pose: i % 2 ? "point_l" : "point_r", eyes:"eyes_happy"});
+  return new Promise(function(resolve){
+    var done = false;
+    function finish(){ if (done) return; done = true; if (card) card.classList.remove("speaking"); resolve(); }
+    pbAudio.pause();
+    pbAudio.onended = finish;
+    pbAudio.onerror = function(){ setTimeout(finish, 1500); };
+    pbAudio.src = pbClip(ph, v);
+    pbAudio.playbackRate = pbMode.slow ? 0.75 : 1;
+    try{ pbAudio.preservesPitch = true; }catch(e){}
+    pbAudio.play().catch(function(){ setTimeout(finish, 1500); });
+    setTimeout(finish, 15000);
+  });
+}
+function pbWait(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
+function pbStop(){
+  pbRun++; pbPlayingAll = false;
+  try{ pbAudio.pause(); }catch(e){}
+  var btn = document.getElementById("pbPlayAll");
+  if (btn) btn.innerHTML = "&#9654; Play all";
+  Array.prototype.forEach.call(document.querySelectorAll("#pbList .pbcard.speaking"), function(c){ c.classList.remove("speaking"); });
+}
+function pbPlayAll(){
+  if (pbPlayingAll){ pbStop(); return; }
+  pbStop();
+  var run = pbRun, n = pbSec.phrases.length, i = 0;
+  pbPlayingAll = true;
+  document.getElementById("pbPlayAll").innerHTML = "&#9632; Stop";
+  (function next(){
+    if (run !== pbRun) return;
+    if (i >= n){
+      pbStop();
+      if (window.AoiHost) window.AoiHost.say("That's all of them! Tap any phrase to hear it again.", {pose:"present_r", eyes:"eyes_happy"});
+      return;
+    }
+    var card = document.querySelectorAll("#pbList .pbcard")[i];
+    if (card) card.scrollIntoView({block:"center", behavior:"smooth"});
+    pbSay(i).then(function(){
+      if (run !== pbRun) return null;
+      return pbMode.twice ? pbWait(600).then(function(){ return run === pbRun ? pbSay(i) : null; }) : null;
+    }).then(function(){ i++; return pbWait(900); }).then(next);
+  })();
+}
+["pbForm", "pbDial"].forEach(function(id){
+  document.getElementById(id).addEventListener("click", function(e){
+    var b = e.target.closest("button"); if (!b) return;
+    if (id === "pbForm") pbMode.f = b.getAttribute("data-v"); else pbMode.d = b.getAttribute("data-v");
+    pbSave(); pbStop(); renderPhrasebook();
+  });
+});
+document.getElementById("pbSlow").addEventListener("click", function(){ pbMode.slow = !pbMode.slow; pbSave(); renderPhrasebook(); });
+document.getElementById("pbTwice").addEventListener("click", function(){ pbMode.twice = !pbMode.twice; pbSave(); renderPhrasebook(); });
+document.getElementById("pbPlayAll").addEventListener("click", pbPlayAll);
+
 var TEACHER_SECTIONS = [
+  {id:"japan", title:"Japan Travel", icon:"torii", blurb:"Phrases for your trip, polite or casual, in standard Japanese, Osaka-ben or Kyoto-ben. Aoi says every one.",
+   modules:function(){ return JP_TRAVEL.map(function(x){ return {title:x.title, icon:x.icon, meta:x.phrases.length + (x.hear ? " to listen for" : " phrases"), start:function(){ openPhrasebook(x.id); }}; }); }},
   {id:"claude", title:"Claude Code", icon:"code", blurb:"Using Claude Code from your phone, narrated in Aoi's own voice.",
    modules:function(){ return [{title:"Claude Code on Your Phone", icon:"phone", meta:CLAUDE_CODE_BEATS.length + " scenes \u00b7 voiced", start:startTeacherLesson}]; }},
   {id:"ppl", title:"PPL Checkride", icon:"plane", blurb:"All 12 FAA knowledge areas. Each lesson teaches five points, then quizzes you on them.",
@@ -3535,7 +3732,7 @@ var DESTINATIONS = [
   {place:"Kyoto, Japan", kind:"City", facts:[
     "Kyoto was the capital of Japan for over a thousand years, from 794 all the way to 1868.",
     "It's home to over a thousand Buddhist temples and Shinto shrines, including the famous gold-covered Kinkaku-ji.",
-    "Wild Japanese macaques — sometimes called snow monkeys — live in the mountains nearby, and are known for soaking in hot springs in winter."]},
+    "Wild Japanese macaques live in the hills nearby, at Arashiyama's monkey park; their cousins in snowy Nagano are the famous ones that soak in hot springs."]},
   {place:"Antarctica", kind:"Continent", facts:[
     "Antarctica is the coldest, driest, and windiest continent on Earth — and almost entirely covered in ice.",
     "It has no native land mammals at all, but it's home to emperor penguins, the tallest and heaviest penguin species alive.",
@@ -3558,7 +3755,7 @@ var DESTINATIONS = [
     "It's home to the fennec fox, the smallest fox species, whose oversized ears help it radiate away heat."]},
   {place:"Grand Canyon, USA", kind:"Canyon", facts:[
     "The Colorado River carved the Grand Canyon over roughly 5 to 6 million years.",
-    "It's about 277 miles long and in places nearly a mile deep.",
+    "It's about 277 miles long and over a mile deep in places.",
     "Its rock layers expose almost 2 billion years of the Earth's geological history."]},
   {place:"The Great Wall, China", kind:"Landmark", facts:[
     "It isn't one single wall — it's many walls built over centuries by different dynasties, later linked together.",
@@ -3581,8 +3778,8 @@ var DESTINATIONS = [
     "It's sometimes called the \"Rose City\" for the color of its rock.",
     "It was lost to most of the outside world for centuries, until it was rediscovered in 1812."]},
   {place:"Machu Picchu, Peru", kind:"Ancient city", facts:[
-    "This 15th-century Inca citadel sits high in the Andes, nearly 8,000 feet above sea level.",
-    "Its stones were cut so precisely that it was built without any mortar at all.",
+    "This 15th-century Inca citadel sits high in the Andes, nearly 8,000 feet (about 2,430 meters) above sea level.",
+    "Its finest walls were cut so precisely that the stones hold together without any mortar.",
     "It wasn't widely known outside Peru until 1911."]},
   {place:"Masai Mara, Kenya", kind:"Nature reserve", facts:[
     "It's part of the same ecosystem as the Serengeti, just across the border in Kenya.",
@@ -3601,7 +3798,7 @@ var DESTINATIONS = [
     "It's home to the Rafflesia, the world's largest flower, which can grow over three feet across.",
     "That giant flower smells like rotting meat, to attract the insects that pollinate it."]},
   {place:"Madagascar", kind:"Island", facts:[
-    "Madagascar has been separated from mainland Africa for around 88 million years.",
+    "Madagascar split from Africa about 160 million years ago, and from India about 88 million years ago; it has been an island on its own ever since.",
     "That long isolation let its wildlife evolve on its own — it's home to lemurs, found nowhere else in the wild.",
     "A huge share of its plants and animals exist nowhere else on Earth."]},
   {place:"Yellowstone National Park, USA", kind:"National park", facts:[
@@ -3609,12 +3806,12 @@ var DESTINATIONS = [
     "It sits on top of a volcanic hot spot, giving it more geysers than anywhere else on Earth, including Old Faithful.",
     "It's home to free-roaming American bison, the largest land mammal in North America."]},
   {place:"The Alps", kind:"Mountain range", facts:[
-    "The Alps are Europe's highest and longest mountain range, crossing eight countries.",
+    "The Alps are the highest and most extensive mountain range lying entirely in Europe, crossing eight countries.",
     "Mont Blanc, their tallest peak, reaches nearly 15,800 feet.",
     "Alpine ibex — wild goats with huge curved horns — can climb near-vertical rock faces most animals couldn't touch."]},
   {place:"Iguazu Falls, Argentina/Brazil", kind:"Waterfalls", facts:[
     "It's not one waterfall but a system of around 275 individual falls spread across nearly two miles.",
-    "It's wider than Niagara Falls and taller than both Niagara and Victoria Falls.",
+    "It's wider than both Niagara and Victoria Falls, and taller than Niagara.",
     "The surrounding rainforest is home to toucans and brilliant blue morpho butterflies."]},
   {place:"Mount Fuji, Japan", kind:"Mountain", facts:[
     "At about 12,389 feet, it's Japan's tallest mountain.",
@@ -4027,7 +4224,7 @@ function layoutAoi(live){
    still leaves it a usable width; otherwise it stays full width under her. Natural (un-pulled)
    edges are recovered from the margins applied last time, so this never has to reset the page
    and re-measure. Runs live while she is dragged and again when a scroll settles. */
-var AVOID_SEL = '#card .hubcard, #card .grid > .card, #card .choice';
+var AVOID_SEL = '#card .hubcard, #card .grid > .card, #card .choice, #card .pbcard';
 function avoidOptions(r){
   var inX = r.width * 0.14, top = r.top + r.height * 0.06;
   var hl = r.left + inX, hr = r.right - inX, hb = r.bottom;

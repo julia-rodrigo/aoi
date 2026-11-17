@@ -1,0 +1,982 @@
+[
+ {
+  "file": "thanks_sp.mp3",
+  "jp": "ありがとうございます",
+  "kana": "ありがとうございます"
+ },
+ {
+  "file": "thanks_sc.mp3",
+  "jp": "ありがとう",
+  "kana": "ありがとう"
+ },
+ {
+  "file": "thanks_op.mp3",
+  "jp": "おおきに",
+  "kana": "おおきに"
+ },
+ {
+  "file": "thanks_oc.mp3",
+  "jp": "おおきにな",
+  "kana": "おおきにな"
+ },
+ {
+  "file": "thanks_kp.mp3",
+  "jp": "おおきに、ありがとうございます",
+  "kana": "おおきに、ありがとうございます"
+ },
+ {
+  "file": "thanks_kc.mp3",
+  "jp": "おおきに",
+  "kana": "おおきに"
+ },
+ {
+  "file": "sorry_sp.mp3",
+  "jp": "すみません",
+  "kana": "すみません"
+ },
+ {
+  "file": "sorry_sc.mp3",
+  "jp": "ごめん",
+  "kana": "ごめん"
+ },
+ {
+  "file": "sorry_op.mp3",
+  "jp": "すんません",
+  "kana": "すんません"
+ },
+ {
+  "file": "sorry_oc.mp3",
+  "jp": "ごめんな",
+  "kana": "ごめんな"
+ },
+ {
+  "file": "sorry_kp.mp3",
+  "jp": "すんまへん",
+  "kana": "すんまへん"
+ },
+ {
+  "file": "sorry_kc.mp3",
+  "jp": "かんにんな",
+  "kana": "かんにんな"
+ },
+ {
+  "file": "isee_sp.mp3",
+  "jp": "そうですね",
+  "kana": "そうですね"
+ },
+ {
+  "file": "isee_sc.mp3",
+  "jp": "そうだね",
+  "kana": "そうだね"
+ },
+ {
+  "file": "isee_oc.mp3",
+  "jp": "せやな",
+  "kana": "せやな"
+ },
+ {
+  "file": "isee_kp.mp3",
+  "jp": "そうどすな",
+  "kana": "そうどすな"
+ },
+ {
+  "file": "isee_kc.mp3",
+  "jp": "そうやね",
+  "kana": "そうやね"
+ },
+ {
+  "file": "really_sp.mp3",
+  "jp": "本当ですか？",
+  "kana": "ほんとうですか"
+ },
+ {
+  "file": "really_sc.mp3",
+  "jp": "ほんと？",
+  "kana": "ほんと？"
+ },
+ {
+  "file": "really_op.mp3",
+  "jp": "ほんまですか？",
+  "kana": "ほんまですか？"
+ },
+ {
+  "file": "really_oc.mp3",
+  "jp": "ほんま？",
+  "kana": "ほんま？"
+ },
+ {
+  "file": "really_kp.mp3",
+  "jp": "ほんまどすか？",
+  "kana": "ほんまどすか？"
+ },
+ {
+  "file": "really_kc.mp3",
+  "jp": "ほんまに？",
+  "kana": "ほんまに？"
+ },
+ {
+  "file": "noproblem_sp.mp3",
+  "jp": "大丈夫です",
+  "kana": "だいじょうぶです"
+ },
+ {
+  "file": "noproblem_sc.mp3",
+  "jp": "大丈夫",
+  "kana": "だいじょうぶ"
+ },
+ {
+  "file": "noproblem_oc.mp3",
+  "jp": "かまへんで",
+  "kana": "かまへんで"
+ },
+ {
+  "file": "noproblem_kp.mp3",
+  "jp": "かまいまへん",
+  "kana": "かまいまへん"
+ },
+ {
+  "file": "noproblem_kc.mp3",
+  "jp": "かまへんよ",
+  "kana": "かまへんよ"
+ },
+ {
+  "file": "thisplease_sp.mp3",
+  "jp": "これをお願いします",
+  "kana": "これをおねがいします"
+ },
+ {
+  "file": "thisplease_sc.mp3",
+  "jp": "これちょうだい",
+  "kana": "これちょうだい"
+ },
+ {
+  "file": "thisplease_oc.mp3",
+  "jp": "これにするわ",
+  "kana": "これにするわ"
+ },
+ {
+  "file": "thisplease_kp.mp3",
+  "jp": "これ、おくれやす",
+  "kana": "これ、おくれやす"
+ },
+ {
+  "file": "thisplease_kc.mp3",
+  "jp": "これにしよ",
+  "kana": "これにしよ"
+ },
+ {
+  "file": "recommend_sp.mp3",
+  "jp": "おすすめは何ですか？",
+  "kana": "おすすめはなんですか"
+ },
+ {
+  "file": "recommend_sc.mp3",
+  "jp": "おすすめは？",
+  "kana": "おすすめは？"
+ },
+ {
+  "file": "recommend_oc.mp3",
+  "jp": "おすすめ何なん？",
+  "kana": "おすすめなんなん"
+ },
+ {
+  "file": "recommend_kp.mp3",
+  "jp": "おすすめは何どすか？",
+  "kana": "おすすめはなんどすか"
+ },
+ {
+  "file": "recommend_kc.mp3",
+  "jp": "おすすめ何やろ？",
+  "kana": "おすすめなんやろ"
+ },
+ {
+  "file": "delicious_sp.mp3",
+  "jp": "とてもおいしいです",
+  "kana": "とてもおいしいです"
+ },
+ {
+  "file": "delicious_sc.mp3",
+  "jp": "すごくおいしい！",
+  "kana": "すごくおいしい！"
+ },
+ {
+  "file": "delicious_op.mp3",
+  "jp": "ほんまにおいしいです",
+  "kana": "ほんまにおいしいです"
+ },
+ {
+  "file": "delicious_oc.mp3",
+  "jp": "めっちゃうまいわ！",
+  "kana": "めっちゃうまいわ！"
+ },
+ {
+  "file": "delicious_kp.mp3",
+  "jp": "ほんまにおいしおす",
+  "kana": "ほんまにおいしおす"
+ },
+ {
+  "file": "delicious_kc.mp3",
+  "jp": "ほんまにおいしいわぁ",
+  "kana": "ほんまにおいしいわぁ"
+ },
+ {
+  "file": "nomeat_sp.mp3",
+  "jp": "肉は食べられません",
+  "kana": "にくはたべられません"
+ },
+ {
+  "file": "nomeat_sc.mp3",
+  "jp": "肉は食べられない",
+  "kana": "にくはたべられない"
+ },
+ {
+  "file": "nomeat_op.mp3",
+  "jp": "肉は食べられへんのです",
+  "kana": "にくはたべられへんのです"
+ },
+ {
+  "file": "nomeat_oc.mp3",
+  "jp": "肉は食べられへんねん",
+  "kana": "にくはたべられへんねん"
+ },
+ {
+  "file": "nomeat_kp.mp3",
+  "jp": "お肉はよう食べへんのです",
+  "kana": "おにくはようたべへんのです"
+ },
+ {
+  "file": "nomeat_kc.mp3",
+  "jp": "お肉はよう食べへん",
+  "kana": "おにくはようたべへん"
+ },
+ {
+  "file": "check_sp.mp3",
+  "jp": "お会計お願いします",
+  "kana": "おかいけいおねがいします"
+ },
+ {
+  "file": "check_sc.mp3",
+  "jp": "お会計お願い",
+  "kana": "おかいけいおねがい"
+ },
+ {
+  "file": "check_op.mp3",
+  "jp": "お勘定お願いします",
+  "kana": "おかんじょうおねがいします"
+ },
+ {
+  "file": "check_oc.mp3",
+  "jp": "お勘定して",
+  "kana": "おかんじょうして"
+ },
+ {
+  "file": "gochiso_sp.mp3",
+  "jp": "ごちそうさまでした",
+  "kana": "ごちそうさまでした"
+ },
+ {
+  "file": "gochiso_sc.mp3",
+  "jp": "ごちそうさま",
+  "kana": "ごちそうさま"
+ },
+ {
+  "file": "gochiso_op.mp3",
+  "jp": "ごちそうさんでした",
+  "kana": "ごちそうさんでした"
+ },
+ {
+  "file": "gochiso_oc.mp3",
+  "jp": "ごちそうさん",
+  "kana": "ごちそうさん"
+ },
+ {
+  "file": "gochiso_kp.mp3",
+  "jp": "ごちそうさんどした",
+  "kana": "ごちそうさんどした"
+ },
+ {
+  "file": "gochiso_kc.mp3",
+  "jp": "おおきに、ごちそうさん",
+  "kana": "おおきに、ごちそうさん"
+ },
+ {
+  "file": "howmuch_sp.mp3",
+  "jp": "これはいくらですか？",
+  "kana": "これはいくらですか？"
+ },
+ {
+  "file": "howmuch_sc.mp3",
+  "jp": "これいくら？",
+  "kana": "これいくら？"
+ },
+ {
+  "file": "howmuch_op.mp3",
+  "jp": "これなんぼですか？",
+  "kana": "これなんぼですか？"
+ },
+ {
+  "file": "howmuch_oc.mp3",
+  "jp": "これなんぼ？",
+  "kana": "これなんぼ？"
+ },
+ {
+  "file": "howmuch_kp.mp3",
+  "jp": "これ、なんぼどす？",
+  "kana": "これ、なんぼどす？"
+ },
+ {
+  "file": "looking_sp.mp3",
+  "jp": "見ているだけです",
+  "kana": "みているだけです"
+ },
+ {
+  "file": "looking_sc.mp3",
+  "jp": "見てるだけ",
+  "kana": "みてるだけ"
+ },
+ {
+  "file": "looking_oc.mp3",
+  "jp": "見てるだけやねん",
+  "kana": "みてるだけやねん"
+ },
+ {
+  "file": "looking_kp.mp3",
+  "jp": "ちょっと見せてもろてます",
+  "kana": "ちょっとみせてもろてます"
+ },
+ {
+  "file": "looking_kc.mp3",
+  "jp": "見てるだけやし",
+  "kana": "みてるだけやし"
+ },
+ {
+  "file": "tryon_sp.mp3",
+  "jp": "試着してもいいですか？",
+  "kana": "しちゃくしてもいいですか"
+ },
+ {
+  "file": "tryon_sc.mp3",
+  "jp": "試着していい？",
+  "kana": "しちゃくしていい"
+ },
+ {
+  "file": "tryon_op.mp3",
+  "jp": "試着してもええですか？",
+  "kana": "しちゃくしてもええですか"
+ },
+ {
+  "file": "tryon_oc.mp3",
+  "jp": "試着してもええ？",
+  "kana": "しちゃくしてもええ"
+ },
+ {
+  "file": "tryon_kp.mp3",
+  "jp": "試着させてもろてもよろしおすか？",
+  "kana": "しちゃくさせてもろてもよろしおすか"
+ },
+ {
+  "file": "tryon_kc.mp3",
+  "jp": "試着させてもろてもええ？",
+  "kana": "しちゃくさせてもろてもええ"
+ },
+ {
+  "file": "takethis_sp.mp3",
+  "jp": "これにします",
+  "kana": "これにします"
+ },
+ {
+  "file": "takethis_sc.mp3",
+  "jp": "これにする",
+  "kana": "これにする"
+ },
+ {
+  "file": "takethis_op.mp3",
+  "jp": "ほな、これにします",
+  "kana": "ほな、これにします"
+ },
+ {
+  "file": "takethis_oc.mp3",
+  "jp": "ほな、これにするわ",
+  "kana": "ほな、これにするわ"
+ },
+ {
+  "file": "takethis_kp.mp3",
+  "jp": "ほな、これにさせてもらいます",
+  "kana": "ほな、これにさせてもらいます"
+ },
+ {
+  "file": "takethis_kc.mp3",
+  "jp": "ほな、これにしよ",
+  "kana": "ほな、これにしよ"
+ },
+ {
+  "file": "nobag_sp.mp3",
+  "jp": "袋は大丈夫です",
+  "kana": "ふくろはだいじょうぶです"
+ },
+ {
+  "file": "nobag_sc.mp3",
+  "jp": "袋いらない",
+  "kana": "ふくろいらない"
+ },
+ {
+  "file": "nobag_op.mp3",
+  "jp": "袋はいらんです",
+  "kana": "ふくろはいらんです"
+ },
+ {
+  "file": "nobag_oc.mp3",
+  "jp": "袋いらんわ",
+  "kana": "ふくろいらんわ"
+ },
+ {
+  "file": "nobag_kp.mp3",
+  "jp": "袋はよろしおす",
+  "kana": "ふくろはよろしおす"
+ },
+ {
+  "file": "nobag_kc.mp3",
+  "jp": "袋はええわ",
+  "kana": "ふくろはええわ"
+ },
+ {
+  "file": "card_sp.mp3",
+  "jp": "カードは使えますか？",
+  "kana": "かーどはつかえますか"
+ },
+ {
+  "file": "card_sc.mp3",
+  "jp": "カード使える？",
+  "kana": "かーどつかえる"
+ },
+ {
+  "file": "card_op.mp3",
+  "jp": "カードいけますか？",
+  "kana": "かーどいけますか"
+ },
+ {
+  "file": "card_oc.mp3",
+  "jp": "カードいける？",
+  "kana": "かーどいける"
+ },
+ {
+  "file": "card_kp.mp3",
+  "jp": "カード使えますやろか？",
+  "kana": "かーどつかえますやろか"
+ },
+ {
+  "file": "card_kc.mp3",
+  "jp": "カード使えるやろか？",
+  "kana": "かーどつかえるやろか"
+ },
+ {
+  "file": "station_sp.mp3",
+  "jp": "駅はどこですか？",
+  "kana": "えきはどこですか"
+ },
+ {
+  "file": "station_sc.mp3",
+  "jp": "駅どこ？",
+  "kana": "えきどこ"
+ },
+ {
+  "file": "station_oc.mp3",
+  "jp": "駅どこにあるん？",
+  "kana": "えきどこにあるん"
+ },
+ {
+  "file": "station_kp.mp3",
+  "jp": "駅はどこどすか？",
+  "kana": "えきはどこどすか"
+ },
+ {
+  "file": "station_kc.mp3",
+  "jp": "駅どっちやろ？",
+  "kana": "えきどっちやろ"
+ },
+ {
+  "file": "train_sp.mp3",
+  "jp": "この電車は京都に行きますか？",
+  "kana": "このでんしゃはきょうとにいきますか"
+ },
+ {
+  "file": "train_sc.mp3",
+  "jp": "この電車、京都行く？",
+  "kana": "このでんしゃきょうといく"
+ },
+ {
+  "file": "train_oc.mp3",
+  "jp": "この電車、京都行くん？",
+  "kana": "このでんしゃきょうといくん"
+ },
+ {
+  "file": "train_kp.mp3",
+  "jp": "この電車、京都に行きますやろか？",
+  "kana": "このでんしゃきょうとにいきますやろか"
+ },
+ {
+  "file": "train_kc.mp3",
+  "jp": "この電車、京都行くやろか？",
+  "kana": "このでんしゃきょうといくやろか"
+ },
+ {
+  "file": "taxi_sp.mp3",
+  "jp": "ここまでお願いします",
+  "kana": "ここまでおねがいします"
+ },
+ {
+  "file": "taxi_sc.mp3",
+  "jp": "ここまでお願い",
+  "kana": "ここまでおねがい"
+ },
+ {
+  "file": "taxi_op.mp3",
+  "jp": "ここまで頼んます",
+  "kana": "ここまでたのんます"
+ },
+ {
+  "file": "taxi_oc.mp3",
+  "jp": "ここまで頼むわ",
+  "kana": "ここまでたのむわ"
+ },
+ {
+  "file": "taxi_kp.mp3",
+  "jp": "ここまで行ってもらえますやろか",
+  "kana": "ここまでいってもらえますやろか"
+ },
+ {
+  "file": "taxi_kc.mp3",
+  "jp": "ここまで行ってくれはる？",
+  "kana": "ここまでいってくれはる"
+ },
+ {
+  "file": "far_sp.mp3",
+  "jp": "遠いですか？",
+  "kana": "とおいですか"
+ },
+ {
+  "file": "far_sc.mp3",
+  "jp": "遠い？",
+  "kana": "とおい"
+ },
+ {
+  "file": "far_oc.mp3",
+  "jp": "遠いん？",
+  "kana": "とおいん"
+ },
+ {
+  "file": "far_kp.mp3",
+  "jp": "遠おすか？",
+  "kana": "とおおすか"
+ },
+ {
+  "file": "far_kc.mp3",
+  "jp": "遠いやろか？",
+  "kana": "とおいやろか"
+ },
+ {
+  "file": "lost_sp.mp3",
+  "jp": "道に迷いました",
+  "kana": "みちにまよいました"
+ },
+ {
+  "file": "lost_sc.mp3",
+  "jp": "道に迷っちゃった",
+  "kana": "みちにまよっちゃった"
+ },
+ {
+  "file": "lost_op.mp3",
+  "jp": "道に迷ってしもたんです",
+  "kana": "みちにまよってしもたんです"
+ },
+ {
+  "file": "lost_oc.mp3",
+  "jp": "道に迷ってもうた",
+  "kana": "みちにまよってもうた"
+ },
+ {
+  "file": "lost_kp.mp3",
+  "jp": "道に迷うてしもたんどす",
+  "kana": "みちにまようてしもたんどす"
+ },
+ {
+  "file": "lost_kc.mp3",
+  "jp": "道に迷うてしもた",
+  "kana": "みちにまようてしもた"
+ },
+ {
+  "file": "reservation_sp.mp3",
+  "jp": "予約しています",
+  "kana": "よやくしています"
+ },
+ {
+  "file": "reservation_sc.mp3",
+  "jp": "予約してる",
+  "kana": "よやくしてる"
+ },
+ {
+  "file": "reservation_oc.mp3",
+  "jp": "予約してんねんけど",
+  "kana": "よやくしてんねんけど"
+ },
+ {
+  "file": "reservation_kp.mp3",
+  "jp": "予約させてもろてます",
+  "kana": "よやくさせてもろてます"
+ },
+ {
+  "file": "reservation_kc.mp3",
+  "jp": "予約してるんやけど",
+  "kana": "よやくしてるんやけど"
+ },
+ {
+  "file": "luggage_sp.mp3",
+  "jp": "荷物を預けてもいいですか？",
+  "kana": "にもつをあずけてもいいですか"
+ },
+ {
+  "file": "luggage_sc.mp3",
+  "jp": "荷物預けていい？",
+  "kana": "にもつあずけていい"
+ },
+ {
+  "file": "luggage_op.mp3",
+  "jp": "荷物預けてもええですか？",
+  "kana": "にもつあずけてもええですか"
+ },
+ {
+  "file": "luggage_oc.mp3",
+  "jp": "荷物預けてもええ？",
+  "kana": "にもつあずけてもええ"
+ },
+ {
+  "file": "luggage_kp.mp3",
+  "jp": "荷物、預かってもろてもよろしおすか？",
+  "kana": "にもつあずかってもろてもよろしおすか"
+ },
+ {
+  "file": "luggage_kc.mp3",
+  "jp": "荷物、預かってもろてもええ？",
+  "kana": "にもつあずかってもろてもええ"
+ },
+ {
+  "file": "checkout_sp.mp3",
+  "jp": "チェックアウトは何時ですか？",
+  "kana": "ちぇっくあうとはなんじですか"
+ },
+ {
+  "file": "checkout_sc.mp3",
+  "jp": "チェックアウト何時？",
+  "kana": "ちぇっくあうとなんじ"
+ },
+ {
+  "file": "checkout_oc.mp3",
+  "jp": "チェックアウト何時なん？",
+  "kana": "ちぇっくあうとなんじなん"
+ },
+ {
+  "file": "checkout_kp.mp3",
+  "jp": "チェックアウトは何時どすか？",
+  "kana": "ちぇっくあうとはなんじどすか"
+ },
+ {
+  "file": "checkout_kc.mp3",
+  "jp": "チェックアウト何時やろ？",
+  "kana": "ちぇっくあうとなんじやろ"
+ },
+ {
+  "file": "wifi_sp.mp3",
+  "jp": "Wi-Fiのパスワードを教えてください",
+  "kana": "わいふぁいのぱすわーどをおしえてください"
+ },
+ {
+  "file": "wifi_sc.mp3",
+  "jp": "Wi-Fiのパスワード教えて",
+  "kana": "わいふぁいのぱすわーどおしえて"
+ },
+ {
+  "file": "wifi_oc.mp3",
+  "jp": "Wi-Fiのパスワード教えてくれへん？",
+  "kana": "わいふぁいのぱすわーどおしえてくれへん"
+ },
+ {
+  "file": "wifi_kp.mp3",
+  "jp": "Wi-Fiのパスワード、教えてもろてもよろしおすか？",
+  "kana": "わいふぁいのぱすわーどおしえてもろてもよろしおすか"
+ },
+ {
+  "file": "wifi_kc.mp3",
+  "jp": "Wi-Fiのパスワード教えてくれはる？",
+  "kana": "わいふぁいのぱすわーどおしえてくれはる"
+ },
+ {
+  "file": "helpme_sp.mp3",
+  "jp": "助けてください！",
+  "kana": "たすけてください"
+ },
+ {
+  "file": "helpme_sc.mp3",
+  "jp": "助けて！",
+  "kana": "たすけて"
+ },
+ {
+  "file": "ambulance_sp.mp3",
+  "jp": "救急車を呼んでください！",
+  "kana": "きゅうきゅうしゃをよんでください"
+ },
+ {
+  "file": "ambulance_sc.mp3",
+  "jp": "救急車呼んで！",
+  "kana": "きゅうきゅうしゃよんで"
+ },
+ {
+  "file": "sick_sp.mp3",
+  "jp": "気分が悪いです",
+  "kana": "きぶんがわるいです"
+ },
+ {
+  "file": "sick_sc.mp3",
+  "jp": "気分悪い",
+  "kana": "きぶんわるい"
+ },
+ {
+  "file": "sick_op.mp3",
+  "jp": "ちょっとしんどいです",
+  "kana": "ちょっとしんどいです"
+ },
+ {
+  "file": "sick_oc.mp3",
+  "jp": "しんどいわ",
+  "kana": "しんどいわ"
+ },
+ {
+  "file": "sick_kc.mp3",
+  "jp": "えらいしんどいわ",
+  "kana": "えらいしんどいわ"
+ },
+ {
+  "file": "wallet_sp.mp3",
+  "jp": "財布をなくしました",
+  "kana": "さいふをなくしました"
+ },
+ {
+  "file": "wallet_sc.mp3",
+  "jp": "財布なくした",
+  "kana": "さいふなくした"
+ },
+ {
+  "file": "wallet_op.mp3",
+  "jp": "財布なくしてしもたんです",
+  "kana": "さいふなくしてしもたんです"
+ },
+ {
+  "file": "wallet_oc.mp3",
+  "jp": "財布なくしてもうた",
+  "kana": "さいふなくしてもうた"
+ },
+ {
+  "file": "wallet_kp.mp3",
+  "jp": "財布なくしてしもたんどす",
+  "kana": "さいふなくしてしもたんどす"
+ },
+ {
+  "file": "wallet_kc.mp3",
+  "jp": "財布なくしてしもた",
+  "kana": "さいふなくしてしもた"
+ },
+ {
+  "file": "english_sp.mp3",
+  "jp": "英語を話せますか？",
+  "kana": "えいごをはなせますか"
+ },
+ {
+  "file": "english_sc.mp3",
+  "jp": "英語話せる？",
+  "kana": "えいごはなせる"
+ },
+ {
+  "file": "english_op.mp3",
+  "jp": "英語しゃべれますか？",
+  "kana": "えいごしゃべれますか"
+ },
+ {
+  "file": "english_oc.mp3",
+  "jp": "英語しゃべれる？",
+  "kana": "えいごしゃべれる"
+ },
+ {
+  "file": "english_kp.mp3",
+  "jp": "英語しゃべらはりますか？",
+  "kana": "えいごしゃべらはりますか"
+ },
+ {
+  "file": "firsttime_sp.mp3",
+  "jp": "日本は初めてです",
+  "kana": "にほんははじめてです"
+ },
+ {
+  "file": "firsttime_sc.mp3",
+  "jp": "日本、初めてなんだ",
+  "kana": "にほんはじめてなんだ"
+ },
+ {
+  "file": "firsttime_oc.mp3",
+  "jp": "日本、初めてやねん",
+  "kana": "にほんはじめてやねん"
+ },
+ {
+  "file": "firsttime_kp.mp3",
+  "jp": "日本は初めてどす",
+  "kana": "にほんははじめてどす"
+ },
+ {
+  "file": "firsttime_kc.mp3",
+  "jp": "日本、初めてなんや",
+  "kana": "にほんはじめてなんや"
+ },
+ {
+  "file": "overseas_sp.mp3",
+  "jp": "海外から来ました",
+  "kana": "かいがいからきました"
+ },
+ {
+  "file": "overseas_sc.mp3",
+  "jp": "海外から来たんだ",
+  "kana": "かいがいからきたんだ"
+ },
+ {
+  "file": "overseas_oc.mp3",
+  "jp": "海外から来てん",
+  "kana": "かいがいからきてん"
+ },
+ {
+  "file": "overseas_kc.mp3",
+  "jp": "海外から来たんや",
+  "kana": "かいがいからきたんや"
+ },
+ {
+  "file": "beautiful_sp.mp3",
+  "jp": "きれいですね",
+  "kana": "きれいですね"
+ },
+ {
+  "file": "beautiful_sc.mp3",
+  "jp": "きれいだね",
+  "kana": "きれいだね"
+ },
+ {
+  "file": "beautiful_op.mp3",
+  "jp": "ほんまにきれいですね",
+  "kana": "ほんまにきれいですね"
+ },
+ {
+  "file": "beautiful_oc.mp3",
+  "jp": "めっちゃきれいやな",
+  "kana": "めっちゃきれいやな"
+ },
+ {
+  "file": "beautiful_kp.mp3",
+  "jp": "ほんまにきれいどすなぁ",
+  "kana": "ほんまにきれいどすなぁ"
+ },
+ {
+  "file": "beautiful_kc.mp3",
+  "jp": "ほんまにきれいやねぇ",
+  "kana": "ほんまにきれいやねぇ"
+ },
+ {
+  "file": "photo_sp.mp3",
+  "jp": "一緒に写真を撮りませんか？",
+  "kana": "いっしょにしゃしんをとりませんか"
+ },
+ {
+  "file": "photo_sc.mp3",
+  "jp": "一緒に写真撮ろう！",
+  "kana": "いっしょにしゃしんとろう"
+ },
+ {
+  "file": "photo_oc.mp3",
+  "jp": "一緒に写真撮ろ！",
+  "kana": "いっしょにしゃしんとろ"
+ },
+ {
+  "file": "photo_kp.mp3",
+  "jp": "一緒に写真撮らしてもろてもよろしおすか？",
+  "kana": "いっしょにしゃしんとらしてもろてもよろしおすか"
+ },
+ {
+  "file": "photo_kc.mp3",
+  "jp": "一緒に写真撮らへん？",
+  "kana": "いっしょにしゃしんとらへん"
+ },
+ {
+  "file": "bye_sp.mp3",
+  "jp": "では、また",
+  "kana": "では、また"
+ },
+ {
+  "file": "bye_sc.mp3",
+  "jp": "またね",
+  "kana": "またね"
+ },
+ {
+  "file": "bye_op.mp3",
+  "jp": "ほな、また",
+  "kana": "ほな、また"
+ },
+ {
+  "file": "bye_oc.mp3",
+  "jp": "ほな、またな",
+  "kana": "ほな、またな"
+ },
+ {
+  "file": "bye_kp.mp3",
+  "jp": "ほな、また寄せてもらいます",
+  "kana": "ほなまたよせてもらいます"
+ },
+ {
+  "file": "bye_kc.mp3",
+  "jp": "ほな、さいなら",
+  "kana": "ほな、さいなら"
+ },
+ {
+  "file": "hear_irasshai.mp3",
+  "jp": "いらっしゃいませ",
+  "kana": "いらっしゃいませ"
+ },
+ {
+  "file": "hear_maido.mp3",
+  "jp": "まいど",
+  "kana": "まいど"
+ },
+ {
+  "file": "hear_oideyasu.mp3",
+  "jp": "おいでやす",
+  "kana": "おいでやす"
+ },
+ {
+  "file": "hear_okoshiyasu.mp3",
+  "jp": "おこしやす",
+  "kana": "おこしやす"
+ },
+ {
+  "file": "hear_mokari.mp3",
+  "jp": "もうかりまっか？",
+  "kana": "もうかりまっか？"
+ },
+ {
+  "file": "hear_bochibochi.mp3",
+  "jp": "ぼちぼちでんな",
+  "kana": "ぼちぼちでんな"
+ },
+ {
+  "file": "hear_fukuro.mp3",
+  "jp": "袋はご利用ですか？",
+  "kana": "ふくろはごりようですか"
+ },
+ {
+  "file": "hear_atatame.mp3",
+  "jp": "温めますか？",
+  "kana": "あたためますか"
+ }
+]

@@ -1,0 +1,120 @@
+"""Checks phrases.py and writes the phrasebook data the app embeds, plus the voice clip list.
+
+    python3 build.py            check, then write phrasebook.js and clips.json
+Exit status is non-zero if any check fails, so a typo can't slip into the app.
+"""
+import json, os, re, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from phrases import SECTIONS, HEAR
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+KEYS = ["sp", "sc", "op", "oc", "kp", "kc"]
+
+# --- kana -> plain romaji, only as strict as the comparison below needs ---
+BASE = {
+ 'あ':'a','い':'i','う':'u','え':'e','お':'o','か':'ka','き':'ki','く':'ku','け':'ke','こ':'ko','が':'ga','ぎ':'gi','ぐ':'gu','げ':'ge','ご':'go',
+ 'さ':'sa','し':'shi','す':'su','せ':'se','そ':'so','ざ':'za','じ':'ji','ず':'zu','ぜ':'ze','ぞ':'zo','た':'ta','ち':'chi','つ':'tsu','て':'te','と':'to',
+ 'だ':'da','ぢ':'ji','づ':'zu','で':'de','ど':'do','な':'na','に':'ni','ぬ':'nu','ね':'ne','の':'no','は':'ha','ひ':'hi','ふ':'fu','へ':'he','ほ':'ho',
+ 'ば':'ba','び':'bi','ぶ':'bu','べ':'be','ぼ':'bo','ぱ':'pa','ぴ':'pi','ぷ':'pu','ぺ':'pe','ぽ':'po','ま':'ma','み':'mi','む':'mu','め':'me','も':'mo',
+ 'や':'ya','ゆ':'yu','よ':'yo','ら':'ra','り':'ri','る':'ru','れ':'re','ろ':'ro','わ':'wa','を':'o','ん':'n','ぁ':'a','ぃ':'i','ぅ':'u','ぇ':'e','ぉ':'o'}
+YOON = {'ゃ':'a','ゅ':'u','ょ':'o'}
+
+def to_hira(s):
+    return ''.join(chr(ord(c) - 0x60) if 'ァ' <= c <= 'ヶ' else c for c in s)
+
+def kana_romaji(kana):
+    s = to_hira(kana); out = ''; i = 0
+    while i < len(s):
+        c = s[i]; nxt = s[i + 1] if i + 1 < len(s) else ''
+        if c == 'っ':
+            out += '*'; i += 1; continue
+        if c == 'ー':
+            i += 1; continue
+        if nxt in YOON and c in BASE:
+            b = BASE[c]
+            b = b[:-1] if b in ('shi', 'chi', 'ji') else b[:-1] + 'y'
+            out += b + YOON[nxt]; i += 2; continue
+        if nxt == 'ぇ' and c in ('ち', 'し', 'じ'):
+            out += BASE[c][:-1] + 'e'; i += 2; continue
+        if nxt in ('ぁ', 'ぃ', 'ぇ', 'ぉ') and c == 'ふ':
+            out += 'f' + BASE[nxt]; i += 2; continue
+        out += BASE.get(c, ''); i += 1
+    return re.sub(r'\*(.)', lambda m: ('t' if m.group(1) == 'c' else m.group(1)) + m.group(1), out)
+
+def norm(r):
+    r = r.lower()
+    for a, b in (('ā', 'a'), ('ī', 'i'), ('ū', 'u'), ('ē', 'e'), ('ō', 'o')):
+        r = r.replace(a, b)
+    r = re.sub(r'[^a-z]', '', r)
+    r = r.replace('tch', 'cch').replace('ha', 'wa')
+    prev = None
+    while prev != r:
+        prev = r
+        r = re.sub(r'(a)a|(i)i|(u)u|(e)e|(o)o', lambda m: next(g for g in m.groups() if g), r).replace('ou', 'o')
+    return r
+
+errors = []
+def check(where, v):
+    jp, kana, romaji, hl, note = v
+    reading = kana or jp
+    if not kana and re.search(r'[一-鿿]', jp):
+        errors.append(f"{where}: has kanji but no kana reading")
+    if kana and re.search(r'[^぀-ヿ]', kana):
+        errors.append(f"{where}: kana reading has non-kana characters: {kana}")
+    a, b = norm(kana_romaji(re.sub(r'[^぀-ヿ]', '', reading))), norm(romaji)
+    if a != b:
+        errors.append(f"{where}: romaji '{romaji}' doesn't match kana '{reading}' ({a} vs {b})")
+    for h in hl:
+        if h not in jp:
+            errors.append(f"{where}: highlight '{h}' isn't in '{jp}'")
+
+def resolve(p, k, seen=()):
+    v = p[k]
+    if isinstance(v, dict):
+        if k in seen: raise ValueError(p['id'] + ': circular same')
+        return resolve(p, v['same'], seen + (k,))
+    return k, v
+
+clips, data = [], []
+ids = set()
+for sec in SECTIONS:
+    for p in sec['phrases']:
+        if p['id'] in ids: errors.append('duplicate id ' + p['id'])
+        ids.add(p['id'])
+        for k in KEYS:
+            if k not in p: errors.append(f"{p['id']}: missing {k}"); continue
+            src, v = resolve(p, k)
+            if src == k:
+                check(f"{p['id']}.{k}", v)
+                clips.append({"file": f"{p['id']}_{k}.mp3", "jp": v[0], "kana": v[1] or v[0]})
+for p in HEAR['phrases']:
+    check(f"hear.{p['id']}", p['v'])
+    clips.append({"file": f"hear_{p['id']}.mp3", "jp": p['v'][0], "kana": p['v'][1] or p['v'][0]})
+
+if errors:
+    print('\n'.join(errors)); sys.exit(1)
+
+def ver(v, src):
+    jp, kana, romaji, hl, note = v
+    return {"jp": jp, "kana": kana or "", "ro": romaji, "hl": hl, "note": note, "src": src}
+
+out = []
+for sec in SECTIONS:
+    phrases = []
+    for p in sec['phrases']:
+        vs = {}
+        for k in KEYS:
+            src, v = resolve(p, k)
+            vs[k] = ver(v, src)
+        phrases.append({"id": p['id'], "en": p['en'], "v": vs})
+    out.append({"id": sec['id'], "title": sec['title'], "icon": sec['icon'], "blurb": sec['blurb'], "phrases": phrases})
+out.append({"id": HEAR['id'], "title": HEAR['title'], "icon": HEAR['icon'], "blurb": HEAR['blurb'], "hear": True,
+            "phrases": [{"id": p['id'], "en": p['en'], "where": p['where'], "v": {"x": ver(p['v'], 'x')}} for p in HEAR['phrases']]})
+
+with open(os.path.join(HERE, 'phrasebook.js'), 'w', encoding='utf-8') as f:
+    f.write('/* Generated by phrasebook/build.py from phrasebook/phrases.py; edit those, not this. */\n')
+    f.write('var JP_TRAVEL = ' + json.dumps(out, ensure_ascii=False, separators=(',', ':')) + ';\n')
+with open(os.path.join(HERE, 'clips.json'), 'w', encoding='utf-8') as f:
+    json.dump(clips, f, ensure_ascii=False, indent=1)
+n = sum(len(s['phrases']) for s in SECTIONS)
+print(f"OK: {n} phrases x 6 versions + {len(HEAR['phrases'])} to listen for; {len(clips)} distinct clips to record")

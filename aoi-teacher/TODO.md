@@ -22,6 +22,14 @@ main functions are being made solid first.
 - [ ] Have a flight instructor review the PPL bank before relying on it for the real test;
       rules change (BasicMed was expanded by the 2024 FAA Reauthorization Act)
 
+- [x] Japan Travel phrasebook: 36 phrases x polite/casual x standard/Osaka/Kyoto, plus 8 to
+      listen for, all voiced by Aoi; tap to hear, Play all, Slow, Twice
+- [ ] Have a native Kansai speaker (ideally one from Kyoto) review the dialect phrases, and
+      record them with real Kansai intonation (Aoi's voice reads them in standard pitch)
+- [x] Fact-check of the Japanese pronunciation lesson and Aoi's Day destinations (6 facts fixed,
+      narration re-recorded)
+- [ ] Wire Aoi's Day narration audio (audio/daytrip) into the Aoi's Day lesson
+
 ## Next: a model that helps with all of these
 
 Aoi should help track, remind and recommend across every area below, not only the quiz

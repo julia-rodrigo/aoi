@@ -41,7 +41,10 @@ main functions are being made solid first.
 - [x] Songs and haiku: "Say it today" in six versions; lines stack up as you read
 - [x] Your Song: paste lyrics you own, Aoi explains them (device voice; copyrighted songs aren't bundled)
 - [x] Music with Aoi (reading sheet music, Japanese songs to follow), Piano by Ear, Guitar (chords + by ear)
-- [ ] Her real voice for Your Song lines and humming (needs a voice relay; today it's the device voice and a synthesised hum)
+- [x] Aoi hums in her own voice (recorded hum, retuned per note); "la" voice too
+- [ ] Her real voice for Your Song lines (needs a voice relay; today it's the device voice)
+- [x] One voice at a time (she never talks over herself); silent when the app is closed
+- [x] Record your own tune on the keys; it becomes sheet music Aoi can hum
 - [ ] More Japanese melodies once each is checked against a printed score (ふるさと, 春が来た, 赤とんぼ)
 - [ ] More stories (Urashima Taro, The Crane's Return), and per-word audio in stories
 - [ ] Modern songs: lyrics are copyrighted, so only via a licensed source or the user's own

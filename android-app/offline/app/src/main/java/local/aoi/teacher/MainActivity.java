@@ -131,6 +131,8 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onPause() {
+        // Leaving the app stops Aoi mid-sentence (and any music) instead of letting her talk on.
+        web.evaluateJavascript("window.aoiHush && window.aoiHush()", null);
         super.onPause();
         web.onPause();
     }

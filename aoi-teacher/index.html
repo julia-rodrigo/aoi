@@ -762,6 +762,10 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 .gfret.lit{background:#9cc0ff; color:#0b1d44;}
 .mkeys{position:sticky; top:0; z-index:6; background:var(--bg); padding:6px 0;}
 .mnote.hit{color:var(--good);}
+.pbseg.pb4{grid-template-columns:repeat(4, 1fr);}
+.mlyric{fill:var(--fg); font-weight:700; font-family:"M PLUS Rounded 1c", var(--font-body);}
+.mnote.on .mlyric{fill:var(--accent);}
+.btn.rec{background:#d9534f; border-color:#d9534f;}
 .mscore{margin:0; font-size:14px;} .mscore b{font-size:18px; color:var(--good);}
 .strumnow{display:grid; grid-template-columns:1.25fr 1fr; gap:12px; align-items:end;}
 .chnext{opacity:.55; display:flex; flex-direction:column; align-items:center;} .chnext small{font-size:11px; color:var(--muted);}
@@ -1295,6 +1299,36 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 
 <script src="phrasebook/phrasebook.js"></script>
 <script src="grammar/japanese.js"></script>
+<script>
+/* One voice at a time. Aoi's lines, lesson narration, phrase clips and her Japanese all use
+   separate audio players; whenever one starts, every other one stops, so she never talks over
+   herself. aoiHush() silences everything (used when the app goes to the background). */
+(function(){
+  var players = [], orig = HTMLMediaElement.prototype.play;
+  HTMLMediaElement.prototype.play = function(){
+    var me = this;
+    if (!me.__aoiMix){
+      if (players.indexOf(me) < 0) players.push(me);
+      players.forEach(function(el){ if (el !== me && !el.paused){ try{ el.pause(); }catch(e){} } });
+      try{ if (window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
+    }
+    return orig.apply(this, arguments);
+  };
+  window.aoiQuiet = function(){
+    players.forEach(function(el){ try{ el.pause(); }catch(e){} });
+    try{ if (window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
+  };
+  window.aoiHush = function(){
+    window.aoiQuiet();
+    if (window.aoiHushHooks) window.aoiHushHooks.forEach(function(f){ try{ f(); }catch(e){} });
+  };
+  window.aoiHushHooks = [];
+  /* Closing or switching away from the app stops her mid-sentence instead of talking on. */
+  function away(){ if (document.hidden) window.aoiHush(); }
+  document.addEventListener("visibilitychange", away);
+  window.addEventListener("pagehide", function(){ window.aoiHush(); });
+})();
+</script>
 <script>
 
 function Q(id, cat, q, choices, a, explain){ return {id:id, cat:cat, q:q, choices:choices, a:a, explain:explain}; }
@@ -3574,6 +3608,11 @@ document.getElementById("pbPlayAll").addEventListener("click", pbPlayAll);
    romaji). Each Japanese line is split into words, and each word carries its kana and romaji, so
    the Romaji switch can hide the helpers for reading practice while a tap on any word brings
    them back for just that word. Aoi speaks the Japanese (audio/jp/), her caption gives the English. */
+window.aoiHushHooks.push(function(){
+  musStop(); pbStop(); jpStopAudio();
+  if (lessonPlaying && !views.teacherLesson.hidden) setLessonPlaying(false);
+  if (musState && musState.playing){ musState.playing = false; if (musState.mode === "sheet") renderSheet(); else if (musState.mode === "strum") renderStrum(); }
+});
 var JPR_KEY = "aoi_jp_read_v1";
 var jpRomaji = (function(){ try{ return localStorage.getItem(JPR_KEY) !== "off"; }catch(e){ return true; } })();
 var jpAudio = new Audio(), jpSpeakingEl = null;
@@ -3660,7 +3699,7 @@ document.addEventListener("click", function(e){
 function deviceSay(text){
   try{
     if (!window.speechSynthesis) return false;
-    speechSynthesis.cancel();
+    if (window.aoiQuiet) window.aoiQuiet();
     var u = new SpeechSynthesisUtterance(text);
     u.lang = "ja-JP"; u.rate = 0.9;
     var v = speechSynthesis.getVoices().filter(function(x){ return /^ja/i.test(x.lang); })[0];
@@ -3902,9 +3941,10 @@ function musCtx(){
     comp.threshold.value = -14; comp.knee.value = 10; comp.ratio.value = 4; comp.attack.value = 0.003; comp.release.value = 0.2;
     MUS.master = MUS.ctx.createGain(); MUS.master.gain.value = 1.15;
     MUS.master.connect(comp); comp.connect(MUS.ctx.destination);
+    humLoad(MUS.ctx);
     /* iPhones mute in-page synth sound while the ring/silent switch is on silent; playing a tiny
        silent clip through an <audio> element first moves the page to the media channel. */
-    try{ var un = new Audio("data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjE2LjEwMAAAAAAAAAAAAAAA//NwwAAAAAAAAAAAAEluZm8AAAAPAAAADAAABZwAMjIyMjIyMjJFRUVFRUVFRVhYWFhYWFhYampqampqampqfX19fX19fX2QkJCQkJCQkKKioqKioqKiorW1tbW1tbW1yMjIyMjIyMja2tra2tra2trt7e3t7e3t7f//////////AAAAAExhdmM2MC4zMQAAAAAAAAAAAAAAACQDNwAAAAAAAAWcHqGxZwAAAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NCxKMAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NAxKQAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/80LEowAAA0gAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/80DEpAAAA0gAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsSjAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NCxKMAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NAxKQAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/80LEowAAA0gAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVU="); un.play().catch(function(){}); }catch(e){}
+    try{ var un = new Audio(); un.__aoiMix = true; un.src = ("data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjE2LjEwMAAAAAAAAAAAAAAA//NwwAAAAAAAAAAAAEluZm8AAAAPAAAADAAABZwAMjIyMjIyMjJFRUVFRUVFRVhYWFhYWFhYampqampqampqfX19fX19fX2QkJCQkJCQkKKioqKioqKiorW1tbW1tbW1yMjIyMjIyMja2tra2tra2trt7e3t7e3t7f//////////AAAAAExhdmM2MC4zMQAAAAAAAAAAAAAAACQDNwAAAAAAAAWcHqGxZwAAAAAAAAAAAAAAAAD/80DEAAAAA0gAAAAATEFNRTMuMTAwVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsRbAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NCxKMAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NAxKQAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/80LEowAAA0gAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVVVMQU1FMy4xMDBVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/80DEpAAAA0gAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQsSjAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVVUxBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVf/zQMSkAAADSAAAAABVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NCxKMAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMuMTAwVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NAxKQAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVX/80LEowAAA0gAAAAAVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVU="); un.play().catch(function(){}); }catch(e){}
   }
   if (MUS.ctx.state === "suspended") MUS.ctx.resume();
   return MUS.ctx;
@@ -3921,7 +3961,45 @@ function musStop(){
 }
 function musLater(fn, ms){ MUS.timers.push(setTimeout(fn, Math.max(0, ms))); }
 
+/* Aoi's own voice: short takes of her humming "むー" and singing "らー", each with a steady
+   stretch that loops, replayed at the speed that gives each note's pitch. The synthesised hum
+   below stays as a fallback for the moment before they load (or if they can't). */
+var HUM_SAMPLES = {
+  hum_low:  {file:"audio/hum/hum_low.wav",  hz:237.1,  loopStart:0.15265, loopEnd:0.93871},
+  hum_high: {file:"audio/hum/hum_high.wav", hz:300.0,  loopStart:0.15281, loopEnd:1.04113},
+  la:       {file:"audio/hum/la.wav",       hz:358.54, loopStart:0.15048, loopEnd:0.93984}
+};
+var humLoading = false;
+function humLoad(ctx){
+  if (humLoading || !window.fetch || location.protocol === "file:") return; /* opened as a local file: the synthesised hum is used */
+  humLoading = true;
+  Object.keys(HUM_SAMPLES).forEach(function(k){
+    var smp = HUM_SAMPLES[k];
+    fetch(smp.file).then(function(r){ if (!r.ok) throw new Error(r.status); return r.arrayBuffer(); })
+      .then(function(ab){ return new Promise(function(ok, bad){ ctx.decodeAudioData(ab, ok, bad); }); })
+      .then(function(buf){ smp.buf = buf; }).catch(function(){});
+  });
+}
+function voiceSample(ctx, smp, f, t, d){
+  var src = ctx.createBufferSource(), g = ctx.createGain();
+  src.buffer = smp.buf; src.playbackRate.value = f / smp.hz;
+  src.loop = true; src.loopStart = smp.loopStart; src.loopEnd = smp.loopEnd;
+  src.connect(g); g.connect(MUS.master);
+  var end = t + d;
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.9, t + 0.04);
+  g.gain.setValueAtTime(0.9, Math.max(t + 0.05, end - 0.08)); g.gain.exponentialRampToValueAtTime(0.0001, end);
+  src.start(t, 0.03); src.stop(end + 0.05); MUS.sources.push(src);
+}
 function voiceHum(ctx, f, t, d){
+  var smp = f < 268 ? HUM_SAMPLES.hum_low : HUM_SAMPLES.hum_high;
+  if (smp.buf){ voiceSample(ctx, smp, f, t, d); return; }
+  voiceHumSynth(ctx, f, t, d);
+}
+function voiceLa(ctx, f, t, d){
+  if (HUM_SAMPLES.la.buf){ voiceSample(ctx, HUM_SAMPLES.la, f, t, d); return; }
+  voiceHum(ctx, f, t, d);
+}
+function voiceHumSynth(ctx, f, t, d){
   var o1 = ctx.createOscillator(), o2 = ctx.createOscillator(), vib = ctx.createOscillator();
   var vg = ctx.createGain(), mix = ctx.createGain(), lp = ctx.createBiquadFilter(), g = ctx.createGain();
   o1.type = "sawtooth"; o2.type = "sine"; o1.frequency.value = f; o2.frequency.value = f;
@@ -3969,7 +4047,7 @@ function voiceGuitar(ctx, f, t, d){
   g.gain.setValueAtTime(0.85, t); g.gain.setValueAtTime(0.85, t + Math.max(d, 0.4)); g.gain.exponentialRampToValueAtTime(0.0001, t + Math.max(d, 0.4) + 0.6);
   src.start(t); src.stop(t + Math.max(d, 0.4) + 0.65); MUS.sources.push(src);
 }
-var MUS_VOICES = {hum: voiceHum, piano: voicePiano, guitar: voiceGuitar};
+var MUS_VOICES = {hum: voiceHum, la: voiceLa, piano: voicePiano, guitar: voiceGuitar};
 function musNote(inst, midi, when, dur){
   var ctx = musCtx(); if (!ctx) return;
   (MUS_VOICES[inst] || voiceHum)(ctx, midiFreq(midi), ctx.currentTime + (when || 0.02), dur || 0.6);
@@ -4041,6 +4119,7 @@ function musNoteSvg(n, i, x, mode, cls){
   if (n.dot) out += '<circle cx="' + (x + 10) + '" cy="' + (st % 2 === 0 ? y - 2.5 : y) + '" r="1.8" fill="currentColor"/>';
   var nm = musNameOf(n.p, mode);
   if (nm) out += '<text class="mname" x="' + x + '" y="' + 102 + '" text-anchor="middle" font-size="11">' + nm + '</text>';
+  if (n.lyric) out += '<text class="mlyric" x="' + x + '" y="119" text-anchor="middle" font-size="13">' + n.lyric + '</text>';
   return out + '</g>';
 }
 /* Rows of bars; each row is its own SVG so it wraps on a phone. */
@@ -4052,7 +4131,7 @@ function musStaff(notes, opts){
   for (var r = 0; r * perRow < barIds.length; r++){
     var ids = barIds.slice(r * perRow, r * perRow + perRow), first = r === 0;
     var left = first && opts.time ? 52 : 34, bw = (W - left - 4) / perRow;
-    var svg = '<svg class="mstaff" viewBox="0 0 ' + W + ' 110" role="img" aria-label="Music, bars ' + (ids[0] + 1) + ' to ' + (ids[ids.length - 1] + 1) + '">';
+    var svg = '<svg class="mstaff" viewBox="0 0 ' + W + ' ' + (opts.lyrics ? 126 : 110) + '" role="img" aria-label="Music, bars ' + (ids[0] + 1) + ' to ' + (ids[ids.length - 1] + 1) + '">';
     for (var l = 0; l < 5; l++) svg += '<line x1="2" x2="' + (left + bw * ids.length) + '" y1="' + (30 + l * 10) + '" y2="' + (30 + l * 10) + '" stroke="currentColor" stroke-width="1" opacity=".55"/>';
     svg += '<path d="' + CLEF_PATH + '" transform="translate(4 14) scale(.9)" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>';
     if (first && opts.time){ var ts = opts.time.split("/");
@@ -4078,7 +4157,9 @@ function musMini(tokens, names, time){ return musStaff(musParse(tokens), {perRow
 /* Songs Japanese children grow up singing. Only the melodies are used here, and every one is
    public domain: traditional, or folk and classical tunes that Japan sings with its own words. */
 var MUSIC_SONGS = [
- {id:"sakura", title:"Sakura Sakura", jp:"さくら さくら", origin:"Japanese folk song from the Edo period", bpm:72, time:"4/4",
+ {id:"sakura", title:"Sakura Sakura", jp:"\u3055\u304f\u3089 \u3055\u304f\u3089", origin:"Japanese folk song from the Edo period", bpm:72, time:"4/4",
+  /* the 1888 words, one per note; "-" holds the syllable over a second note */
+  lyrics:"\u3055 \u304f \u3089 \u3055 \u304f \u3089 \u3084 \u3088 \u3044 \u306e \u305d \u3089 - \u306f \u307f \u308f \u305f \u3059 \u304b \u304e - \u308a \u304b \u3059 \u307f \u304b \u304f \u3082 - \u304b \u306b \u304a \u3044 \u305e \u3044 \u305a - \u308b \u3044 \u3056 \u3084 \u3044 \u3056 \u3084 \u307f \u306b \u3086 - \u304b \u3093",
   notes:"A4q A4q B4h | A4q A4q B4h / A4q B4q C5q B4q | A4q B4e A4e F4h / E4q C4q E4q F4q | E4q E4e C4e B3h / A4q B4q C5q B4q | A4q B4e A4e F4h / E4q C4q E4q F4q | E4q E4e C4e B3h / A4q A4q B4h | A4q A4q B4h / E4q F4q B4e A4e F4q | E4w"},
  {id:"chocho", title:"Chōchō", jp:"ちょうちょう", origin:"School song from 1881, to a German folk tune", bpm:104, time:"4/4",
   notes:"G4q E4q E4h | F4q D4q D4h | C4q D4q E4q F4q | G4q G4q G4h / G4q E4q E4h | F4q D4q D4h | C4q E4q G4q G4q | C4w / D4q D4q D4q D4q | D4q E4q F4h | E4q E4q E4q E4q | E4q F4q G4h / G4q E4q E4h | F4q D4q D4h | C4q E4q G4q G4q | C4w"},
@@ -4093,7 +4174,14 @@ var MUSIC_SONGS = [
  {id:"yorokobi", title:"Yorokobi no Uta", jp:"よろこびの歌", origin:"Beethoven's Ode to Joy (1824); Japan sings it every December as 「第九」", bpm:100, time:"4/4",
   notes:"E4q E4q F4q G4q | G4q F4q E4q D4q / C4q C4q D4q E4q | E4q. D4e D4h / E4q E4q F4q G4q | G4q F4q E4q D4q / C4q C4q D4q E4q | D4q. C4e C4h"}
 ];
-function musSong(id){ var f = null; MUSIC_SONGS.forEach(function(s){ if (s.id === id) f = s; }); return f; }
+function musSong(id){ var f = null; MUSIC_SONGS.concat(myTunes()).forEach(function(s){ if (s.id === id) f = s; }); return f; }
+/* Notes for a song, with its words attached where it has them. */
+function musSongNotes(song){
+  var notes = musParse(song.notes);
+  if (song.lyrics){ var ly = song.lyrics.split(" "), k = 0;
+    notes.forEach(function(n){ if (!n.p) return; var w = ly[k++]; if (w && w !== "-") n.lyric = w; }); }
+  return notes;
+}
 var MUS_PREF_KEY = "aoi_music_pref_v1";
 var musPref = (function(){ try{ var p = JSON.parse(localStorage.getItem(MUS_PREF_KEY) || "{}");
   return {names: p.names === "abc" || p.names === "doremi" ? p.names : "", inst: MUS_VOICES[p.inst] ? p.inst : "hum"}; }catch(e){ return {names:"", inst:"hum"}; } })();
@@ -4220,13 +4308,13 @@ function musModule(L, meta, start){
 var musState = null;
 function musBody(){ return document.getElementById("musicBody"); }
 function musSeg(attr, opts, cur){
-  return '<div class="pbseg' + (opts.length === 3 ? ' pb3' : '') + '">' + opts.map(function(o){
+  return '<div class="pbseg' + (opts.length === 3 ? ' pb3' : opts.length === 4 ? ' pb4' : '') + '">' + opts.map(function(o){
     return '<button type="button" data-' + attr + '="' + o[0] + '" class="' + (o[0] === cur ? 'on' : '') + '" aria-pressed="' + (o[0] === cur) + '">' + o[1] + '</button>';
   }).join("") + '</div>';
 }
 function openSheet(id, inst){
   var song = musSong(id); musStop();
-  musState = {mode:"sheet", song:song, notes:musParse(song.notes), inst:inst || musPref.inst, bpm:song.bpm, playing:false, hits:{}, score:null, from: inst ? inst : null};
+  musState = {mode:"sheet", song:song, notes:musSongNotes(song), inst:inst || (song.lyrics ? "hum" : musPref.inst), bpm:song.bpm, playing:false, hits:{}, score:null, from: inst ? inst : null};
   showView("music", {backTo:"teacher"}); setHeader(song.jp, inst === "piano" ? "Piano" : inst === "guitar" ? "Guitar" : "Music");
   renderSheet();
   if (window.AoiHost) window.AoiHost.say(inst ? "Press play: the keys light up as I play. Tap along with me! Notes you hit in time turn green." :
@@ -4236,14 +4324,16 @@ function renderSheet(){
   var S = musState, song = S.song;
   var withNotes = S.notes.filter(function(n){ return n.p; }).length;
   musBody().innerHTML = '<div class="lcard mcard"><div class="ctag">' + esc_(song.title) + ' · ' + esc_(song.origin) + '</div>' +
-    (S.from ? musSeg("mmode", S.inst === "guitar" ? [["ear", "By ear"], ["along", "Play along"], ["strum", "Strum along"]] : [["ear", "By ear"], ["along", "Play along"]], "along") : '') +
+    (S.from ? musSeg("mmode", S.inst === "guitar" && SONG_CHORDS[song.id] ? [["ear", "By ear"], ["along", "Play along"], ["strum", "Strum along"]] : [["ear", "By ear"], ["along", "Play along"]], "along") : '') +
     '<div class="mctl"><button class="btn primary" type="button" data-mplay>' + (S.playing ? "&#9632; Stop" : "&#9654; Play") + '</button>' +
     '<span class="mtempo"><button class="pbtog" type="button" data-mtempo="-8" aria-label="Slower">&minus;</button><b>' + S.bpm + '</b><small>bpm</small><button class="pbtog" type="button" data-mtempo="8" aria-label="Faster">+</button></span></div>' +
-    musSeg("minst", [["hum", "Aoi hums"], ["piano", "Piano"], ["guitar", "Guitar"]], S.inst) +
+    musSeg("minst", [["hum", "Aoi hums"], ["la", "Aoi: \u201cla\u201d"], ["piano", "Piano"], ["guitar", "Guitar"]], S.inst) +
     musSeg("mnames", [["", "No names"], ["abc", "C D E"], ["doremi", "ドレミ"]], musPref.names) +
     (S.score != null ? '<p class="mscore">You hit <b>' + S.score + '</b> of ' + withNotes + ' notes in time.</p>' : '') +
     '<div class="mkeys">' + (S.inst === "guitar" ? guitarBoard(-1) : pianoKeys(-1)) + '</div>' +
-    musStaff(S.notes, {perRow: window.innerWidth > 700 ? 4 : 2, names: musPref.names, time: song.time, mark: function(i){ return S.hits[i] ? "hit" : ""; }}) + '</div>';
+    (song.lyrics ? '<p class="hint">Sing the words under the notes while Aoi hums. Turn on \u30c9\u30ec\u30df to sing the note names instead.</p>' : '') +
+    musStaff(S.notes, {perRow: window.innerWidth > 700 ? 4 : 2, names: musPref.names, time: song.time, lyrics: !!song.lyrics, mark: function(i){ return S.hits[i] ? "hit" : ""; }}) +
+    (song.mine ? '<div class="lbtns"><button class="pbtog" type="button" data-mydeltune>Delete this tune</button></div>' : '') + '</div>';
 }
 function sheetPlay(){
   var S = musState;
@@ -4311,7 +4401,7 @@ function renderEar(){
         return '<span class="edot' + (got ? ' got' : '') + (k === S.pos && S.hint >= 1 ? ' next' : '') + '">' + (show ? musNameOf(n.p, musPref.names || "abc") : "") + '</span>';
       }).join("");
       head = '<div class="lcard mcard"><div class="ctag">' + esc_(S.song.jp) + ' · phrase ' + (S.ph + 1) + ' of ' + S.phrases.length + '</div>' +
-        musSeg("mmode", S.inst === "guitar" ? [["ear", "By ear"], ["along", "Play along"], ["strum", "Strum along"]] : [["ear", "By ear"], ["along", "Play along"]], "ear") +
+        musSeg("mmode", S.inst === "guitar" && SONG_CHORDS[S.song.id] ? [["ear", "By ear"], ["along", "Play along"], ["strum", "Strum along"]] : [["ear", "By ear"], ["along", "Play along"]], "ear") +
         '<div class="edots">' + dots + '</div>' +
         '<div class="mctl"><button class="btn primary" type="button" data-mlisten>&#9654; Listen</button>' +
         '<button class="pbtog" type="button" data-mhint>Hint' + (S.hint ? ' (' + S.hint + ')' : '') + '</button>' +
@@ -4319,7 +4409,8 @@ function renderEar(){
         '<button class="pbtog" type="button" data-mshow aria-pressed="' + !!S.show + '">Show me</button></div></div>';
     }
   }
-  var names = musSeg("mnames", [["", "No names"], ["abc", "C D E"], ["doremi", "ドレミ"]], musPref.names);
+  var names = musSeg("mnames", [["", "No names"], ["abc", "C D E"], ["doremi", "\u30c9\u30ec\u30df"]], musPref.names);
+  if (!S.song) head = recHtml();
   musBody().innerHTML = head + '<div class="lcard mcard">' + names + (S.inst === "piano" ? pianoHtml() : guitarHtml()) + '</div>';
 }
 function pianoKeys(hintMidi){
@@ -4370,6 +4461,7 @@ function guitarSpot(m){
 }
 function earPress(m, el){
   var S = musState;
+  if (S.rec && S.rec.on) S.rec.taps.push({m: m, t: performance.now()});
   musNote(S.inst === "hum" ? "piano" : S.inst, m, 0.01, 0.6);
   el.classList.add("hit"); setTimeout(function(){ el.classList.remove("hit"); }, 260);
   if (S.mode === "sheet"){
@@ -4416,6 +4508,11 @@ document.getElementById("musicBody").addEventListener("click", function(e){
   if ((b = t.closest("[data-minst]"))){ musPref.inst = musState.inst = b.getAttribute("data-minst"); musSavePref(); musStop(); musState.playing = false; renderSheet(); return; }
   if ((b = t.closest("[data-mnames]"))){ musPref.names = b.getAttribute("data-mnames"); musSavePref(); musState.mode === "sheet" ? renderSheet() : renderEar(); return; }
   if (t.closest("[data-mlisten]")){ earListen(); return; }
+  if (t.closest("[data-recgo]")){ musState.rec = {on: true, taps: []}; renderEar(); return; }
+  if (t.closest("[data-recstop]")){ musState.rec.on = false; renderEar(); return; }
+  if (t.closest("[data-recsave]")){ recSave(); return; }
+  if (t.closest("[data-recdrop]")){ musState.rec = null; renderEar(); return; }
+  if (t.closest("[data-mydeltune]")){ myTunesSave(myTunes().filter(function(x){ return x.id !== musState.song.id; })); openTeacherLib(teacherSec); return; }
   if (t.closest("[data-mshow]")){ musState.show = !musState.show; renderEar(); if (musState.show) earListen(); return; }
   if ((b = t.closest("[data-mmode]"))){
     var sg = musState.song, mm = b.getAttribute("data-mmode"), inst = musState.mode === "strum" || musState.inst === "guitar" ? "guitar" : "piano";
@@ -4427,6 +4524,43 @@ document.getElementById("musicBody").addEventListener("click", function(e){
   if (t.closest("[data-mall]")){ musPlay(musState.notes, musState.inst, musState.bpm); return; }
   if (t.closest("[data-magain]")){ openEar(musState.inst, musState.song.id); return; }
 });
+
+/* --- Your own tunes: play a melody on the keys (say, from sheet music you own), and it becomes a
+   song like the others: on a staff, hummed by Aoi, with play-along and by-ear practice. Kept on
+   this device only. --- */
+var MYTUNES_KEY = "aoi_mytunes_v1";
+function myTunes(){ try{ return JSON.parse(localStorage.getItem(MYTUNES_KEY) || "[]"); }catch(e){ return []; } }
+function myTunesSave(list){ try{ localStorage.setItem(MYTUNES_KEY, JSON.stringify(list.slice(0, 30))); }catch(e){} }
+function recHtml(){
+  var r = musState.rec;
+  if (!r) return '<div class="lcard mcard"><div class="ctag">Free play</div><p class="hint">Play anything. Want Aoi to learn a tune? Tap Record, play it on the keys, then Stop. ' +
+    'It turns into sheet music she can hum, and you can practise it like the other songs.</p><div class="mctl"><button class="btn primary" type="button" data-recgo>&#9679; Record a tune</button></div></div>';
+  if (r.on) return '<div class="lcard mcard"><div class="ctag">Recording\u2026 ' + r.taps.length + ' notes</div><p class="hint">Play the tune at a steady speed. Stop when you\'re done.</p>' +
+    '<div class="mctl"><button class="btn primary rec" type="button" data-recstop>&#9632; Stop</button></div></div>';
+  if (r.taps.length < 3) return '<div class="lcard mcard"><p class="hint">That was only ' + r.taps.length + ' notes. Try again with a few more.</p><div class="mctl"><button class="btn primary" type="button" data-recgo>&#9679; Record again</button></div></div>';
+  return '<div class="lcard mcard"><div class="ctag">' + r.taps.length + ' notes recorded</div><input id="recTitle" class="minput" type="text" maxlength="40" placeholder="Name your tune">' +
+    '<div class="mctl"><button class="btn primary" type="button" data-recsave>Save as sheet music</button><button class="pbtog" type="button" data-recdrop>Discard</button></div></div>';
+}
+/* Taps become notes: each note lasts until the next tap, rounded to the nearest eighth,
+   quarter, dotted quarter, half, dotted half or whole at 90 beats a minute. */
+function recTokens(taps, bpm){
+  var spb = 60000 / bpm, sizes = [[0.5, "e"], [1, "q"], [1.5, "q."], [2, "h"], [3, "h."], [4, "w"]], out = [], beat = 0, bar = 0;
+  taps.forEach(function(tp, i){
+    var len = i + 1 < taps.length ? (taps[i + 1].t - tp.t) / spb : 1, best = sizes[0];
+    sizes.forEach(function(sz){ if (Math.abs(sz[0] - len) < Math.abs(best[0] - len)) best = sz; });
+    if (beat > 0 && Math.floor(beat / 4) > bar){ bar = Math.floor(beat / 4); out.push(bar % 2 === 0 ? "/" : "|"); }
+    out.push(midiName(tp.m) + best[1].charAt(0) + (best[1].length > 1 ? "." : ""));
+    beat += best[0];
+  });
+  return out.join(" ");
+}
+function recSave(){
+  var S = musState, title = ((document.getElementById("recTitle") || {}).value || "").trim() || "My tune " + (myTunes().length + 1);
+  var tune = {id: "my_" + Date.now(), title: title, jp: title, origin: "Your tune, recorded on the keys", bpm: 90, time: "4/4", notes: recTokens(S.rec.taps, 90), mine: true};
+  var list = myTunes(); list.unshift(tune); myTunesSave(list);
+  if (window.AoiHost) window.AoiHost.say("Saved! Here's your tune as sheet music. Press play and I'll hum it.", {voice: "ok4", pose: "present_r", eyes: "eyes_happy"});
+  openSheet(tune.id, "piano");
+}
 
 /* --- Strum along: Aoi sings the tune (hum), the chord chart moves with it, you strum on the beat.
    The pad plays whatever chord the song is on, so it works with or without a real guitar.
@@ -4686,10 +4820,12 @@ var TEACHER_SECTIONS = [
      .concat([{title:"Your Song", icon:"heart", meta:"paste lyrics \u00b7 Aoi explains", start:openMySong}]); }},
   {id:"music", title:"Music with Aoi", icon:"note", blurb:"Learn to read sheet music (with Japan's \u30c9\u30ec\u30df), then follow the notes of Japanese songs while Aoi hums them.",
    modules:function(){ return MUSIC_LESSONS.map(function(L){ return musModule(L, L.beats.length + " steps \u00b7 quiz", function(){ musStart(L); }); })
-     .concat(MUSIC_SONGS.map(function(sg){ return {title:sg.jp, icon:"note", meta:"Follow the notes \u00b7 " + sg.title, start:function(){ openSheet(sg.id); }}; })); }},
+     .concat(MUSIC_SONGS.map(function(sg){ return {title:sg.jp, icon:"note", meta:(sg.lyrics ? "Sing along \u00b7 " : "Follow the notes \u00b7 ") + sg.title, start:function(){ openSheet(sg.id); }}; }))
+     .concat(myTunes().map(function(sg){ return {title:sg.title, icon:"note", meta:"Your tune \u00b7 follow the notes", start:function(){ openSheet(sg.id); }}; })); }},
   {id:"piano", title:"Piano by Ear", icon:"note", blurb:"Japanese songs on the keys: play along as they light up, or learn them by ear phrase by phrase.",
    modules:function(){ return MUSIC_SONGS.map(function(sg){ return {title:sg.jp, icon:"note", meta:sg.title + " \u00b7 by ear or play along", start:function(){ openEar("piano", sg.id); }}; })
-     .concat([{title:"Free play", icon:"note", meta:"just the keys", start:function(){ openEar("piano", null); }}]); }},
+     .concat(myTunes().map(function(sg){ return {title:sg.title, icon:"note", meta:"Your tune \u00b7 by ear or play along", start:function(){ openEar("piano", sg.id); }}; }))
+     .concat([{title:"Free play & record", icon:"note", meta:"play anything, record a tune", start:function(){ openEar("piano", null); }}]); }},
   {id:"guitar", title:"Guitar", icon:"note", blurb:"Eight easy chords, then Japanese songs: strum along with the chord chart, play the tune on the fretboard, or learn it by ear.",
    modules:function(){ return [musModule({id:"gu_chords", title:"Your first chords"}, "8 chords \u00b7 quiz", chordsLesson)]
      .concat(MUSIC_SONGS.map(function(sg){ return {title:sg.jp, icon:"note", meta:sg.title + " \u00b7 by ear, play or strum along", start:function(){ openEar("guitar", sg.id); }}; }))

@@ -763,6 +763,14 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 .mkeys{position:sticky; top:0; z-index:6; background:var(--bg); padding:6px 0;}
 .mnote.hit{color:var(--good);}
 .mscore{margin:0; font-size:14px;} .mscore b{font-size:18px; color:var(--good);}
+.strumnow{display:grid; grid-template-columns:1.25fr 1fr; gap:12px; align-items:end;}
+.chnext{opacity:.55; display:flex; flex-direction:column; align-items:center;} .chnext small{font-size:11px; color:var(--muted);}
+.strumpad{width:100%; height:104px; font-family:inherit; font-size:24px; font-weight:800; border:3px solid var(--accent); background:var(--surface-2); color:var(--accent); cursor:pointer; touch-action:manipulation; user-select:none; -webkit-user-select:none; transition:background .08s;}
+.strumpad.beat{box-shadow:inset 0 0 0 6px var(--accent);}
+.strumpad.ok{background:var(--good); color:var(--bg);} .strumpad.off{background:#e8a33d; color:#1b1f2a;}
+.cchart{display:grid; grid-template-columns:repeat(4, 1fr); gap:4px;}
+.cbar{display:flex; justify-content:space-around; gap:2px; padding:7px 2px; border:1.5px solid var(--line); font-size:13px;}
+.cch{padding:1px 4px;} .cch.on{background:var(--accent); color:var(--accent-fg);}
 .pkey.hit{background:var(--accent); color:var(--accent-fg);}
 .pkey.miss{background:#d9534f;}
 .edots{display:flex; flex-wrap:wrap; gap:5px;}
@@ -3950,13 +3958,15 @@ function voiceGuitar(ctx, f, t, d){
     buf = ctx.createBuffer(1, len, sr);
     var y = buf.getChannelData(0), i;
     for (i = 0; i < N; i++) y[i] = Math.random() * 2 - 1;
+    for (i = 1; i < N; i++) y[i] = 0.5 * (y[i] + y[i - 1]); /* softer pick */
     for (i = N; i < len; i++) y[i] = 0.996 * 0.5 * (y[i - N] + (i - N - 1 >= 0 ? y[i - N - 1] : 0));
     KS_CACHE[k] = buf;
   }
-  var src = ctx.createBufferSource(), g = ctx.createGain(), lp = ctx.createBiquadFilter();
-  src.buffer = buf; lp.type = "lowpass"; lp.frequency.value = 3200;
-  src.connect(lp); lp.connect(g); g.connect(MUS.master);
-  g.gain.setValueAtTime(0.45, t); g.gain.setValueAtTime(0.45, t + Math.max(d, 0.4)); g.gain.exponentialRampToValueAtTime(0.0001, t + Math.max(d, 0.4) + 0.6);
+  var src = ctx.createBufferSource(), g = ctx.createGain(), lp = ctx.createBiquadFilter(), body = ctx.createBiquadFilter();
+  src.buffer = buf; lp.type = "lowpass"; lp.frequency.value = 3600;
+  body.type = "peaking"; body.frequency.value = 220; body.Q.value = 1.2; body.gain.value = 5;
+  src.connect(body); body.connect(lp); lp.connect(g); g.connect(MUS.master);
+  g.gain.setValueAtTime(0.85, t); g.gain.setValueAtTime(0.85, t + Math.max(d, 0.4)); g.gain.exponentialRampToValueAtTime(0.0001, t + Math.max(d, 0.4) + 0.6);
   src.start(t); src.stop(t + Math.max(d, 0.4) + 0.65); MUS.sources.push(src);
 }
 var MUS_VOICES = {hum: voiceHum, piano: voicePiano, guitar: voiceGuitar};
@@ -4226,7 +4236,7 @@ function renderSheet(){
   var S = musState, song = S.song;
   var withNotes = S.notes.filter(function(n){ return n.p; }).length;
   musBody().innerHTML = '<div class="lcard mcard"><div class="ctag">' + esc_(song.title) + ' · ' + esc_(song.origin) + '</div>' +
-    (S.from ? musSeg("mmode", [["ear", "By ear"], ["along", "Play along"]], "along") : '') +
+    (S.from ? musSeg("mmode", S.inst === "guitar" ? [["ear", "By ear"], ["along", "Play along"], ["strum", "Strum along"]] : [["ear", "By ear"], ["along", "Play along"]], "along") : '') +
     '<div class="mctl"><button class="btn primary" type="button" data-mplay>' + (S.playing ? "&#9632; Stop" : "&#9654; Play") + '</button>' +
     '<span class="mtempo"><button class="pbtog" type="button" data-mtempo="-8" aria-label="Slower">&minus;</button><b>' + S.bpm + '</b><small>bpm</small><button class="pbtog" type="button" data-mtempo="8" aria-label="Faster">+</button></span></div>' +
     musSeg("minst", [["hum", "Aoi hums"], ["piano", "Piano"], ["guitar", "Guitar"]], S.inst) +
@@ -4301,7 +4311,7 @@ function renderEar(){
         return '<span class="edot' + (got ? ' got' : '') + (k === S.pos && S.hint >= 1 ? ' next' : '') + '">' + (show ? musNameOf(n.p, musPref.names || "abc") : "") + '</span>';
       }).join("");
       head = '<div class="lcard mcard"><div class="ctag">' + esc_(S.song.jp) + ' · phrase ' + (S.ph + 1) + ' of ' + S.phrases.length + '</div>' +
-        musSeg("mmode", [["ear", "By ear"], ["along", "Play along"]], "ear") +
+        musSeg("mmode", S.inst === "guitar" ? [["ear", "By ear"], ["along", "Play along"], ["strum", "Strum along"]] : [["ear", "By ear"], ["along", "Play along"]], "ear") +
         '<div class="edots">' + dots + '</div>' +
         '<div class="mctl"><button class="btn primary" type="button" data-mlisten>&#9654; Listen</button>' +
         '<button class="pbtog" type="button" data-mhint>Hint' + (S.hint ? ' (' + S.hint + ')' : '') + '</button>' +
@@ -4408,15 +4418,124 @@ document.getElementById("musicBody").addEventListener("click", function(e){
   if (t.closest("[data-mlisten]")){ earListen(); return; }
   if (t.closest("[data-mshow]")){ musState.show = !musState.show; renderEar(); if (musState.show) earListen(); return; }
   if ((b = t.closest("[data-mmode]"))){
-    var sg = musState.song, inst = musState.mode === "sheet" ? musState.inst : musState.inst;
-    if (b.getAttribute("data-mmode") === "along" && musState.mode !== "sheet") openSheet(sg.id, inst);
-    else if (b.getAttribute("data-mmode") === "ear" && musState.mode === "sheet") openEar(inst === "guitar" ? "guitar" : "piano", sg.id);
+    var sg = musState.song, mm = b.getAttribute("data-mmode"), inst = musState.mode === "strum" || musState.inst === "guitar" ? "guitar" : "piano";
+    if (mm === "along") openSheet(sg.id, inst); else if (mm === "ear") openEar(inst, sg.id); else if (mm === "strum") openStrum(sg.id);
     return;
   }
   if (t.closest("[data-mhint]")){ musState.hint = Math.min(2, musState.hint + 1); renderEar(); return; }
   if (t.closest("[data-mskip]")){ musState.pos = earPhrase().length - 1; earPress(noteMidi(musState.notes[earPhrase()[musState.pos]].p), t.closest("button")); return; }
   if (t.closest("[data-mall]")){ musPlay(musState.notes, musState.inst, musState.bpm); return; }
   if (t.closest("[data-magain]")){ openEar(musState.inst, musState.song.id); return; }
+});
+
+/* --- Strum along: Aoi sings the tune (hum), the chord chart moves with it, you strum on the beat.
+   The pad plays whatever chord the song is on, so it works with or without a real guitar.
+   Simple chords for each song, one or two per bar, in the order of the bars in MUSIC_SONGS. --- */
+var SONG_CHORDS = {
+  sakura:"Am | Am | Am | Am Dm | Am Dm | Am E | Am | Am Dm | Am Dm | Am E | Am | Am | Am Dm | E",
+  chocho:"C | G | C | C | C | G | C | C | G | G | C | C | C | G | C | C",
+  kaeru:"C | C | C | C | C | C | C | C",
+  kirakira:"C | Fmaj7 C | Fmaj7 C | G C | C Fmaj7 | C G | C Fmaj7 | C G | C | Fmaj7 C | Fmaj7 C | G C",
+  merry:"C | C | G | C | C | C | G | C",
+  guchoki:"C | C | C | C | C | C | C | C",
+  yorokobi:"C | G | C | C G | C | G | C | G C"
+};
+function strumEvents(id){
+  var ev = [];
+  SONG_CHORDS[id].split("|").forEach(function(bar, b){
+    var cs = bar.trim().split(/\s+/), len = 4 / cs.length;
+    cs.forEach(function(c, k){ ev.push({bar: b, beat: b * 4 + k * len, len: len, name: c}); });
+  });
+  return ev;
+}
+function openStrum(id){
+  musStop();
+  var song = musSong(id), notes = musParse(song.notes), ev = strumEvents(id);
+  musState = {mode:"strum", inst:"guitar", song:song, notes:notes, events:ev, cur:0, bpm:Math.max(60, song.bpm - 16), playing:false, auto:false, strums:0, onBeat:0, score:null};
+  showView("music", {backTo:"teacher"}); setHeader(song.jp, "Guitar");
+  renderStrum();
+  if (window.AoiHost) window.AoiHost.say("I'll sing the tune. Tap the big pad, or strum your guitar, on every beat. Watch the chord change!", {pose:"present_r", eyes:"eyes_happy"});
+}
+function renderStrum(){
+  var S = musState, ev = S.events, cur = ev[S.cur], next = ev[S.cur + 1] || ev[0];
+  var used = {}; ev.forEach(function(e){ used[e.name] = 1; });
+  var bars = [], i;
+  ev.forEach(function(e, j){ (bars[e.bar] = bars[e.bar] || []).push('<b class="cch' + (j === S.cur ? ' on' : '') + '" data-ev="' + j + '">' + e.name + '</b>'); });
+  musBody().innerHTML = '<div class="lcard mcard"><div class="ctag">' + esc_(S.song.title) + ' \u00b7 strum along</div>' +
+    musSeg("mmode", [["ear", "By ear"], ["along", "Play along"], ["strum", "Strum along"]], "strum") +
+    '<div class="mctl"><button class="btn primary" type="button" data-splay>' + (S.playing ? "&#9632; Stop" : "&#9654; Play") + '</button>' +
+    '<span class="mtempo"><button class="pbtog" type="button" data-stempo="-8" aria-label="Slower">&minus;</button><b>' + S.bpm + '</b><small>bpm</small><button class="pbtog" type="button" data-stempo="8" aria-label="Faster">+</button></span>' +
+    '<button class="pbtog" type="button" data-sauto aria-pressed="' + S.auto + '">Aoi strums too</button></div>' +
+    (S.score ? '<p class="mscore">' + S.score + '</p>' : '') +
+    '<div class="strumnow"><div class="chnow">' + chordSvg({name: cur.name, shape: CHORD_SHAPE[cur.name]}) + '</div>' +
+    '<div class="chnext"><small>next</small>' + chordSvg({name: next.name, shape: CHORD_SHAPE[next.name]}) + '</div></div>' +
+    '<button type="button" class="strumpad" data-strum>Strum &#8595;</button>' +
+    '<div class="ctag">Chord chart \u00b7 one box per bar, four beats each</div><div class="cchart">' +
+    bars.map(function(x, b){ return '<span class="cbar" data-bar="' + b + '">' + x.join("") + '</span>'; }).join("") + '</div>' +
+    '<div class="ctag">Chords in this song \u00b7 tap to hear</div><div class="chordrow">' + Object.keys(used).map(function(n){
+      return '<button type="button" class="chordbtn" data-chord="' + CHORD_SHAPE[n] + '">' + chordSvg({name: n, shape: CHORD_SHAPE[n]}) + '</button>'; }).join("") + '</div></div>';
+}
+function strumSetChord(j){
+  var S = musState; S.cur = j;
+  var ev = S.events, cur = ev[j], next = ev[j + 1] || ev[0], box = musBody().querySelector(".strumnow");
+  if (box) box.innerHTML = '<div class="chnow">' + chordSvg({name: cur.name, shape: CHORD_SHAPE[cur.name]}) + '</div>' +
+    '<div class="chnext"><small>next</small>' + chordSvg({name: next.name, shape: CHORD_SHAPE[next.name]}) + '</div>';
+  Array.prototype.forEach.call(musBody().querySelectorAll(".cch"), function(x){ x.classList.toggle("on", +x.getAttribute("data-ev") === j); });
+}
+function strumPlay(){
+  var S = musState;
+  if (S.playing){ musStop(); S.playing = false; renderStrum(); return; }
+  S.playing = true; S.strums = 0; S.onBeat = 0; S.score = null; S.cur = 0; renderStrum();
+  var spb = 60 / S.bpm, lead = 4, base = performance.now() + 120;
+  /* one bar of count-in clicks, then the song */
+  for (var c = 0; c < lead; c++) (function(c){
+    musLater(function(){ var pad = musBody().querySelector(".strumpad"); if (pad){ pad.textContent = String(lead - c); } }, 120 + c * spb * 1000);
+    musNote("guitar", 88, 0.12 + c * spb, 0.05);
+  })(c);
+  var total = S.notes[S.notes.length - 1].beat + S.notes[S.notes.length - 1].len;
+  S.beatTimes = [];
+  for (var b = 0; b < total; b++) S.beatTimes.push(base + 120 + (lead + b) * spb * 1000); /* musPlay starts 120 ms in */
+  musLater(function(){
+    var pad = musBody().querySelector(".strumpad"); if (pad) pad.innerHTML = "Strum &#8595;";
+    musPlay(S.notes, "hum", S.bpm, null).then(function(){
+      if (musState !== S || !S.playing) return;
+      S.playing = false;
+      S.score = S.strums ? "You strummed " + S.strums + " times, " + S.onBeat + " right on the beat." : null;
+      renderStrum();
+      if (window.AoiHost) window.AoiHost.say(S.onBeat >= total * 0.7 ? "Great rhythm! You stayed right with me." : "Nice! Slow it down a little and keep strumming on every beat.", {voice: S.onBeat >= total * 0.7 ? "ok4" : "ok2", pose:"present_r", eyes:"eyes_happy"});
+    });
+    S.events.forEach(function(e, j){ musLater(function(){ strumSetChord(j); }, 120 + e.beat * spb * 1000); });
+    for (var b = 0; b < total; b++) (function(b){
+      musLater(function(){
+        var pad = musBody().querySelector(".strumpad"); if (pad){ pad.classList.add("beat"); setTimeout(function(){ pad.classList.remove("beat"); }, 120); }
+        if (S.auto){ var e = S.events[S.cur]; chordMidis(CHORD_SHAPE[e.name]).forEach(function(m, k){ musNote("guitar", m, 0.02 + k * 0.03, spb * 0.9); }); }
+      }, 120 + b * spb * 1000);
+    })(b);
+  }, lead * spb * 1000 + 120);
+}
+function strumTap(pad){
+  var S = musState, e = S.events[S.cur];
+  chordMidis(CHORD_SHAPE[e.name]).forEach(function(m, k){ musNote("guitar", m, 0.005 + k * 0.022, 1.1); });
+  if (!S.playing || !S.beatTimes) return;
+  var now = performance.now(), best = Infinity;
+  S.beatTimes.forEach(function(t){ best = Math.min(best, Math.abs(now - t)); });
+  if (best > 600) return; /* still in the count-in */
+  S.strums++;
+  var ok = best <= 170;
+  if (ok) S.onBeat++;
+  pad.classList.add(ok ? "ok" : "off"); setTimeout(function(){ pad.classList.remove("ok"); pad.classList.remove("off"); }, 180);
+}
+musBody().addEventListener("pointerdown", function(e){
+  var pad = e.target.closest && e.target.closest("[data-strum]");
+  if (pad && musState && musState.mode === "strum"){ e.preventDefault(); strumTap(pad); }
+});
+musBody().addEventListener("click", function(e){
+  var t = e.target, b, S = musState;
+  if (!S || S.mode !== "strum" || !t.closest) return;
+  if (t.closest("[data-splay]")){ strumPlay(); return; }
+  if ((b = t.closest("[data-stempo]"))){ if (S.playing){ musStop(); S.playing = false; } S.bpm = Math.max(50, Math.min(150, S.bpm + +b.getAttribute("data-stempo"))); renderStrum(); return; }
+  if (t.closest("[data-sauto]")){ S.auto = !S.auto; renderStrum(); return; }
+  if ((b = t.closest("[data-chord]"))){ strum(b.getAttribute("data-chord")); return; }
 });
 
 /* --- guitar chords (a narrated lesson with diagrams you can strum) --- */
@@ -4426,8 +4545,12 @@ var CHORDS = [
  {name:"D", shape:"xx0232", text:"D major: just the top four strings, a little triangle shape."},
  {name:"Em", shape:"022000", text:"E minor: only two fingers! Minor chords sound softer and sadder."},
  {name:"Am", shape:"x02210", text:"A minor: the same shape as E major, moved over one string."},
- {name:"E", shape:"022100", text:"E major: like Em, plus one finger on the G string."}
+ {name:"E", shape:"022100", text:"E major: like Em, plus one finger on the G string."},
+ {name:"Dm", shape:"xx0231", text:"D minor: top four strings, a gentle, wistful sound. Sakura Sakura uses it."},
+ {name:"Fmaj7", shape:"xx3210", text:"F major 7: an easy stand-in for F, which needs a hard barre. It sounds dreamy."}
 ];
+var CHORD_SHAPE = {};
+CHORDS.forEach(function(c){ CHORD_SHAPE[c.name] = c.shape; });
 function chordMidis(shape){
   var out = [];
   shape.split("").forEach(function(c, i){ if (c !== "x") out.push(GUITAR_OPEN[5 - i] + (+c)); });
@@ -4453,7 +4576,7 @@ function chordSvg(ch){
 function chordsLesson(){
   musStop();
   var L = {id:"gu_chords", title:"Your first chords", quiz:L_CHORDS_QUIZ};
-  var beats = [{text:"Six open chords get you through hundreds of songs. Each diagram shows the strings, low E on the left, and where to press. Tap a diagram to strum it.", pose:"present_r", eyes:"eyes_happy",
+  var beats = [{text:"Eight easy chords get you through hundreds of songs. Each diagram shows the strings, low E on the left, and where to press. Tap a diagram to strum it.", pose:"present_r", eyes:"eyes_happy",
     visual: musCard("Guitar", '<div class="chordrow">' + CHORDS.map(function(c){ return '<button type="button" class="chordbtn" data-chord="' + c.shape + '">' + chordSvg(c) + '</button>'; }).join("") + '</div>')}];
   CHORDS.forEach(function(c, i){
     beats.push({text: c.text + " Its shape is " + c.shape.split("").join(" ") + ".", pose: i % 2 ? "point_l" : "point_r", eyes: null,
@@ -4567,9 +4690,9 @@ var TEACHER_SECTIONS = [
   {id:"piano", title:"Piano by Ear", icon:"note", blurb:"Japanese songs on the keys: play along as they light up, or learn them by ear phrase by phrase.",
    modules:function(){ return MUSIC_SONGS.map(function(sg){ return {title:sg.jp, icon:"note", meta:sg.title + " \u00b7 by ear or play along", start:function(){ openEar("piano", sg.id); }}; })
      .concat([{title:"Free play", icon:"note", meta:"just the keys", start:function(){ openEar("piano", null); }}]); }},
-  {id:"guitar", title:"Guitar", icon:"note", blurb:"Your first chords, then Japanese songs by ear on the fretboard.",
-   modules:function(){ return [musModule({id:"gu_chords", title:"Your first chords"}, "6 chords \u00b7 quiz", chordsLesson)]
-     .concat(MUSIC_SONGS.map(function(sg){ return {title:sg.jp, icon:"note", meta:sg.title + " \u00b7 by ear or play along", start:function(){ openEar("guitar", sg.id); }}; }))
+  {id:"guitar", title:"Guitar", icon:"note", blurb:"Eight easy chords, then Japanese songs: strum along with the chord chart, play the tune on the fretboard, or learn it by ear.",
+   modules:function(){ return [musModule({id:"gu_chords", title:"Your first chords"}, "8 chords \u00b7 quiz", chordsLesson)]
+     .concat(MUSIC_SONGS.map(function(sg){ return {title:sg.jp, icon:"note", meta:sg.title + " \u00b7 by ear, play or strum along", start:function(){ openEar("guitar", sg.id); }}; }))
      .concat([{title:"Free play", icon:"note", meta:"just the fretboard", start:function(){ openEar("guitar", null); }}]); }},
   {id:"claude", title:"Claude Code", icon:"code", blurb:"Using Claude Code from your phone, narrated in Aoi's own voice.",
    modules:function(){ return [{title:"Claude Code on Your Phone", icon:"phone", meta:CLAUDE_CODE_BEATS.length + " scenes \u00b7 voiced", start:startTeacherLesson}]; }},

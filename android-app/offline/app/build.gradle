@@ -1,0 +1,37 @@
+plugins { id 'com.android.application' }
+
+android {
+    namespace 'local.aoi.teacher'
+    compileSdk 34
+    defaultConfig {
+        applicationId 'local.aoi.teacher'
+        minSdk 24
+        // 34, not 35+: Android 15 forces edge-to-edge on apps targeting 35, and a WebView page
+        // can't read the status/navigation bar insets to keep content out from under them.
+        targetSdk 34
+        versionCode Integer.parseInt(System.getenv('AOI_VERSION_CODE') ?: '1')
+        versionName System.getenv('AOI_VERSION_NAME') ?: '1.0'
+    }
+    signingConfigs {
+        release {
+            storeFile file(System.getenv('AOI_KEYSTORE') ?: 'missing.keystore')
+            storePassword System.getenv('AOI_KEYSTORE_PASS')
+            keyAlias System.getenv('AOI_KEY_ALIAS') ?: 'android'
+            keyPassword System.getenv('AOI_KEY_PASS') ?: System.getenv('AOI_KEYSTORE_PASS')
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+    }
+    lint {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}

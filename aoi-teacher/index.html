@@ -4307,7 +4307,8 @@ window.AoiHost.onView('hub');
 
 })();
 
-if ('serviceWorker' in navigator){
+/* Not inside the Android app, which serves these files from its own bundle and needs no offline cache. */
+if ('serviceWorker' in navigator && location.hostname !== 'appassets.androidplatform.net'){
   window.addEventListener('load', function(){
     navigator.serviceWorker.register('sw.js').catch(function(){});
   });

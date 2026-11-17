@@ -1,4 +1,25 @@
-# Aoi Teacher — Android app (TWA)
+# Aoi Teacher — Android app
+
+There are two ways this folder builds an Android app:
+
+- **`offline/` (recommended): a self-contained app.** The whole web app (`aoi-teacher/`, including
+  Aoi's sprites and voice clips) is bundled inside the APK and served from a private address, so it
+  works offline and always matches the code it was built from, with no push or hosting needed. Aoi
+  is the launcher icon (`offline/make_icons.py` draws every Android size, including the adaptive
+  round/squircle shapes, from `aoi-teacher/icons/icon-512.png`). The phone's back button closes an
+  open panel, then uses the app's own back arrow, then exits. To build:
+
+  ```
+  AOI_KEYSTORE=/path/to/your.keystore AOI_KEYSTORE_PASS=... \
+  AOI_VERSION_CODE=2 AOI_VERSION_NAME=1.1 ./offline/build.sh
+  ```
+
+  Bump `AOI_VERSION_CODE` for every new build, and sign with the same keystore each time, or
+  Android will refuse to install it over the previous one. The keystore is never committed.
+
+- **TWA (below): a thin wrapper around the hosted site.** It loads the live GitHub Pages site, so
+  it only shows changes once they are pushed and deployed.
+
 
 This folder holds the Trusted Web Activity (TWA) config used to wrap the
 hosted PWA (`https://julia-rodrigo.github.io/aoi/`) into an installable

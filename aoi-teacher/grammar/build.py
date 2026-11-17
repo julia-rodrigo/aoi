@@ -15,6 +15,8 @@ from grammar import EX, CHARTS, LESSONS
 from words import TOPICS, DIALECT
 from stories import STORIES
 from songs import SONGS
+from poems import POEMS
+from today import TODAY
 from recipes_jp import RECIPES_JP
 
 errors = []
@@ -184,7 +186,7 @@ def story_line(L, where):
     return {"en": L['en'], "v": out}
 
 reads = []
-for R in STORIES + SONGS:
+for R in STORIES + SONGS + POEMS:
     lines = []
     for i, s in enumerate(R['lines']):
         if 'v' in s:
@@ -194,6 +196,9 @@ for R in STORIES + SONGS:
             x['words'] = [[w[0], kana_of(w[0], w[1], f"{R['id']}.line{i}.word"), w[2]] for w in s['words']]
             x['words'] = [[w[0], w[1] if w[1] != w[0] else "", w[2]] for w in x['words']]
             x['point'] = s.get('point', '')
+        td = s.get('today') or TODAY.get(R['id'], {}).get(i)
+        if x is not None and td:
+            x['today'] = story_line(td, f"{R['id']}.line{i}.today")
         lines.append(x)
     reads.append({"id": R['id'], "title": R['title'], "jp": R['jp'], "icon": R['icon'], "kind": R['kind'], "blurb": R['blurb'],
                   "intro": R.get('intro', ''), "lines": lines, "quiz": quiz(R['quiz'], R['id'])})

@@ -37,7 +37,12 @@ main functions are being made solid first.
 - [x] Stories in six versions (polite/casual x standard/Osaka/Kyoto), all voiced
 - [x] Learn from Songs: 9 public-domain songs explained line by line (words + grammar point)
 - [x] Japanese line for every Kitchen step, polite or casual, voiced, hideable
-- [x] Dictionary cross-check of every kanji reading (grammar/check_kanji.py; 939 checked)
+- [x] Dictionary cross-check of every kanji reading (grammar/check_kanji.py; 1,109 checked)
+- [x] Songs and haiku: "Say it today" in six versions; lines stack up as you read
+- [x] Your Song: paste lyrics you own, Aoi explains them (device voice; copyrighted songs aren't bundled)
+- [x] Music with Aoi (reading sheet music, Japanese songs to follow), Piano by Ear, Guitar (chords + by ear)
+- [ ] Her real voice for Your Song lines and humming (needs a voice relay; today it's the device voice and a synthesised hum)
+- [ ] More Japanese melodies once each is checked against a printed score (ふるさと, 春が来た, 赤とんぼ)
 - [ ] More stories (Urashima Taro, The Crane's Return), and per-word audio in stories
 - [ ] Modern songs: lyrics are copyrighted, so only via a licensed source or the user's own
       copy pasted into chat for Aoi to explain

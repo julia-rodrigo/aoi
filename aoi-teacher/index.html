@@ -716,6 +716,13 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 .jgrid{display:grid; grid-template-columns:repeat(auto-fill, minmax(92px, 1fr)); gap:6px;}
 .jgrid .jj{font-size:22px;} .jgrid .jwen{font-size:12px;}
 .jstory{display:flex; flex-direction:column; gap:6px;}
+.jmodes{display:flex; flex-direction:column; gap:6px;}
+.jmodes .pbseg button{padding:5px 4px; font-size:12.5px;}
+.jmodes .pbseg button small{font-size:10px;}
+.jchip{display:flex; margin-bottom:-4px;}
+.jsent.pv .jw.chg{background:var(--pv-bg);}
+.jsent.pv .jw.chg .jj{color:var(--pv);}
+.jsent.pv{border-left:4px solid var(--pv);}
 
 /* The chat button rides on her top-left corner (placed by layoutAoi()), so it reads as "talk to
    her" and never sits over the text box or a right-aligned button like Next. */
@@ -3520,6 +3527,8 @@ document.addEventListener("click", function(e){
   var t = e.target;
   if (!t || !t.closest) return;
   if (t.closest("[data-jptog]")){ jpToggleRomaji(); return; }
+  var md = t.closest("[data-jmode]");
+  if (md){ jpSetMode(md.getAttribute("data-jmode"), md.getAttribute("data-v")); return; }
   var w = t.closest(".jw");
   var c = t.closest("[data-clip]");
   if (w && !jpRomaji){
@@ -3531,13 +3540,14 @@ document.addEventListener("click", function(e){
 });
 
 var JP_ROLE_NAME = {topic:"topic は", subject:"subject が", object:"object を", place:"place・time に で へ", time:"time", verb:"verb / ending", adj:"adjective", q:"question word"};
-function jpWord(jp, kana, ro, role){
-  return '<span class="jw' + (role ? ' r-' + role : '') + '"><span class="jk">' + (kana ? esc_(kana) : '') + '</span>' +
+function jpWord(jp, kana, ro, role, chg){
+  return '<span class="jw' + (role ? ' r-' + role : '') + (chg ? ' chg' : '') + '"><span class="jk">' + (kana ? esc_(kana) : '') + '</span>' +
     '<span class="jj" lang="ja">' + esc_(jp) + '</span><span class="jr">' + esc_(ro) + '</span></span>';
 }
 function jpBare(s){ return s.replace(/[、。！？「」『』…\s]/g, ""); }
 function jpSentence(ex, cls){
-  var words = ex.s.map(function(w){ return jpWord(w[0], w[1] !== jpBare(w[0]) ? w[1] : "", w[3], w[2]); }).join("");
+  var words = ex.s.map(function(w){ return jpWord(w[0], w[1] !== jpBare(w[0]) ? w[1] : "", w[3], w[2], w[4]); }).join("");
+  if (ex.src) cls = (cls ? cls + ' ' : '') + pbVerCls(pbMode.d + pbMode.f);
   return '<div class="jsent' + (cls ? ' ' + cls : '') + '" data-clip="' + ex.a + '"><span class="jspk" aria-hidden="true">&#128266;</span>' +
     '<div class="jline">' + words + '</div><div class="jen">' + esc_(ex.en) + '</div>' +
     (ex.note ? '<div class="jnote">' + esc_(ex.note) + '</div>' : '') + '</div>';
@@ -3648,21 +3658,49 @@ function jpTopicBeats(L){
 function jpTopicReview(L){
   return '<div class="ctag">Tap a word to hear it again</div><div class="jgrid">' + L.words.map(function(w){ return jpWordCard(w); }).join("") + '</div>';
 }
+/* Stories come in the phrasebook's six versions (polite/casual x standard/Osaka/Kyoto) and share
+   its remembered choice; songs keep their words as written. */
+var jpCurrentRead = null;
+function jpVer(line){ return line.v ? line.v[pbMode.d + pbMode.f] : line; }
+function jpModes(){
+  var f = pbMode.f, d = pbMode.d;
+  function b(attr, v, label, small, on){
+    return '<button type="button" data-jmode="' + attr + '" data-v="' + v + '" class="' + (on ? 'on' : '') + '" aria-pressed="' + (on ? 'true' : 'false') + '">' +
+      label + '<small lang="ja">' + small + '</small></button>';
+  }
+  return '<div class="jmodes"><div class="pbseg">' + b("f", "p", "Polite", "です・ます", f === "p") + b("f", "c", "Casual", "タメ口", f === "c") + '</div>' +
+    '<div class="pbseg pb3">' + b("d", "s", "Standard", "標準語", d === "s") + b("d", "o", "Osaka", "大阪弁", d === "o") + b("d", "k", "Kyoto", "京都弁", d === "k") + '</div></div>';
+}
 function jpReadBeats(L){
-  var song = L.kind === "song";
-  var beats = [jpIntro(L, [L.jp, L.lines.length + " lines", song ? "song" : "story"],
-    (song ? "Let's read a song together. I'll say the words; you follow along. " : "Story time! I'll read it line by line. ") +
-    (L.intro || L.blurb) + " Hide the romaji if you want to practise reading kanji.")];
-  L.lines.forEach(function(s, i){
-    var prev = i ? jpSentence(L.lines[i - 1], "dim") : "";
-    beats.push({text: s.en, pose: i % 2 ? "present_l" : "present_r", eyes: null, audio: "audio/jp/" + s.a,
-      visual: jpCard(L.title + " · line " + (i + 1) + " of " + L.lines.length, prev + jpSentence(s, "now"))});
+  var song = L.kind === "song", modes = song ? "" : jpModes();
+  var beats = [jpIntro(L, [L.jp, L.lines.length + " lines", song ? "song" : "6 versions"],
+    (song ? "Let's read a song together. I'll say the words; you follow along. " :
+      "Story time! Pick polite or casual, and standard, Osaka or Kyoto; you can switch on any line. ") +
+    (L.intro || L.blurb) + " Hide the romaji to practise reading kanji.")];
+  if (modes) beats[0].visual = jpCard(L.title, lessonHero(L.icon, L.title, L.blurb, [L.jp, L.lines.length + " lines", "6 versions"]) + modes);
+  L.lines.forEach(function(line, i){
+    var s = jpVer(line), prev = "";
+    var chip = line.v ? pbChip(pbMode.d + pbMode.f) : "";
+    beats.push({text: line.en || s.en, pose: i % 2 ? "present_l" : "present_r", eyes: null, audio: "audio/jp/" + s.a,
+      visual: jpCard(L.title + " \u00b7 line " + (i + 1) + " of " + L.lines.length, modes + prev + (chip ? '<div class="jchip">' + chip + '</div>' : '') + jpSentence(s, "now"))});
   });
   return beats;
 }
 function jpReadReview(L){
-  return '<div class="ctag">' + esc_(L.title) + ' · the whole ' + (L.kind === "song" ? "song" : "story") + '</div><div class="jstory">' +
-    L.lines.map(function(s){ return jpSentence(s); }).join("") + '</div>';
+  return '<div class="ctag">' + esc_(L.title) + ' \u00b7 the whole ' + (L.kind === "song" ? "song" : "story") + '</div>' +
+    (L.kind === "song" ? "" : jpModes()) + '<div class="jstory">' +
+    L.lines.map(function(line){ return jpSentence(jpVer(line)); }).join("") + '</div>';
+}
+function jpSetMode(attr, v){
+  if (attr === "f") pbMode.f = v; else pbMode.d = v;
+  pbSave();
+  if (!jpCurrentRead || views.teacherLesson.hidden) return;
+  var beats = jpReadBeats(jpCurrentRead);
+  LESSON.beats = beats; TUTOR_LESSON = beats;
+  if (teacherEnded){ LESSON.finish(document.getElementById("teacherVisual")); jpApplyRomaji(); return; }
+  tutorTranscript.pop();
+  tutorRenderBeat();
+  jpApplyRomaji();
 }
 function jpChartsLesson(){
   var names = ["groups", "taberu", "iku", "suru", "kuru", "teform", "takai", "shizuka", "gakusei"];
@@ -3680,7 +3718,8 @@ function jpStart(id){
   jpStopAudio();
   if (L.beats) jpPlayLesson(L, jpGrammarBeats(L));
   else if (L.words) jpPlayLesson(L, jpTopicBeats(L), {review: function(){ return jpTopicReview(L); }});
-  else jpPlayLesson(L, jpReadBeats(L), {auto: true, tag: L.kind === "song" ? "Song" : "Story", review: function(){ return jpReadReview(L); }});
+  else { jpCurrentRead = L; jpPlayLesson(L, jpReadBeats(L), {auto: true, tag: L.kind === "song" ? "Song" : "Story", review: function(){ return jpReadReview(L); }}); }
+  if (!L.lines) jpCurrentRead = null;
   jpApplyRomaji();
 }
 

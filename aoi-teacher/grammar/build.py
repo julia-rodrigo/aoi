@@ -156,11 +156,36 @@ dialect = {"id": DIALECT['id'], "title": DIALECT['title'], "icon": DIALECT['icon
            "beats": beat_list(DIALECT['beats'], DIALECT['id']), "quiz": quiz(DIALECT['quiz'], DIALECT['id'])}
 
 # --- stories and songs ---
+VKEYS = ["sp", "sc", "op", "oc", "kp", "kc"]
+def bare(jp): return re.sub(r'[、。！？「」『』…\s]', '', jp)
+
+def story_line(L, where):
+    """Six versions of one line. Words that differ from the standard polite version are flagged
+    (5th field) so the app can colour what changes."""
+    built = {}
+    for k in VKEYS:
+        src, seen = k, set()
+        while isinstance(L['v'][src], str):
+            if src in seen: errors.append(f"{where}: circular same"); return None
+            seen.add(src); src = L['v'][src]
+        if src not in built:
+            text, ro = L['v'][src]
+            built[src] = sent({"t": text, "ro": ro, "en": L['en']}, f"{where}.{src}")
+        if built[src] is None: return None
+        built[k] = built[src]
+    base = {bare(w[0]) for w in built['sp']['s']}
+    out = {}
+    for k in VKEYS:
+        b = built[k]
+        out[k] = dict(b, s=[w + [1 if k != 'sp' and bare(w[0]) not in base else 0] for w in b['s']],
+                      note=L['notes'].get(k, ''), src=next(x for x in VKEYS if built[x] is b))
+    return {"en": L['en'], "v": out}
+
 reads = []
 for R in STORIES + SONGS:
+    lines = [story_line(s, f"{R['id']}.line{i}") if 'v' in s else sent(s, f"{R['id']}.line{i}") for i, s in enumerate(R['lines'])]
     reads.append({"id": R['id'], "title": R['title'], "jp": R['jp'], "icon": R['icon'], "kind": R['kind'], "blurb": R['blurb'],
-                  "intro": R.get('intro', ''), "lines": [sent(s, f"{R['id']}.line{i}") for i, s in enumerate(R['lines'])],
-                  "quiz": quiz(R['quiz'], R['id'])})
+                  "intro": R.get('intro', ''), "lines": lines, "quiz": quiz(R['quiz'], R['id'])})
 
 ids = [x['id'] for x in grammar + topics + reads] + [dialect['id']]
 if len(ids) != len(set(ids)): errors.append('duplicate lesson ids')

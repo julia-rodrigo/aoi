@@ -765,6 +765,9 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 .pbseg.pb4{grid-template-columns:repeat(4, 1fr);}
 .sci{width:100%; height:auto; display:block; color:var(--fg);}
 .sci-note{margin:2px 0 0; font-size:11px; color:var(--muted);}
+.sciimg{margin:0; display:flex; flex-direction:column; align-items:center; gap:4px;}
+.sciimg img{max-width:100%; max-height:300px; height:auto; border-radius:6px; background:#fff;}
+.sciimg figcaption{font-size:11px; color:var(--muted); text-align:center;}
 .scifacts{display:flex; align-items:baseline; gap:10px;} .scifacts b{font-size:24px; font-family:"M PLUS Rounded 1c", var(--font-body);} .scifacts span{font-weight:700;}
 .scitab{width:100%; border-collapse:collapse; font-size:13px;} .scitab th, .scitab td{border:1px solid var(--line); padding:6px 8px; text-align:left;} .scitab th{font-weight:700; color:var(--muted);}
 .scicalc{display:flex; flex-direction:column; gap:8px;} .scicalc label{display:flex; align-items:center; gap:8px; font-weight:700; font-size:14px;}
@@ -4039,8 +4042,9 @@ function voiceSample(ctx, smp, f, t, d){
   src.loop = true; src.loopStart = smp.loopStart; src.loopEnd = smp.loopEnd;
   src.connect(g); g.connect(MUS.master);
   var end = t + d;
-  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.9, t + 0.04);
-  g.gain.setValueAtTime(0.9, Math.max(t + 0.05, end - 0.08)); g.gain.exponentialRampToValueAtTime(0.0001, end);
+  var pk = 0.9 * (MUS.vol || 1);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(pk, t + 0.04);
+  g.gain.setValueAtTime(pk, Math.max(t + 0.05, end - 0.08)); g.gain.exponentialRampToValueAtTime(0.0001, end);
   src.start(t, 0.03); src.stop(end + 0.05); MUS.sources.push(src);
 }
 function voiceHum(ctx, f, t, d){
@@ -4105,10 +4109,14 @@ function voiceNa(ctx, f, t, d){
   voiceLa(ctx, f, t, d);
 }
 var MUS_VOICES = {hum: voiceHum, la: voiceLa, na: voiceNa, aoi: voiceHum, piano: voicePiano, guitar: voiceGuitar};
-function musNote(inst, midi, when, dur){
+function musNote(inst, midi, when, dur, vol){
   var ctx = musCtx(); if (!ctx) return;
+  MUS.vol = vol == null ? 1 : vol;
   (MUS_VOICES[inst] || voiceHum)(ctx, midiFreq(midi), ctx.currentTime + (when || 0.02), dur || 0.6);
+  MUS.vol = 1;
 }
+/* A third below in C major, for Aoi's choir. */
+function choirBelow(m){ var sc = [55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72, 74, 76], i = sc.indexOf(m); return i >= 2 ? sc[i - 2] : m - 4; }
 function musParse(src){
   var notes = [], bar = 0, phrase = 0, beat = 0;
   src.split(/\s+/).forEach(function(tok){
@@ -4134,6 +4142,7 @@ function musPlay(notes, inst, bpm, onNote, from, to){
       (function(i){
         var n = notes[i], at = t0 + (n.beat - start) * spb;
         if (n.p) musNote(inst === "aoi" ? ({"\u306a": "na", "\u3089": "la"})[n.syl] || "hum" : inst, noteMidi(n.p), at, n.len * spb * 0.92);
+        if (n.p && inst === "aoi" && notes.choir){ var hm = choirBelow(noteMidi(n.p)); musNote("hum", hm, at, n.len * spb * 0.92, 0.55); if (n.len >= 2) musNote("hum", noteMidi(n.p) - 12, at, n.len * spb * 0.92, 0.4); }
         if (onNote) musLater(function(){ onNote(i); }, at * 1000);
       })(i);
     }
@@ -4176,7 +4185,7 @@ function musNoteSvg(n, i, x, mode, cls){
   if (n.dot) out += '<circle cx="' + (x + 10) + '" cy="' + (st % 2 === 0 ? y - 2.5 : y) + '" r="1.8" fill="currentColor"/>';
   var nm = musNameOf(n.p, mode);
   if (nm) out += '<text class="mname" x="' + x + '" y="' + 102 + '" text-anchor="middle" font-size="11">' + nm + '</text>';
-  if (n.lyric) out += '<text class="mlyric" x="' + x + '" y="119" text-anchor="middle" font-size="13">' + n.lyric + '</text>';
+  if (n.lyric) out += '<text class="mlyric" x="' + x + '" y="119" text-anchor="middle" font-size="' + (/[a-z]/i.test(n.lyric) ? 10.5 : 13) + '">' + esc_(n.lyric) + '</text>';
   return out + '</g>';
 }
 /* Rows of bars; each row is its own SVG so it wraps on a phone. */
@@ -4218,6 +4227,10 @@ var MUSIC_SONGS = [
   /* the 1888 words, one per note; "-" holds the syllable over a second note */
   lyrics:"\u3055 \u304f \u3089 \u3055 \u304f \u3089 \u3084 \u3088 \u3044 \u306e \u305d \u3089 - \u306f \u307f \u308f \u305f \u3059 \u304b \u304e - \u308a \u304b \u3059 \u307f \u304b \u304f \u3082 - \u304b \u306b \u304a \u3044 \u305e \u3044 \u305a - \u308b \u3044 \u3056 \u3084 \u3044 \u3056 \u3084 \u307f \u306b \u3086 - \u304b \u3093",
   notes:"A4q A4q B4h | A4q A4q B4h / A4q B4q C5q B4q | A4q B4e A4e F4h / E4q C4q E4q F4q | E4q E4e C4e B3h / A4q B4q C5q B4q | A4q B4e A4e F4h / E4q C4q E4q F4q | E4q E4e C4e B3h / A4q A4q B4h | A4q A4q B4h / E4q F4q B4e A4e F4q | E4w"},
+ {id:"birthday", title:"Happy Birthday", jp:"\u30cf\u30c3\u30d4\u30fc\u30d0\u30fc\u30b9\u30c7\u30fc", origin:"Mildred and Patty Hill's tune; public domain", bpm:96, time:"3/4",
+  notes:"Rh G4e G4e | A4q G4q C5q | B4h G4e G4e / A4q G4q D5q | C5h G4e G4e / G5q E5q C5q | B4q A4q F5e F5e / E5q C5q D5q | C5h.",
+  lyrics:"Hap py birth day to you, Hap py birth day to you, Hap py birth day dear friend - Hap py birth day to you!",
+  chords:"C | C | G | G | C | C7 | F | C G | C"},
  {id:"chocho", title:"Chōchō", jp:"ちょうちょう", origin:"School song from 1881, to a German folk tune", bpm:104, time:"4/4",
   notes:"G4q E4q E4h | F4q D4q D4h | C4q D4q E4q F4q | G4q G4q G4h / G4q E4q E4h | F4q D4q D4h | C4q E4q G4q G4q | C4w / D4q D4q D4q D4q | D4q E4q F4h | E4q E4q E4q E4q | E4q F4q G4h / G4q E4q E4h | F4q D4q D4h | C4q E4q G4q G4q | C4w"},
  {id:"kaeru", title:"Kaeru no Gasshō", jp:"かえるの合唱", origin:"The Frogs' Chorus: a children's round, to a German folk tune", bpm:100, time:"4/4",
@@ -4236,6 +4249,7 @@ function songChords(song){ return song && (song.chords || SONG_CHORDS[song.id]);
 /* Notes for a song, with its words attached where it has them. */
 function musSongNotes(song){
   var notes = musParse(song.notes);
+  notes.choir = !!song.choir;
   if (song.lyrics){ var ly = song.lyrics.split(" "), k = 0;
     var last = "";
     notes.forEach(function(n){ if (!n.p) return; var w = ly[k++]; if (w && w !== "-"){ n.lyric = w; last = w; } n.syl = last; }); }
@@ -4392,7 +4406,7 @@ function renderSheet(){
     (S.score != null ? '<p class="mscore">You hit <b>' + S.score + '</b> of ' + withNotes + ' notes in time.</p>' : '') +
     '<div class="mkeys">' + (S.inst === "guitar" ? guitarBoard(-1) : pianoKeys(-1)) + '</div>' +
     (song.lyrics ? '<p class="hint">Sing the words under the notes while Aoi hums. Turn on \u30c9\u30ec\u30df to sing the note names instead.</p>' : '') +
-    musStaff(S.notes, {perRow: window.innerWidth > 700 ? 4 : 2, names: musPref.names, time: song.time, lyrics: !!song.lyrics, mark: function(i){ return S.hits[i] ? "hit" : ""; }}) +
+    musStaff(S.notes, {perRow: window.innerWidth > 700 ? 4 : 2, names: musPref.names, time: song.time, beats: +song.time.split("/")[0], lyrics: !!song.lyrics, mark: function(i){ return S.hits[i] ? "hit" : ""; }}) +
     (song.mine ? '<div class="lbtns"><button class="pbtog" type="button" data-mydeltune>Delete this tune</button></div>' : '') + '</div>';
 }
 function sheetPlay(){
@@ -4404,8 +4418,18 @@ function sheetPlay(){
   var bandTimers = [];
   if (S.band && songChords(S.song)) setTimeout(function(){ /* after musPlay below has cleared old sounds */
     if (musState !== S || !S.playing) return;
+    var anthem = S.song.style === "anthem";
     strumEvents(S.song.id).forEach(function(e){
-      var at = 0.12 + e.beat * spb, shape = CHORD_SHAPE[e.name] || CHORD_SHAPE.C;
+      var at = 0.12 + e.beat * spb, shape = CHORD_SHAPE[anthem && POWER[e.name] ? POWER[e.name] : e.name] || CHORD_SHAPE.C;
+      if (anthem){
+        chordMidis(shape).forEach(function(m, j){ musNote("guitar", m, at + j * 0.01, e.len * spb * 0.95); });
+        /* stomp, stomp, clap: every two beats */
+        for (var q = 0; q + 1 < e.len + 0.001; q += 2){
+          drumHit("K", at + q * spb, 1); drumHit("K", at + (q + 0.5) * spb, 1); drumHit("C", at + (q + 1) * spb, 0.9);
+          musNote("bass", bassRoot(e.name), at + q * spb, spb * 1.8);
+        }
+        return;
+      }
       [0, 2].forEach(function(off){ if (off < e.len) chordMidis(shape).forEach(function(m, j){ musNote("guitar", m, at + off * spb + j * 0.014, spb * 1.6); }); });
       for (var q = 0; q < e.len; q++){ musNote("bass", bassRoot(e.name), at + q * spb, spb * 0.85); drumHit(q % 2 ? "S" : "K", at + q * spb, 0.8); drumHit("H", at + q * spb, 0.6); drumHit("H", at + (q + 0.5) * spb, 0.45); }
     });
@@ -4427,7 +4451,8 @@ function sheetPlay(){
     S.score = got ? got : null;
     renderSheet();
     if (!window.AoiHost) return;
-    if (!got) window.AoiHost.line("ok2");
+    if (S.song.id === "birthday") window.AoiHost.line("bday");
+    else if (!got) window.AoiHost.line("ok2");
     else if (got / total >= 0.8) window.AoiHost.say("Wow, you hit " + got + " of " + total + " notes in time!", {voice:"ok4", pose:"present_r", eyes:"eyes_happy"});
     else window.AoiHost.say("You hit " + got + " of " + total + ". Slow the tempo down and try again!", {voice:"ok2", pose:"present_l", eyes:"eyes_happy"});
   });
@@ -4451,9 +4476,9 @@ function openEar(inst, id){
   if (window.AoiHost) window.AoiHost.say(song ? "Listen to the phrase, then play it back. Use Hint if you're stuck!" : "Play anything you like. Turn on note names to see what each one is.", {pose:"point_r", eyes:"eyes_happy"});
   if (song) setTimeout(earListen, 700);
 }
-function earPhrase(){ var S = musState; return S.phrases[S.ph] || []; }
+function earPhrase(){ var S = musState; return (S && S.phrases && S.phrases[S.ph]) || []; }
 function earListen(){
-  var S = musState; if (!S || !S.song) return;
+  var S = musState; if (!S || S.mode !== "ear" || !S.song) return; /* you may have switched mode meanwhile */
   var ph = earPhrase(); if (!ph.length) return;
   var slow = S.misses >= 3 ? 0.75 : 1, spb = 60 / (S.bpm * slow);
   musPlay(S.notes, S.inst, S.bpm * slow, S.show ? function(i){ var n = S.notes[i]; if (n.p) musLight(noteMidi(n.p), n.len * spb * 900); } : null, ph[0], ph[ph.length - 1] + 1);
@@ -4645,10 +4670,10 @@ var SONG_CHORDS = {
   yorokobi:"C | G | C | C G | C | G | C | G C"
 };
 function strumEvents(id){
-  var ev = [];
-  songChords(musSong(id)).split("|").forEach(function(bar, b){
-    var cs = bar.trim().split(/\s+/), len = 4 / cs.length;
-    cs.forEach(function(c, k){ ev.push({bar: b, beat: b * 4 + k * len, len: len, name: c}); });
+  var ev = [], sg = musSong(id), bpb = sg && sg.time ? +sg.time.split("/")[0] : 4;
+  songChords(sg).split("|").forEach(function(bar, b){
+    var cs = bar.trim().split(/\s+/), len = bpb / cs.length;
+    cs.forEach(function(c, k){ ev.push({bar: b, beat: b * bpb + k * len, len: len, name: c}); });
   });
   return ev;
 }
@@ -4961,7 +4986,7 @@ var PROGRESSIONS = [
  {id:"doowop", jp:"ドゥーワップ進行", ro:"Dwūwappu shinkō", en:"The doo-wop loop", roman:"I – vi – IV – V", chords:["C", "Am", "F", "G"],
   about:"The 1950s ballad sound, still everywhere."}
 ];
-function progById(id){ var f = null; PROGRESSIONS.forEach(function(p){ if (p.id === id) f = p; }); return f; }
+function progById(id){ var f = null; PROGRESSIONS.concat(typeof ANTHEM_PROGS === "undefined" ? [] : ANTHEM_PROGS).forEach(function(p){ if (p.id === id) f = p; }); return f; }
 var EASY_SWAP = {F:"Fmaj7", Bm:"D", Gm7:"G7"}; /* friendlier shapes when "Easy chords" is on */
 
 /* --- the band: drums, bass and guitar, synthesised --- */
@@ -4971,9 +4996,19 @@ function noiseBuf(ctx){
   for (var i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
   return (MUS.noise = b);
 }
+function clapHit(ctx, t, v){
+  [0, 0.012, 0.024].forEach(function(o, k){
+    var n = ctx.createBufferSource(), bp = ctx.createBiquadFilter(), g = ctx.createGain(); n.buffer = noiseBuf(ctx);
+    bp.type = "bandpass"; bp.frequency.value = 1400; bp.Q.value = 0.9; n.connect(bp); bp.connect(g); g.connect(MUS.master);
+    g.gain.setValueAtTime(0.9 * v, t + o); g.gain.exponentialRampToValueAtTime(0.001, t + o + (k === 2 ? 0.16 : 0.02));
+    n.start(t + o); n.stop(t + o + 0.2); MUS.sources.push(n);
+  });
+}
 function drumHit(kind, when, vol){
   var ctx = musCtx(); if (!ctx) return;
-  var t = ctx.currentTime + (when || 0.01), v = vol == null ? 1 : vol, g = ctx.createGain(); g.connect(MUS.master);
+  var t = ctx.currentTime + (when || 0.01), v = vol == null ? 1 : vol;
+  if (kind === "C"){ clapHit(ctx, t, v); return; }
+  var g = ctx.createGain(); g.connect(MUS.master);
   if (kind === "K"){
     var o = ctx.createOscillator(); o.type = "sine";
     o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.14);
@@ -5216,6 +5251,13 @@ GUITAR_LESSONS.concat(BAND_LESSONS).forEach(function(L){
 
 /* --- Aoi Song: Aoi writes a tune over a J-pop progression and hums it in a mix of
    "na", "la" and "mm". Each song number always comes out the same (it's the random seed). --- */
+var ANTHEM_PROGS = [
+ {id:"anthem1", jp:"\u30ed\u30c3\u30af\u30fb\u30a2\u30f3\u30bb\u30e0", en:"Stadium rock", roman:"I \u2013 IV \u2013 V \u2013 I", chords:["C", "F", "G", "C"]},
+ {id:"anthem2", jp:"\u30ed\u30c3\u30af\u30fb\u30a2\u30f3\u30bb\u30e0", en:"Big minor anthem", roman:"vi \u2013 IV \u2013 I \u2013 V", chords:["Am", "F", "C", "G"]},
+ {id:"anthem3", jp:"\u30ed\u30c3\u30af\u30fb\u30a2\u30f3\u30bb\u30e0", en:"Rock \u266d7", roman:"I \u2013 \u266dVII \u2013 IV \u2013 I", chords:["C", "Bb", "F", "C"]}
+];
+CHORD_SHAPE.Bb5 = "x133xx";
+var POWER = {C:"C5", F:"F5", G:"G5", Am:"A5", Bb:"Bb5", E:"E5", D:"D5"};
 var AOISONG_KEY = "aoi_aoisongs_v1";
 function aoiSongList(){ try{ return JSON.parse(localStorage.getItem(AOISONG_KEY) || "[]"); }catch(e){ return []; } }
 function aoiSongSave(list){ try{ localStorage.setItem(AOISONG_KEY, JSON.stringify(list.slice(-40))); }catch(e){} }
@@ -5224,14 +5266,15 @@ var SCALE = [60, 62, 64, 65, 67, 69, 71, 72, 74]; /* C4 to D5, C major */
 var CHORD_TONES = {C:[0,4,7], Cmaj7:[0,4,7,11], C7:[0,4,7,10], G:[7,11,2], G7:[7,11,2,5], Am:[9,0,4], Am7:[9,0,4,7], Em:[4,7,11], Em7:[4,7,11,2],
   F:[5,9,0], Fmaj7:[5,9,0,4], Dm:[2,5,9], Dm7:[2,5,9,0], E7:[4,8,11,2], Gm7:[7,10,2,5], D:[2,6,9], E:[4,8,11], A:[9,1,4], Bm:[11,2,6]};
 var RHYTHMS = [[1,1,1,1], [2,1,1], [1,1,2], [1.5,0.5,1,1], [0.5,0.5,1,1,1], [1,0.5,0.5,2], [1,1,1.5,0.5]];
-function aoiSongGen(n, progId){
-  var rnd = seeded(n), p = progById(progId) || PROGRESSIONS[n % PROGRESSIONS.length];
+function aoiSongGen(n, progId, style){
+  var anthem = style === "anthem", rnd = seeded(n * (anthem ? 7919 : 1)), p = progById(progId) || (anthem ? ANTHEM_PROGS : PROGRESSIONS)[n % (anthem ? 3 : PROGRESSIONS.length)];
   var ch = p.chords.length >= 8 ? p.chords.slice(0, 8) : p.chords.concat(p.chords).slice(0, 8);
   if (ch.length < 8) while (ch.length < 8) ch.push(p.chords[ch.length % p.chords.length]);
-  var tokens = [], lyr = [], prev = 64, sylls = ["な", "ら", "な", "ん"], durName = {0.5:"e", 1:"q", 1.5:"q.", 2:"h", 4:"w"};
+  var tokens = [], lyr = [], prev = 64, sylls = ["な", "ら", "な", "ん"], durName = {0.5:"e", 1:"q", 1.5:"q.", 2:"h", 3:"h.", 4:"w"};
   ch.forEach(function(c, b){
-    var rh = b === 7 ? [2, 2] : b === 3 ? [1, 1, 2] : RHYTHMS[Math.floor(rnd() * RHYTHMS.length)];
-    var tones = CHORD_TONES[c] || [0, 4, 7], phraseSyl = sylls[Math.floor(b / 2)];
+    var rhythms = anthem ? [[2, 2], [1, 1, 2], [3, 1], [1.5, 0.5, 2], [1, 1, 1, 1]] : RHYTHMS;
+    var rh = b === 7 ? (anthem ? [4] : [2, 2]) : b === 3 ? [1, 1, 2] : rhythms[Math.floor(rnd() * rhythms.length)];
+    var tones = CHORD_TONES[c] || [0, 4, 7], phraseSyl = anthem ? "\u3089" : sylls[Math.floor(b / 2)];
     rh.forEach(function(len, k){
       var cand;
       if (k === 0 || (b === 7 && k === rh.length - 1)){
@@ -5250,14 +5293,17 @@ function aoiSongGen(n, progId){
     });
     if (b < 7) tokens.push(b % 2 === 1 ? "/" : "|");
   });
-  return {id: "aoi_" + n, n: n, title: "Aoi Song " + n, jp: "アオイのうた " + n, origin: "Written by Aoi over " + p.jp + " (" + p.en + ")",
+  if (anthem) return {id: "anthem_" + n, n: n, title: "Aoi Anthem " + n, jp: "\u30a2\u30aa\u30a4\u306e\u30a2\u30f3\u30bb\u30e0 " + n, origin: "A rock anthem by Aoi (" + p.en + ", " + p.roman + ")",
+    bpm: 76 + Math.floor(rnd() * 3) * 4, time: "4/4", notes: tokens.join(" "), lyrics: lyr.join(" "), chords: ch.join(" | "), aoi: true, prog: p.id, style: "anthem", choir: true};
+  return {id: "aoi_" + n, n: n, title: "Aoi Song " + n, jp: "\u30a2\u30aa\u30a4\u306e\u3046\u305f " + n, origin: "Written by Aoi over " + p.jp + " (" + p.en + ")",
     bpm: 84 + Math.floor(rnd() * 5) * 6, time: "4/4", notes: tokens.join(" "), lyrics: lyr.join(" "), chords: ch.join(" | "), aoi: true, prog: p.id};
 }
-function aoiSongs(){ return aoiSongList().map(function(x){ return aoiSongGen(x.n, x.prog); }); }
-function aoiSongNew(progId){
-  var list = aoiSongList(), n = list.length ? list[list.length - 1].n + 1 : 1;
-  list.push({n: n, prog: progId || PROGRESSIONS[(n - 1) % PROGRESSIONS.length].id}); aoiSongSave(list);
-  var sg = aoiSongGen(n, list[list.length - 1].prog);
+function aoiSongs(){ return aoiSongList().map(function(x){ return aoiSongGen(x.n, x.prog, x.style); }); }
+function aoiSongNew(progId, style){
+  var list = aoiSongList(), same = list.filter(function(x){ return (x.style || "") === (style || ""); }), n = same.length ? same[same.length - 1].n + 1 : 1;
+  var pool = style === "anthem" ? ANTHEM_PROGS : PROGRESSIONS;
+  list.push({n: n, prog: progId || pool[(n - 1) % pool.length].id, style: style || ""}); aoiSongSave(list);
+  var sg = aoiSongGen(n, list[list.length - 1].prog, style);
   if (window.AoiHost) window.AoiHost.say("I wrote a new song! It's called " + sg.title + ". I'll hum it for you.", {voice:"ok4", pose:"present_r", eyes:"eyes_happy"});
   openSheet(sg.id, null);
   setTimeout(function(){ if (musState && musState.song && musState.song.id === sg.id) sheetPlay(); }, 900);
@@ -5269,21 +5315,21 @@ function aoiSongNew(progId){
    right ascension and declination) with a stereographic projection, and the maths diagrams
    computed from the formulas themselves. Each lesson links to its Japanese words topic. */
 var PLANETS = [
- {en:"Mercury", jp:"水星", km:4879, au:0.39, year:"88 days", day:"176 Earth days", col:"#9c9c9c",
+ {img:"mercury", credit:"NASA/JHUAPL/Carnegie (MESSENGER)", en:"Mercury", jp:"水星", km:4879, au:0.39, year:"88 days", day:"176 Earth days", col:"#9c9c9c",
   fact:"The smallest planet and the closest to the Sun. A single day there, sunrise to sunrise, lasts longer than its year."},
- {en:"Venus", jp:"金星", km:12104, au:0.72, year:"225 days", day:"117 Earth days", col:"#e3c16f",
+ {img:"venus", credit:"NASA/JPL (Magellan radar map; colours added)", en:"Venus", jp:"金星", km:12104, au:0.72, year:"225 days", day:"117 Earth days", col:"#e3c16f",
   fact:"The hottest planet, about 465 °C, because its thick carbon dioxide air traps heat. It spins backwards compared with most planets."},
- {en:"Earth", jp:"地球", km:12756, au:1.00, year:"365.25 days", day:"24 hours", col:"#3b7dd8",
+ {img:"earth", credit:"NASA Goddard (Blue Marble 2012)", en:"Earth", jp:"地球", km:12756, au:1.00, year:"365.25 days", day:"24 hours", col:"#3b7dd8",
   fact:"The only planet known to have liquid water on its surface and life."},
- {en:"Mars", jp:"火星", km:6792, au:1.52, year:"687 days", day:"24 h 40 min", col:"#c1440e",
+ {img:"mars", credit:"NASA/JPL (Viking)", en:"Mars", jp:"火星", km:6792, au:1.52, year:"687 days", day:"24 h 40 min", col:"#c1440e",
   fact:"Red because of iron oxide (rust) in its dust. It has Olympus Mons, the tallest volcano known in the solar system."},
- {en:"Jupiter", jp:"木星", km:142984, au:5.20, year:"11.9 years", day:"about 10 hours", col:"#d8b48a",
+ {img:"jupiter", credit:"NASA/JPL/University of Arizona (Cassini)", en:"Jupiter", jp:"木星", km:142984, au:5.20, year:"11.9 years", day:"about 10 hours", col:"#d8b48a",
   fact:"The biggest planet: more than eleven Earths would fit across it. Its Great Red Spot is a storm bigger than Earth."},
- {en:"Saturn", jp:"土星", km:120536, au:9.58, year:"29.5 years", day:"about 10.7 hours", col:"#e3cf8f", rings:true,
+ {img:"saturn", credit:"NASA/JPL/Space Science Institute (Cassini)", en:"Saturn", jp:"土星", km:120536, au:9.58, year:"29.5 years", day:"about 10.7 hours", col:"#e3cf8f", rings:true,
   fact:"Famous for its rings of ice and rock. It's so light for its size that, on average, it's less dense than water."},
- {en:"Uranus", jp:"天王星", km:51118, au:19.2, year:"84 years", day:"about 17 hours", col:"#9fd6e0",
+ {img:"uranus", credit:"NASA/JPL (Voyager 2)", en:"Uranus", jp:"天王星", km:51118, au:19.2, year:"84 years", day:"about 17 hours", col:"#9fd6e0",
   fact:"Tipped over by about 98 degrees, so it rolls around the Sun on its side."},
- {en:"Neptune", jp:"海王星", km:49528, au:30.1, year:"165 years", day:"about 16 hours", col:"#3f66d6",
+ {img:"neptune", credit:"NASA/JPL (Voyager 2)", en:"Neptune", jp:"海王星", km:49528, au:30.1, year:"165 years", day:"about 16 hours", col:"#3f66d6",
   fact:"The farthest planet, with the fastest winds measured in the solar system, around 2,000 km/h."}
 ];
 function planetRow(hi){
@@ -5305,6 +5351,8 @@ function planetRow(hi){
 function planetCard(i){
   var p = PLANETS[i];
   return planetRow(i) + '<div class="scifacts"><b lang="ja">' + p.jp + '</b><span>' + p.en + '</span></div>' +
+    '<figure class="sciimg"><img src="images/planets/' + p.img + '.jpg" alt="' + p.en + ', photographed by a NASA spacecraft" loading="lazy"><figcaption>Photo: ' + esc_(p.credit) + '. Public domain.' +
+    (p.en === "Venus" ? ' Venus is wrapped in cloud, so this is its surface mapped by radar.' : '') + '</figcaption></figure>' +
     '<table class="scitab"><tr><th>Width</th><td>' + p.km.toLocaleString("en") + ' km</td></tr><tr><th>From the Sun</th><td>' + p.au + ' AU</td></tr>' +
     '<tr><th>One year</th><td>' + p.year + '</td></tr><tr><th>One day</th><td>' + p.day + '</td></tr></table>' +
     '<p class="sci-note">1 AU is the Earth’s average distance from the Sun, about 150 million km.</p>';
@@ -5496,6 +5544,37 @@ var SCIENCE = [
         ["The spacing effect says…", ["reviewing over time beats cramming", "cramming beats spacing", "sleep doesn't matter", "only long sessions work"], 0, "Spread it out."],
         ["1.01 to the power 365 is about…", ["37.8", "3.65", "1.01", "365"], 0, "Compounding again."]]}
 ];
+function grayFig(n, alt, cap){
+  return '<figure class="sciimg"><img src="images/body/gray' + n + '.jpg" alt="' + esc_(alt) + '" loading="lazy"><figcaption>' + cap +
+    ' Gray\u2019s Anatomy (1918), plate ' + n + '. Public domain.</figcaption></figure>';
+}
+function heartFlowSvg(){
+  var box = function(x, y, t, c){ return '<rect x="' + x + '" y="' + y + '" width="96" height="34" rx="6" fill="' + c + '" fill-opacity=".25" stroke="' + c + '"/><text x="' + (x + 48) + '" y="' + (y + 21) + '" text-anchor="middle" font-size="11" font-weight="700" fill="currentColor">' + t + '</text>'; };
+  var path = function(pts, c){ return '<polyline points="' + pts + '" fill="none" stroke="' + c + '" stroke-width="1.8" marker-end="url(#ah)"/>'; };
+  /* atria on top, ventricles below, as in the real heart; lungs above, body below */
+  return '<svg class="sci" viewBox="0 0 340 260" role="img" aria-label="Blood flow: body to right atrium, right ventricle, lungs, left atrium, left ventricle, body">' +
+    '<defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="currentColor"/></marker></defs>' +
+    box(122, 8, "Lungs", "#2fa36b") + box(10, 80, "Right atrium", "#3b7dd8") + box(234, 80, "Left atrium", "#d9534f") +
+    box(10, 150, "Right ventricle", "#3b7dd8") + box(234, 150, "Left ventricle", "#d9534f") + box(122, 218, "Body", "#e3a33d") +
+    path("122,235 4,235 4,97 8,97", "#3b7dd8") + path("58,114 58,148", "#3b7dd8") + path("106,160 150,140 160,44", "#3b7dd8") +
+    path("218,25 282,25 282,78", "#d9534f") + path("282,114 282,148", "#d9534f") + path("282,184 282,235 220,235", "#d9534f") + '</svg>' +
+    '<p class="sci-note">The order blood travels in (a diagram, not a picture of the heart). Blue: oxygen-poor blood on the right side. Red: oxygen-rich blood on the left side.</p>';
+}
+SCIENCE.push({id:"sc_heart", title:"The heart", icon:"heart", jpTopic:"jw_heart", blurb:"Where your heart is, its four chambers, and how blood flows, with real anatomy plates.",
+  beats:[
+   {text:"Your heart sits in the middle of your chest, behind the breastbone, between your two lungs, tipped a little to the left. It's about the size of your fist.", visual: function(){ return grayFig(1218, "The heart's position behind the ribs and breastbone", "The heart (red) behind the ribs."); }},
+   {text:"Here it is with the lungs. In anatomy pictures you're facing the person, so their left side is on your right.", visual: function(){ return grayFig(490, "The heart between the right and left lungs", "Heart and lungs from the front."); }},
+   {text:"From the front you can see the right atrium, the right ventricle, the left ventricle, and the two big arteries leaving the top: the aorta and the pulmonary artery.", visual: function(){ return grayFig(492, "Front surface of the heart with its labelled chambers and arteries", "The front of the heart."); }},
+   {text:"The heart has four chambers. The two atria on top collect blood; the two ventricles below pump it out. The right side sends blood to the lungs; the left side sends it to the whole body.", visual: function(){ return heartFlowSvg(); }},
+   {text:"The heart feeds itself too: the coronary arteries, the red branches here, carry blood to the heart muscle. A blocked one causes a heart attack.", visual: function(){ return grayFig(492, "Coronary arteries on the front of the heart", "Coronary arteries (red) and veins (blue)."); }},
+   {text:"The back of the heart shows the veins bringing blood home, and the left atrium, where blood from the lungs arrives.", visual: function(){ return grayFig(491, "Back surface of the heart showing the left atrium and veins", "The back of the heart."); }},
+   {text:"An adult's resting heart usually beats about 60 to 100 times a minute: around 100,000 times a day. Feel your pulse at your wrist or neck!"}],
+  quiz:[["Where is the heart?", ["Behind the breastbone, between the lungs, tipped left", "Low on the left side of the belly", "Under the right ribs", "Behind the stomach"], 0, "Middle of the chest, tipped left."],
+        ["How many chambers does the heart have?", ["4", "2", "3", "6"], 0, "Two atria, two ventricles."],
+        ["The right side of the heart pumps blood to…", ["the lungs", "the brain only", "the whole body", "the legs only"], 0, "The left side pumps it to the body."],
+        ["The coronary arteries…", ["supply the heart muscle itself", "carry air", "drain the lungs", "connect the kidneys"], 0, "A blockage causes a heart attack."],
+        ["In an anatomy picture, the person's left side is…", ["on your right", "on your left", "at the top", "hidden"], 0, "You're facing them."],
+        ["A typical adult resting heart rate is…", ["60 to 100 beats a minute", "10 to 20", "150 to 200", "1 a second exactly"], 0, "About 100,000 beats a day."]]});
 var SCI_CATS = [], SCI_QUESTIONS = [];
 SCIENCE.forEach(function(L){
   SCI_CATS.push({id:L.id, name:L.title}); CATNAME[L.id] = L.title; CAT_ICON[L.id] = L.icon;
@@ -5554,8 +5633,9 @@ var TEACHER_SECTIONS = [
      .concat([{title:"Free play", icon:"note", meta:"just the fretboard", start:function(){ openEar("guitar", null); }}]); }},
   {id:"jpop", title:"J-pop Chords & Aoi Song", icon:"note", blurb:"The chord progressions behind J-pop and anime songs. Jam with Aoi's band, then let her write you a song.",
    modules:function(){ return PROGRESSIONS.map(function(pg){ return {title:pg.jp, icon:"note", meta:pg.en + " \u00b7 " + pg.chords.join(" "), start:function(){ openGroove({prog: pg.id, you: "strum"}); }}; })
-     .concat([{title:"Aoi writes a song", icon:"heart", meta:"a new tune over a J-pop progression", start:function(){ aoiSongNew(); }}])
-     .concat(aoiSongs().map(function(sg){ return {title:sg.title, icon:"heart", meta:sg.jp + " \u00b7 " + progById(sg.prog).jp, start:function(){ openSheet(sg.id); }}; })); }},
+     .concat([{title:"Aoi writes a song", icon:"heart", meta:"a new tune over a J-pop progression", start:function(){ aoiSongNew(); }},
+              {title:"Aoi writes a rock anthem", icon:"heart", meta:"stomp-stomp-clap, power chords, Aoi's choir", start:function(){ aoiSongNew(null, "anthem"); }}])
+     .concat(aoiSongs().map(function(sg){ return {title:sg.title, icon:"heart", meta:sg.jp + " \u00b7 " + (sg.style === "anthem" ? progById(sg.prog).en : progById(sg.prog).jp), start:function(){ openSheet(sg.id); }}; })); }},
   {id:"drums", title:"Drums", icon:"note", blurb:"Kick, snare and hi-hat: learn the beats, then drum along with Aoi's band.",
    modules:function(){ return [musModule(BAND_LESSONS[0], BAND_LESSONS[0].beats.length + " steps \u00b7 quiz", function(){ bandLesson(BAND_LESSONS[0]); })]
      .concat(DRUM_PATTERNS.map(function(d){ return {title:d.name, icon:"note", meta:d.jp + " \u00b7 play along", start:function(){ openGroove({prog: "axis", you: "drums", drum: d.id, bpm: d.id === "jpop16" ? 84 : 92}); }}; })); }},
@@ -6683,6 +6763,7 @@ var LINES = {
   cook_start:"Let's cook! Gather everything first.",
   sales_start:"Let me introduce your customer.",
   lesson_done:"Lesson done! Nice work.",
+  bday:"\u304a\u8a95\u751f\u65e5\u304a\u3081\u3067\u3068\u3046\uff01 Happy birthday!",
   your_turn:"Now it's your turn \u2014 give it a try!"
 };
 function reactId(correct, repeatMiss, streak){

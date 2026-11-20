@@ -10,7 +10,7 @@ cd "$(dirname "$0")"
 rm -rf app/src/main/assets/www
 mkdir -p app/src/main/assets/www
 cp -r ../../aoi-teacher/index.html ../../aoi-teacher/manifest.json ../../aoi-teacher/icons \
-      ../../aoi-teacher/sprites ../../aoi-teacher/audio app/src/main/assets/www/
+      ../../aoi-teacher/sprites ../../aoi-teacher/audio ../../aoi-teacher/images app/src/main/assets/www/
 mkdir -p app/src/main/assets/www/phrasebook
 cp ../../aoi-teacher/phrasebook/phrasebook.js app/src/main/assets/www/phrasebook/
 mkdir -p app/src/main/assets/www/grammar

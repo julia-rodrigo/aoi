@@ -278,6 +278,27 @@ TOPICS += [
            ["北極星 doesn't seem to move because…", ["it sits almost exactly above the Earth's North Pole", "it's very close", "it's the brightest star", "it's a planet"], 0, "Everything else circles around it."]]},
 ]
 
+
+TOPICS += [
+ {"id": "jw_heart", "title": "The heart & blood", "icon": "heart",
+  "blurb": "The heart's four rooms, arteries and veins, in Japanese.",
+  "words": [("心臓", "しんぞう", "shinzō", "heart"), ("心房", "しんぼう", "shinbō", "atrium (upper chamber)"), ("心室", "しんしつ", "shinshitsu", "ventricle (lower chamber)"),
+            ("血液", "けつえき", "ketsueki", "blood"), ("動脈", "どうみゃく", "dōmyaku", "artery"), ("静脈", "じょうみゃく", "jōmyaku", "vein"),
+            ("肺", "はい", "hai", "lungs"), ("脈", "みゃく", "myaku", "pulse")],
+  "sents": [S("心臓には[しんぞうには] 四つの[よっつの] 部屋が[へやが] あります。", "shinzō ni wa yottsu no heya ga arimasu", "The heart has four rooms."),
+            S("動脈は[どうみゃくは] 心臓から[しんぞうから] 血を[ちを] 運びます。[はこびます]", "dōmyaku wa shinzō kara chi o hakobimasu", "Arteries carry blood away from the heart."),
+            S("静脈は[じょうみゃくは] 心臓に[しんぞうに] 血を[ちを] 戻します。[もどします]", "jōmyaku wa shinzō ni chi o modoshimasu", "Veins bring blood back to the heart."),
+            S("心臓は[しんぞうは] 一日に[いちにちに] 約[やく] 十万回[じゅうまんかい] 動きます。[うごきます]", "shinzō wa ichinichi ni yaku jūmankai ugokimasu", "The heart beats about 100,000 times a day."),
+            S("手首で[てくびで] 脈を[みゃくを] 測ります。[はかります]", "tekubi de myaku o hakarimasu", "You take your pulse at the wrist.")],
+  "rhyme": S("ドキドキ 心臓、[しんぞう] 動脈[どうみゃく] 行って、[いって] 静脈[じょうみゃく] 帰る！[かえる]",
+             "dokidoki shinzō, dōmyaku itte, jōmyaku kaeru!", "Thump-thump goes the heart: out through the arteries, home through the veins!"),
+  "quiz": [["心臓 is…", ["the heart", "the lungs", "blood", "a vein"], 0, "しんぞう."],
+           ["動脈 carry blood…", ["away from the heart", "to the heart", "to the stomach only", "nowhere"], 0, "Arteries: away."],
+           ["How many rooms (chambers) does the heart have?", ["four", "two", "three", "six"], 0, "Two 心房 and two 心室."],
+           ["静脈 is read…", ["じょうみゃく", "せいみゃく", "どうみゃく", "しずみゃく"], 0, "A tricky one: 静 here is じょう."],
+           ["脈 is your…", ["pulse", "breath", "bone", "skin"], 0, "みゃく."]]},
+]
+
 # A narrated intro to Japan's dialects (examples voiced; Aoi speaks with standard intonation).
 DIALECT = {
  "id": "jw_dialects", "title": "Accents & dialects", "icon": "torii",

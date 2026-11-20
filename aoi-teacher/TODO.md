@@ -61,7 +61,20 @@ Done in round 1:
 - [x] Science & World: planets to scale, real star charts, Pythagoras, compound growth, 15 minutes a day
 - [x] Japanese words: Planets & the Sun (すいきんちかもくどってんかい), Stars & Tanabata
 
+Done in rounds 2 and 3:
+- [x] Happy Birthday to sing, play and strum; Aoi's rock anthems (Queen-like style, original tunes)
+- [x] NASA planet photos; a heart lesson with Gray's Anatomy plates tucked behind "see the real drawing"
+- [x] Cute, colourful cartoon pictures and toon-shaded 3D you can turn: solar system, real night sky, heart
+- [x] Teacher sections grouped (Japanese, Music, Science & World, Life Home & Work, Flying & Study);
+      every quiz in the Quiz page
+- [x] FL Studio recording, mixing and mastering; guitar pedals with a playable pedalboard
+- [x] Waltz box step, writing a cheque, exercise basics with a 6-round timer
+- [x] Miso soup, chicken & vegetable soup, dorayaki, shiratama dango
+
 Next rounds:
+- [ ] Medical basics (first aid, when to see a doctor), herbs (culinary, with safety), geology and
+      mechanics, chemistry (elements and the periodic table), tech news (via chat, it changes daily),
+      staying on track and ready for anything (habits, emergency kit / 防災)
 - [ ] Body and heart with real reference images (needs Wikimedia/NASA hosts allowed, or images you provide)
 - [ ] Animals: butterflies vs moths, insects vs spiders, dog and cat breeds (needs real photos for pictures)
 - [ ] Christmas and Japanese festivals (お正月, 節分, ひな祭り, 七夕, お盆, 七五三)

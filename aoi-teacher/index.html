@@ -765,6 +765,26 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 .pbseg.pb4{grid-template-columns:repeat(4, 1fr);}
 .sci{width:100%; height:auto; display:block; color:var(--fg);}
 .sci-note{margin:2px 0 0; font-size:11px; color:var(--muted);}
+.three{position:relative; width:100%; height:330px; border-radius:16px; overflow:hidden; border:3px solid #2b2d42; background:#8fd6ff; touch-action:none;}
+.three canvas{display:block; width:100% !important; height:100% !important;}
+.three-tip{position:absolute; left:10px; top:10px; padding:6px 12px; border-radius:999px; background:#fff3d6; color:#2b2d42; border:2.5px solid #2b2d42; font-weight:800; font-size:13px; opacity:0; transition:opacity .2s; pointer-events:none;}
+.three-tip.on{opacity:1;}
+.cute{border-radius:16px; background:#e9f8ff;}
+.cute-beat{transform-origin:186px 165px; animation:cutebeat 1s ease-in-out infinite;}
+@keyframes cutebeat{0%,60%,100%{transform:scale(1);} 15%{transform:scale(1.06);} 30%{transform:scale(1);} 45%{transform:scale(1.04);}}
+@media (prefers-reduced-motion: reduce){ .cute-beat{animation:none;} }
+.realplate{border:2px dashed var(--line); border-radius:10px; padding:6px 10px;} .realplate summary{cursor:pointer; font-weight:700; font-size:13px;}
+.secgroup{margin:16px 0 4px; font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent-2);}
+.pedals{display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:8px;}
+.pedal{position:relative; display:flex; flex-direction:column; align-items:flex-start; gap:3px; text-align:left; padding:12px 10px 10px; border:3px solid #2b2d42; border-radius:14px; background:var(--pc); color:#2b2d42; font-family:inherit; cursor:pointer;}
+.pedal b{font-size:15px;} .pedal small{font-size:11px; line-height:1.3;}
+.pedal .led{position:absolute; right:10px; top:10px; width:12px; height:12px; border-radius:50%; background:#5a5a5a; border:2px solid #2b2d42;}
+.pedal.on .led{background:#ff3b3b; box-shadow:0 0 10px #ff3b3b;}
+.pedal.on{transform:translateY(2px); box-shadow:inset 0 0 0 3px #fff;}
+.tbig{font-size:22px; font-weight:800; text-align:center; padding:18px 8px; border-radius:14px; border:3px solid #2b2d42; background:#fff3d6; color:#2b2d42;}
+.tbig.work{background:#a8e06c;} .tbig.rest{background:#8fd6ff;}
+.waltzbox{display:block;}
+
 .sciimg{margin:0; display:flex; flex-direction:column; align-items:center; gap:4px;}
 .sciimg img{max-width:100%; max-height:300px; height:auto; border-radius:6px; background:#fff;}
 .sciimg figcaption{font-size:11px; color:var(--muted); text-align:center;}
@@ -1029,6 +1049,7 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 
   <!-- QUIZ SELECT -->
   <div id="view-quiz-select" hidden>
+    <div class="hubgrid" id="quizMore"></div>
     <div class="hubgrid">
       <button class="hubcard" id="hubCardPPL" type="button">
         <span class="badge" style="align-self:flex-start;">PPL Checkride</span>
@@ -2327,7 +2348,7 @@ function showView(name, opts){
      the Teacher lesson (also TEACH_VIEWS) are untouched, and so is Aoi's Day's own portrait view. */
   document.body.classList.toggle("daytripMode", name === "daytrip");
   if (name !== "phrasebook") pbStop();
-  musStop();
+  musStop(); threeStop();
   jpStopAudio();
   if (window.AoiHost && window.AoiHost.onView) window.AoiHost.onView(name);
   document.getElementById("cardZone").scrollTop = 0; window.scrollTo(0, 0);
@@ -2369,6 +2390,16 @@ function renderQuizSelect(){
   var gkBuiltCount = Object.keys(BUILT_TOPICS).length;
   var gkAnswered = 0;
   SUBJECTS.gk.questions.forEach(function(q){ if (Object.prototype.hasOwnProperty.call(gkAns, q.id)) gkAnswered++; });
+  var more = document.getElementById("quizMore");
+  more.innerHTML = "";
+  [["jp", "Japanese"], ["music", "Music"], ["prod", "Music Production"], ["sci", "Science & World"], ["life", "Life & Skills"]].forEach(function(x){
+    var sub = SUBJECTS[x[0]]; if (!sub) return;
+    var ans = loadAnswers(sub), done = sub.questions.filter(function(q){ return Object.prototype.hasOwnProperty.call(ans, q.id); }).length;
+    var b = document.createElement("button"); b.type = "button"; b.className = "hubcard";
+    b.innerHTML = '<span class="badge" style="align-self:flex-start;">' + esc_(x[1]) + '</span><h3>' + esc_(sub.name) + ' quizzes</h3><p>' + sub.questions.length + ' questions in ' + sub.cats.length + ' topics \u2014 ' + done + ' answered.</p>';
+    b.addEventListener("click", function(){ openSubject(x[0]); });
+    more.appendChild(b);
+  });
   document.getElementById("hubGKSub").textContent = gkBuiltCount + " of " + MASTER_TOPICS.length + " topics built so far (" + SUBJECTS.gk.questions.length + " questions) \u2014 " + gkAnswered + " answered.";
 }
 
@@ -3268,7 +3299,7 @@ function tutorPlayCurrent(){
 
 function tutorRenderBeat(){
   var beat = TUTOR_LESSON[tutorIdx];
-  musStop();
+  musStop(); threeStop();
   document.getElementById("teacherVisual").innerHTML = beat.visual || "";
   window.scrollTo(0, 0);
   tutorTranscript.push(beat.text);
@@ -4100,7 +4131,7 @@ function voiceGuitar(ctx, f, t, d){
   var src = ctx.createBufferSource(), g = ctx.createGain(), lp = ctx.createBiquadFilter(), body = ctx.createBiquadFilter();
   src.buffer = buf; lp.type = "lowpass"; lp.frequency.value = 3600;
   body.type = "peaking"; body.frequency.value = 220; body.Q.value = 1.2; body.gain.value = 5;
-  src.connect(body); body.connect(lp); lp.connect(g); g.connect(MUS.master);
+  src.connect(body); body.connect(lp); lp.connect(g); g.connect(MUS.dest || MUS.master);
   g.gain.setValueAtTime(0.85, t); g.gain.setValueAtTime(0.85, t + Math.max(d, 0.4)); g.gain.exponentialRampToValueAtTime(0.0001, t + Math.max(d, 0.4) + 0.6);
   src.start(t); src.stop(t + Math.max(d, 0.4) + 0.65); MUS.sources.push(src);
 }
@@ -5494,7 +5525,8 @@ function calcInit(){ Array.prototype.forEach.call(document.querySelectorAll("#te
 
 var SCIENCE = [
  {id:"sc_planets", title:"The planets", icon:"globe", jpTopic:"jw_planets", blurb:"Our eight planets, to scale, with a fact about each.",
-  beats: [{text:"Eight planets go around the Sun. Here they are at their real sizes compared with each other.", visual: function(){ return planetRow(-1); }}]
+  beats: [{text:"Here's the solar system in 3D! Drag to spin it, pinch to zoom, and tap a planet to hear its name. Sizes and distances are squeezed so everything fits.", visual: function(){ return threeBox(); }, onShow: threeMount("solar", {})},
+           {text:"Eight planets go around the Sun. Here they are at their real sizes compared with each other.", visual: function(){ return planetRow(-1); }}]
    .concat(PLANETS.map(function(p, i){ return {text: p.en + ": " + p.fact, visual: function(){ return planetCard(i); }}; }))
    .concat([{text:"In Japanese, five planets are named after the old elements: water, metal, fire, wood and earth. They also give us the days of the week!", visual: function(){ return planetRow(-1) +
      '<div class="mtable"><span>月 <b>Mon</b></span><span>火 <b>Tue</b></span><span>水 <b>Wed</b></span><span>木 <b>Thu</b></span><span>金 <b>Fri</b></span><span>土 <b>Sat</b></span><span>日 <b>Sun</b></span></div>'; }}]),
@@ -5506,7 +5538,9 @@ var SCIENCE = [
         ["Which planet is farthest from the Sun?", ["Neptune", "Uranus", "Pluto", "Saturn"], 0, "Pluto has been a dwarf planet since 2006."]]},
  {id:"sc_stars", title:"Stars & constellations", icon:"globe", jpTopic:"jw_stars", blurb:"Find Orion, the North Star and the Tanabata stars, from their real positions.",
   beats: SKY_CHARTS.map(function(ch){ return {text: ch.text, visual: function(){ return '<div class="scifacts"><b lang="ja">' + ch.jp + '</b><span>' + ch.title + '</span></div>' + skyChart(ch); }}; })
-   .concat([{text:"Constellations are patterns people imagine; the stars in them can be very different distances away. Light from Betelgeuse takes hundreds of years to reach us.", visual: function(){ return skyChart(SKY_CHARTS[0]); }}]),
+   .concat([{text:"Now look around a real night sky in 3D: every bright star here is placed from its real position. Drag to look up, down and around, and tap a star to name it.", visual: function(){ return threeBox("Drag to look around the sky; tap a star to name it. Star positions are real (J2000)."); },
+     onShow: threeMount("sky", {stars: STARS, look: "betelgeuse", lines: SKY_CHARTS.reduce(function(a, ch){ return a.concat(ch.lines); }, []).concat([["vega","altair"],["altair","deneb"],["deneb","vega"],["betelgeuse","sirius"],["sirius","procyon"],["procyon","betelgeuse"]])})},
+    {text:"Constellations are patterns people imagine; the stars in them can be very different distances away. Light from Betelgeuse takes hundreds of years to reach us.", visual: function(){ return skyChart(SKY_CHARTS[0]); }}]),
   quiz:[["Which constellation has three stars in a row called 三つ星?", ["Orion", "Cassiopeia", "the Big Dipper", "Cygnus"], 0, "Orion's belt."],
         ["To find the North Star from the Big Dipper, follow…", ["the two end stars of its bowl", "its handle", "the brightest star", "Orion's belt"], 0, "Merak to Dubhe, about five times further."],
         ["The brightest star in the night sky is…", ["Sirius", "Polaris", "Vega", "Betelgeuse"], 0, "Part of the Winter Triangle."],
@@ -5562,13 +5596,13 @@ function heartFlowSvg(){
 }
 SCIENCE.push({id:"sc_heart", title:"The heart", icon:"heart", jpTopic:"jw_heart", blurb:"Where your heart is, its four chambers, and how blood flows, with real anatomy plates.",
   beats:[
-   {text:"Your heart sits in the middle of your chest, behind the breastbone, between your two lungs, tipped a little to the left. It's about the size of your fist.", visual: function(){ return grayFig(1218, "The heart's position behind the ribs and breastbone", "The heart (red) behind the ribs."); }},
-   {text:"Here it is with the lungs. In anatomy pictures you're facing the person, so their left side is on your right.", visual: function(){ return grayFig(490, "The heart between the right and left lungs", "Heart and lungs from the front."); }},
-   {text:"From the front you can see the right atrium, the right ventricle, the left ventricle, and the two big arteries leaving the top: the aorta and the pulmonary artery.", visual: function(){ return grayFig(492, "Front surface of the heart with its labelled chambers and arteries", "The front of the heart."); }},
-   {text:"The heart has four chambers. The two atria on top collect blood; the two ventricles below pump it out. The right side sends blood to the lungs; the left side sends it to the whole body.", visual: function(){ return heartFlowSvg(); }},
-   {text:"The heart feeds itself too: the coronary arteries, the red branches here, carry blood to the heart muscle. A blocked one causes a heart attack.", visual: function(){ return grayFig(492, "Coronary arteries on the front of the heart", "Coronary arteries (red) and veins (blue)."); }},
-   {text:"The back of the heart shows the veins bringing blood home, and the left atrium, where blood from the lungs arrives.", visual: function(){ return grayFig(491, "Back surface of the heart showing the left atrium and veins", "The back of the heart."); }},
-   {text:"An adult's resting heart usually beats about 60 to 100 times a minute: around 100,000 times a day. Feel your pulse at your wrist or neck!"}],
+   {text:"Meet your heart! This is a friendly cartoon model. Drag to turn it all the way round, and tap each part to hear its name.", visual: function(){ return threeBox(); }, onShow: threeMount("heart", {face: true, spin: true})},
+   {text:"Your heart sits in the middle of your chest, behind the breastbone, between your two lungs, tipped a little to the left. It's about the size of your fist.", visual: function(){ return cuteChestSvg("heart") + realPlate(1218, "The heart's position behind the ribs and breastbone", "The heart (red) behind the ribs."); }},
+   {text:"The lungs wrap around it on both sides. In body pictures you're facing the person, so their left side is on your right.", visual: function(){ return cuteChestSvg("lungs") + realPlate(490, "The heart between the right and left lungs", "Heart and lungs from the front."); }},
+   {text:"It has four rooms: two atria on top that collect blood, and two ventricles below that pump it out. Tap them on the model! Blue is the right side, red is the left.", visual: function(){ return threeBox(); }, onShow: threeMount("heart", {})},
+   {text:"The right side sends blood to the lungs to pick up oxygen; the left side pumps it to the whole body.", visual: function(){ return heartFlowSvg(); }},
+   {text:"The two big tubes on top are the aorta, carrying blood to the body, and the pulmonary artery, carrying it to the lungs. The heart even feeds itself through little coronary arteries on its surface.", visual: function(){ return threeBox() + realPlate(492, "Front surface of the heart with its arteries", "The front of the heart, with the coronary arteries in red."); }, onShow: threeMount("heart", {spin: true})},
+   {text:"An adult's resting heart usually beats about 60 to 100 times a minute: around 100,000 times a day. Feel your pulse at your wrist or neck!", visual: function(){ return cuteChestSvg("heart"); }}],
   quiz:[["Where is the heart?", ["Behind the breastbone, between the lungs, tipped left", "Low on the left side of the belly", "Under the right ribs", "Behind the stomach"], 0, "Middle of the chest, tipped left."],
         ["How many chambers does the heart have?", ["4", "2", "3", "6"], 0, "Two atria, two ventricles."],
         ["The right side of the heart pumps blood to…", ["the lungs", "the brain only", "the whole body", "the legs only"], 0, "The left side pumps it to the body."],
@@ -5590,7 +5624,7 @@ function sciStart(L){
   musStop();
   var beats = [{text: L.blurb, pose:"present_r", eyes:"eyes_happy", visual: musCard(L.title, lessonHero(L.icon, L.title, L.blurb, [L.beats.length + " steps", L.quiz.length + " questions"]))}];
   L.beats.forEach(function(b, i){
-    beats.push({text: b.text, pose: i % 2 ? "point_l" : "point_r", eyes:null, visual: musCard(L.title + " · " + (i + 1) + " of " + L.beats.length, b.visual ? b.visual() : lessonHero(L.icon, L.title, "", [])), onShow: calcInit});
+    beats.push({text: b.text, pose: i % 2 ? "point_l" : "point_r", eyes:null, visual: musCard(L.title + " \u00b7 " + (i + 1) + " of " + L.beats.length, b.visual ? b.visual() : lessonHero(L.icon, L.title, "", [])), onShow: b.onShow || calcInit});
   });
   playLesson({title:L.title, tag:"Science", beats:beats, manual:true, backTo:"teacher", nextLabel:"Finish", onEndTap:function(){ sciQuiz(L); },
     finish:function(vis){
@@ -5600,6 +5634,289 @@ function sciStart(L){
       if (L.jpTopic) document.getElementById("sciJp").addEventListener("click", function(){ jpStart(L.jpTopic); });
     }});
   calcInit();
+}
+
+/* ---------- 3D scenes (three.js, loaded on demand), cute pictures, and the Life & Skills and
+   Music Production lessons ---------- */
+var aoi3d = null, aoi3dStop = null;
+function threeStop(){ if (aoi3dStop){ try{ aoi3dStop(); }catch(e){} aoi3dStop = null; } }
+function threeBox(hint){ return '<div class="three"></div><p class="sci-note">' + (hint || "Drag to turn it any way you like, pinch or scroll to zoom, tap something to name it.") + '</p>'; }
+function threeMount(name, opts){
+  return function(){
+    var el = document.querySelector("#teacherVisual .three"); if (!el) return;
+    threeStop();
+    opts = opts || {};
+    opts.onPick = function(n){ if (window.AoiHost) window.AoiHost.say(n, {pose:"point_r", eyes:"eyes_happy"}); };
+    (aoi3d ? Promise.resolve(aoi3d) : import("./vendor/aoi3d.js").then(function(m){ aoi3d = m; return m; }))
+      .then(function(m){ if (el.isConnected) aoi3dStop = m.mount(el, name, opts); })
+      .catch(function(){ el.innerHTML = '<p class="hint">3D needs a newer browser or app version.</p>'; });
+  };
+}
+window.aoiHushHooks.push(threeStop);
+
+/* A cute picture of where the heart sits, drawn to match the 1918 anatomy plates: behind the
+   breastbone, between the lungs, tipped to the person's left (your right). */
+function cuteChestSvg(focus){
+  var hl = function(k){ return focus === k ? ' stroke-width="4" stroke="#ff9f1c"' : ' stroke-width="2.5" stroke="#2b2d42"'; };
+  return '<svg class="sci cute" viewBox="0 0 340 300" role="img" aria-label="Cartoon chest: the heart between the lungs, tipped to the left">' +
+    '<rect x="40" y="10" width="260" height="285" rx="70" fill="#fff3d6" stroke="#2b2d42" stroke-width="2.5"/>' +
+    [60, 95, 130, 165, 200].map(function(y){ return '<path d="M72 ' + y + ' Q170 ' + (y + 26) + ' 268 ' + y + '" fill="none" stroke="#f0d3a6" stroke-width="7" stroke-linecap="round"/>'; }).join("") +
+    '<path d="M86 70 Q70 150 84 236 Q120 262 156 236 L158 92 Q130 54 86 70z" fill="#ffb3c1"' + hl("lungs") + '/>' +
+    '<path d="M254 70 Q272 150 258 236 Q226 262 196 238 Q214 214 206 182 L190 92 Q214 54 254 70z" fill="#ffb3c1"' + hl("lungs") + '/>' +
+    '<rect x="160" y="52" width="20" height="150" rx="10" fill="#ffe08a" stroke="#2b2d42" stroke-width="2"/>' +
+    '<g' + (focus === "heart" ? ' class="cute-beat"' : '') + '><path d="M150 132 Q154 104 184 108 Q218 112 222 146 Q226 190 206 226 Q196 236 186 226 Q156 196 150 160z" fill="#ff7a8c"' + hl("heart") + '/>' +
+    '<path d="M150 132 Q154 104 176 106 Q178 160 192 222 Q172 202 158 180 Q150 160 150 132z" fill="#6fa8ff" stroke="none"/>' +
+    '<circle cx="176" cy="160" r="4" fill="#2b2d42"/><circle cx="198" cy="160" r="4" fill="#2b2d42"/><path d="M180 172 Q187 179 194 172" fill="none" stroke="#2b2d42" stroke-width="2.5" stroke-linecap="round"/></g>' +
+    '<text x="112" y="150" text-anchor="middle" font-size="12" font-weight="800" fill="#2b2d42">Right lung</text>' +
+    '<text x="236" y="250" text-anchor="middle" font-size="12" font-weight="800" fill="#2b2d42">Left lung</text>' +
+    '<text x="170" y="282" text-anchor="middle" font-size="11" fill="#2b2d42">(their left is on your right)</text>' +
+    '<text x="170" y="44" text-anchor="middle" font-size="11" font-weight="800" fill="#2b2d42">breastbone</text></svg>';
+}
+function realPlate(n, alt, cap){
+  return '<details class="realplate"><summary>See the real 1918 anatomy drawing</summary>' + grayFig(n, alt, cap) + '</details>';
+}
+
+/* --- Life & Skills and Music Production: narrated lessons with quizzes --- */
+function flowSvg(nodes, colors){
+  var w = 340, n = nodes.length, bw = Math.min(96, (w - 10) / n - 10), out = '<svg class="sci cute" viewBox="0 0 ' + w + ' 90" role="img" aria-label="' + esc_(nodes.join(" to ")) + '">' +
+    '<defs><marker id="fa" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="#2b2d42"/></marker></defs>';
+  nodes.forEach(function(t, i){
+    var x = 5 + i * (w - 10) / n, c = colors[i % colors.length];
+    out += '<rect x="' + x + '" y="22" width="' + bw + '" height="46" rx="12" fill="' + c + '" stroke="#2b2d42" stroke-width="2"/>' +
+      '<text x="' + (x + bw / 2) + '" y="49" text-anchor="middle" font-size="' + (t.length > 11 ? 9.5 : 11) + '" font-weight="800" fill="#2b2d42">' + esc_(t) + '</text>';
+    if (i < n - 1) out += '<line x1="' + (x + bw + 1) + '" y1="45" x2="' + (5 + (i + 1) * (w - 10) / n - 3) + '" y2="45" stroke="#2b2d42" stroke-width="2" marker-end="url(#fa)"/>';
+  });
+  return out + '</svg>';
+}
+var ZELDA = ["#8fd6ff", "#a8e06c", "#ffd166", "#ffb3a7", "#7ee0d3", "#d6c1ff"];
+
+/* The waltz box step, drawn as footprints. Leader's steps; the follower mirrors them. */
+var WALTZ = [ /* [left foot x,y], [right foot x,y], which foot moved */
+  [[-15, 0], [15, 0], ""], [[-15, -60], [15, 0], "L"], [[-15, -60], [45, -60], "R"], [[15, -60], [45, -60], "L"],
+  [[15, -60], [45, 0], "R"], [[-15, 0], [45, 0], "L"], [[-15, 0], [15, 0], "R"]];
+function waltzSvg(k){
+  var st = WALTZ[k], foot = function(p, side, moved){
+    var x = 170 + p[0] * 1.6, y = 200 + p[1] * 1.6;
+    return '<ellipse cx="' + x + '" cy="' + y + '" rx="14" ry="26" fill="' + (moved ? (side === "L" ? "#ff9f1c" : "#2ec4b6") : "#fff3d6") + '" stroke="#2b2d42" stroke-width="2.5"/>' +
+      '<text x="' + x + '" y="' + (y + 5) + '" text-anchor="middle" font-size="14" font-weight="800" fill="#2b2d42">' + side + '</text>';
+  };
+  return '<svg class="sci cute" viewBox="0 0 340 260" role="img" aria-label="Waltz box step, count ' + k + '">' +
+    '<rect x="128" y="88" width="120" height="120" rx="8" fill="none" stroke="#a8e06c" stroke-width="3" stroke-dasharray="6 5"/>' +
+    '<text x="170" y="30" text-anchor="middle" font-size="22" font-weight="800" fill="#2b2d42">' + (k ? "Count " + (k > 3 ? k - 3 : k) + (k > 3 ? " (second half)" : "") : "Start: feet together") + '</text>' +
+    '<text x="300" y="70" text-anchor="middle" font-size="11" fill="#2b2d42">forward ↑</text>' +
+    foot(st[0], "L", st[2] === "L") + foot(st[1], "R", st[2] === "R") + '</svg>';
+}
+function waltzPlay(){
+  var box = document.querySelector("#teacherVisual .waltzbox"); if (!box) return;
+  var spb = 60 / 84;
+  for (var k = 0; k <= 6; k++) (function(k){
+    musLater(function(){ box.innerHTML = waltzSvg(k); }, k * spb * 1000);
+    if (k > 0) drumHit(k % 3 === 1 ? "K" : "H", k * spb - spb + 0.05, k % 3 === 1 ? 1 : 0.7);
+  })(k);
+}
+/* A sample cheque, US style, with made-up details. */
+function checkSvg(focus){
+  var f = function(k){ return focus === k ? ' fill="#ffd166" fill-opacity=".55"' : ' fill="none"'; };
+  return '<svg class="sci cute" viewBox="0 0 340 170" role="img" aria-label="A sample cheque">' +
+    '<rect x="2" y="2" width="336" height="166" rx="10" fill="#e9f8ff" stroke="#2b2d42" stroke-width="2"/>' +
+    '<text x="12" y="20" font-size="9" fill="#2b2d42">Your Name · 1 Sample Street</text><text x="300" y="20" font-size="10" font-weight="800" fill="#2b2d42">101</text>' +
+    '<rect x="218" y="26" width="112" height="16"' + f("date") + '/><text x="222" y="38" font-size="9" fill="#2b2d42">Date  <tspan font-weight="800">Nov 20, 2026</tspan></text>' +
+    '<rect x="8" y="48" width="236" height="18"' + f("payee") + '/><text x="12" y="61" font-size="8" fill="#2b2d42">PAY TO THE ORDER OF  <tspan font-size="11" font-weight="800">Aoi’s Bakery</tspan></text>' +
+    '<rect x="250" y="48" width="80" height="18" stroke="#2b2d42"' + f("num") + '/><text x="256" y="61" font-size="11" font-weight="800" fill="#2b2d42">$ 45.50</text>' +
+    '<rect x="8" y="72" width="322" height="18"' + f("words") + '/><text x="12" y="85" font-size="10" font-weight="800" fill="#2b2d42">Forty-five and 50/100 ———————— <tspan font-weight="400" font-size="8">DOLLARS</tspan></text>' +
+    '<text x="12" y="104" font-size="10" font-weight="800" fill="#2b2d42">SAMPLE BANK</text>' +
+    '<rect x="8" y="112" width="150" height="16"' + f("memo") + '/><text x="12" y="124" font-size="8" fill="#2b2d42">MEMO  <tspan font-size="10" font-weight="800">Dorayaki!</tspan></text>' +
+    '<rect x="186" y="112" width="144" height="16"' + f("sign") + '/><line x1="190" y1="126" x2="326" y2="126" stroke="#2b2d42"/><text x="196" y="122" font-size="11" font-style="italic" fill="#2b2d42">Your signature</text>' +
+    '<rect x="8" y="140" width="322" height="20"' + f("micr") + '/><text x="14" y="154" font-size="10" fill="#2b2d42" font-family="monospace">⑆123456789⑆  000123456⑈  0101</text>' +
+    '<text x="250" y="104" font-size="18" font-weight="800" fill="#ff6b6b" opacity=".6">VOID</text></svg>';
+}
+/* An interval timer for the exercise lesson: 30 s work, 15 s rest, 6 rounds, with beeps. */
+function timerBox(){ return '<div class="scicalc timerbox"><div class="tbig" data-tclock>Ready</div><div class="mctl"><button class="btn primary" type="button" data-tstart>&#9654; Start 6 rounds</button></div><p class="sci-note">30 seconds of moves, 15 seconds of rest. Squats, wall push-ups, lunges, plank, glute bridges, march on the spot.</p></div>'; }
+function timerRun(btn){
+  var clock = document.querySelector("#teacherVisual [data-tclock]"); if (!clock) return;
+  musStop();
+  var moves = ["Squats", "Wall push-ups", "Lunges", "Plank", "Glute bridges", "March on the spot"], t = 0;
+  moves.forEach(function(mv, r){
+    for (var s = 0; s < 45; s++) (function(r, s){
+      musLater(function(){
+        var work = s < 30, left = work ? 30 - s : 45 - s;
+        clock.textContent = (work ? mv : "Rest, next: " + (moves[r + 1] || "done!")) + " · " + left + "s";
+        clock.className = "tbig " + (work ? "work" : "rest");
+        if (s === 0 || s === 30) musNote("piano", s === 0 ? 84 : 72, 0.01, 0.4);
+        if (left <= 3) musNote("piano", 79, 0.01, 0.15);
+      }, (r * 45 + s) * 1000);
+    })(r, s);
+  });
+  musLater(function(){ clock.textContent = "All done! Great work!"; clock.className = "tbig work"; if (window.AoiHost) window.AoiHost.line("lesson_done"); }, 6 * 45 * 1000);
+}
+document.getElementById("teacherVisual").addEventListener("click", function(e){
+  var b = e.target.closest && e.target.closest("[data-tstart], [data-waltz], [data-pedal], [data-pstrum]");
+  if (!b) return;
+  if (b.hasAttribute("data-tstart")) timerRun(b);
+  else if (b.hasAttribute("data-waltz")) waltzPlay();
+  else if (b.hasAttribute("data-pedal")){ b.classList.toggle("on"); b.setAttribute("aria-pressed", b.classList.contains("on")); pedalStrum(b.getAttribute("data-pstyle")); }
+  else pedalStrum(b.getAttribute("data-pstrum"));
+});
+
+/* A pedalboard you can hear: switch pedals on and strum through them. */
+var PEDALS = [
+ {id:"comp", name:"Compressor", col:"#7ee0d3", what:"Evens out loud and soft notes; clean funk and country sparkle."},
+ {id:"od", name:"Overdrive", col:"#a8e06c", what:"Warm, light grit, like a valve amp turned up."},
+ {id:"dist", name:"Distortion", col:"#ff9f1c", what:"Heavy, saturated crunch: the J-rock and metal sound."},
+ {id:"chorus", name:"Chorus", col:"#8fd6ff", what:"A shimmering doubled sound, like two guitars at once."},
+ {id:"trem", name:"Tremolo", col:"#d6c1ff", what:"The volume pulses up and down: surf and vintage."},
+ {id:"delay", name:"Delay", col:"#ffd166", what:"Echoes that repeat after you play."},
+ {id:"reverb", name:"Reverb", col:"#ffb3a7", what:"The sound of a room or hall around you."}
+];
+function pedalboardHtml(){
+  return '<div class="pedals">' + PEDALS.map(function(p){
+    return '<button type="button" class="pedal" data-pedal="' + p.id + '" aria-pressed="false" style="--pc:' + p.col + '"><i class="led"></i><b>' + p.name + '</b><small>' + esc_(p.what) + '</small></button>';
+  }).join("") + '</div><div class="mctl"><button class="btn primary" type="button" data-pstrum="chord">&#9835; Strum a chord</button><button class="btn" type="button" data-pstrum="riff">Play a riff</button></div>' +
+  '<p class="sci-note">Signal chain: guitar → compressor → drive → modulation → delay → reverb → amp. Tap pedals on and off.</p>';
+}
+function shaper(ctx, k){ var n = 1024, c = new Float32Array(n); for (var i = 0; i < n; i++){ var x = i * 2 / n - 1; c[i] = Math.tanh(k * x) / Math.tanh(k); } var w = ctx.createWaveShaper(); w.curve = c; w.oversample = "4x"; return w; }
+function impulse(ctx, secs){ var len = ctx.sampleRate * secs, b = ctx.createBuffer(2, len, ctx.sampleRate); for (var ch = 0; ch < 2; ch++){ var d = b.getChannelData(ch); for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); } return b; }
+function pedalChain(ctx, on){
+  var input = ctx.createGain(), node = input, t = ctx.currentTime, keep = [];
+  var link = function(n){ node.connect(n); node = n; };
+  if (on.comp){ var c = ctx.createDynamicsCompressor(); c.threshold.value = -32; c.ratio.value = 6; link(c); }
+  if (on.od){ var g1 = ctx.createGain(); g1.gain.value = 3; link(g1); link(shaper(ctx, 2.5)); var lp1 = ctx.createBiquadFilter(); lp1.frequency.value = 3800; link(lp1); var o1 = ctx.createGain(); o1.gain.value = 0.55; link(o1); }
+  if (on.dist){ var g2 = ctx.createGain(); g2.gain.value = 10; link(g2); link(shaper(ctx, 12)); var lp2 = ctx.createBiquadFilter(); lp2.frequency.value = 3200; link(lp2); var o2 = ctx.createGain(); o2.gain.value = 0.3; link(o2); }
+  if (on.chorus){ var mix = ctx.createGain(), dl = ctx.createDelay(0.05), lfo = ctx.createOscillator(), dep = ctx.createGain();
+    dl.delayTime.value = 0.018; lfo.frequency.value = 1.3; dep.gain.value = 0.004; lfo.connect(dep); dep.connect(dl.delayTime); lfo.start(t); lfo.stop(t + 4); keep.push(lfo);
+    node.connect(mix); node.connect(dl); var wg = ctx.createGain(); wg.gain.value = 0.7; dl.connect(wg); wg.connect(mix); node = mix; }
+  if (on.trem){ var tg = ctx.createGain(), tl = ctx.createOscillator(), td = ctx.createGain(); tg.gain.value = 0.55; tl.frequency.value = 6; td.gain.value = 0.45; tl.connect(td); td.connect(tg.gain); tl.start(t); tl.stop(t + 4); keep.push(tl); link(tg); }
+  if (on.delay){ var out = ctx.createGain(), d = ctx.createDelay(1), fb = ctx.createGain(), wet = ctx.createGain();
+    d.delayTime.value = 0.34; fb.gain.value = 0.42; wet.gain.value = 0.45; node.connect(out); node.connect(d); d.connect(fb); fb.connect(d); d.connect(wet); wet.connect(out); node = out; }
+  if (on.reverb){ var rout = ctx.createGain(), cv = ctx.createConvolver(), rw = ctx.createGain(); cv.buffer = impulse(ctx, 2.2); rw.gain.value = 0.45; node.connect(rout); node.connect(cv); cv.connect(rw); rw.connect(rout); node = rout; }
+  node.connect(MUS.master);
+  keep.forEach(function(k){ MUS.sources.push(k); });
+  return input;
+}
+function pedalStrum(kind){
+  var ctx = musCtx(); if (!ctx) return;
+  var on = {};
+  Array.prototype.forEach.call(document.querySelectorAll("#teacherVisual .pedal.on"), function(p){ on[p.getAttribute("data-pedal")] = true; });
+  MUS.dest = pedalChain(ctx, on);
+  if (kind === "riff") ["E3", "G3", "A3", "E3", "G3", "A#3", "A3"].forEach(function(n, i){ musNote("guitar", noteMidi(n), 0.02 + [0, .3, .6, 1.2, 1.5, 1.8, 2.0][i], 0.35); });
+  else chordMidis(CHORD_SHAPE[on.dist || on.od ? "E5" : "G"]).forEach(function(m, j){ musNote("guitar", m, 0.02 + j * 0.02, 1.6); });
+  MUS.dest = null;
+}
+
+var LIFE = [
+ {id:"lf_waltz", title:"How to waltz", icon:"heart", blurb:"The box step in 3/4 time: one-two-three, one-two-three.",
+  beats:[
+   {text:"A waltz is in 3/4 time: count ONE two three, ONE two three, with a slight lean on ONE.", visual: function(){ return '<div class="waltzbox">' + waltzSvg(0) + '</div><div class="mctl"><button class="btn primary" type="button" data-waltz>&#9654; Watch the box step</button></div>'; }},
+   {text:"Count 1: step forward with your left foot.", visual: function(){ return waltzSvg(1); }},
+   {text:"Count 2: step to the side and a little forward with your right foot.", visual: function(){ return waltzSvg(2); }},
+   {text:"Count 3: bring your left foot to close beside your right. That's half a box!", visual: function(){ return waltzSvg(3); }},
+   {text:"Count 1 again: step back with your right foot. Count 2: left foot to the side. Count 3: right foot closes. You've drawn a box on the floor!", visual: function(){ return waltzSvg(6); }},
+   {text:"Press play and step along: the box loops round. Stay tall, frame your arms, and rise slightly on counts 2 and 3. Your partner mirrors you: right foot back first.", visual: function(){ return '<div class="waltzbox">' + waltzSvg(0) + '</div><div class="mctl"><button class="btn primary" type="button" data-waltz>&#9654; Step along</button></div>'; }}],
+  quiz:[["A waltz is counted in…", ["3s: one-two-three", "4s", "2s", "5s"], 0, "3/4 time."],
+        ["In the leader's box step, count 1 is…", ["left foot forward", "right foot back", "a spin", "a jump"], 0, "Then right foot to the side, left foot closes."],
+        ["The basic step draws a…", ["box on the floor", "circle", "zig-zag", "straight line"], 0, "Hence 'box step'."],
+        ["Your partner…", ["mirrors you: right foot back first", "does the same as you", "stands still", "steps sideways only"], 0, "Mirror image."]]},
+ {id:"lf_check", title:"Writing a cheque", icon:"doc", blurb:"Every box on a cheque, and how to keep it safe.",
+  beats:[
+   {text:"Here's a sample cheque, US style. Each part matters. Let's go through them.", visual: function(){ return checkSvg(""); }},
+   {text:"Write today's date at the top right.", visual: function(){ return checkSvg("date"); }},
+   {text:"After 'Pay to the order of', write exactly who gets the money: a person's or a company's name.", visual: function(){ return checkSvg("payee"); }},
+   {text:"In the box, write the amount in numbers, starting right next to the dollar sign so nothing can be squeezed in.", visual: function(){ return checkSvg("num"); }},
+   {text:"On the long line, write the amount in words, with cents as a fraction over 100, then draw a line to fill the space. The words are the legal amount if they don't match.", visual: function(){ return checkSvg("words"); }},
+   {text:"The memo line is optional: a note to yourself, like an invoice number. Then sign it the way your bank knows.", visual: function(){ return checkSvg("sign"); }},
+   {text:"The numbers at the bottom are the bank's routing number, your account number, and the cheque number. Never sign a blank cheque, always use a pen, and write VOID across mistakes.", visual: function(){ return checkSvg("micr"); }},
+   {text:"In Japan, personal cheques are rare; people use bank transfers, called 振込 (furikomi), and cheques, 小切手 (kogitte), are mostly for businesses."}],
+  quiz:[["Where do you write the amount in numbers?", ["In the box by the dollar sign", "On the memo line", "At the bottom", "Next to the date"], 0, "Start right next to the $."],
+        ["If the numbers and the words don't match, the bank usually goes by…", ["the words", "the numbers", "the memo", "the date"], 0, "So write the words carefully."],
+        ["Why draw a line after the amount in words?", ["So nobody can add to it", "To look neat", "It's the signature", "To void the cheque"], 0, "Fill the empty space."],
+        ["You should never…", ["sign a blank cheque", "write the date", "use a pen", "write a memo"], 0, "Anyone could fill it in."],
+        ["In Japan, a bank transfer is called…", ["振込 (furikomi)", "小切手 (kogitte)", "複利 (fukuri)", "積立 (tsumitate)"], 0, "Cheques are 小切手."]]},
+ {id:"lf_move", title:"Exercise basics", icon:"gauge", blurb:"How much to move, a safe warm-up, and a 6-round timer to do it with Aoi.",
+  beats:[
+   {text:"The World Health Organization suggests adults get 150 to 300 minutes of moderate activity a week, like brisk walking, plus muscle-strengthening on at least 2 days. Children: about an hour a day.", visual: function(){ return flowSvg(["Warm up", "Move", "Strength", "Cool down"], ZELDA); }},
+   {text:"Warm up for 5 to 10 minutes first: march, swing your arms, and roll your shoulders, so your muscles are ready."},
+   {text:"Good form beats speed: in a squat, knees follow your toes and your back stays long; in a push-up, keep a straight line from head to heels. Wall or knee push-ups are a great start."},
+   {text:"Stop if you feel chest pain, dizziness or sharp pain, and talk to a doctor before starting if you have a health condition."},
+   {text:"Ready? Six moves, 30 seconds each, 15 seconds rest. I'll count you through!", visual: function(){ return timerBox(); }}],
+  quiz:[["WHO suggests adults get how much moderate activity a week?", ["150 to 300 minutes", "10 minutes", "1,000 minutes", "None"], 0, "Plus strength on 2 days."],
+        ["Before exercise you should…", ["warm up for 5 to 10 minutes", "stretch hard while cold", "eat a big meal", "skip it"], 0, "Get the muscles ready."],
+        ["In a squat, your knees should…", ["follow the direction of your toes", "cave inwards", "lock straight", "go behind your heels"], 0, "Knees over toes."],
+        ["If you feel chest pain while exercising…", ["stop and get medical advice", "push through", "go faster", "hold your breath"], 0, "Safety first."]]}
+];
+var PRODUCTION = [
+ {id:"pr_record", title:"Recording in FL Studio", icon:"headset", blurb:"Recording a mic or a guitar into FL Studio, step by step.",
+  beats:[
+   {text:"You need an audio interface: it has a mic input with a preamp, an instrument input for guitar or bass, and headphone and speaker outputs.", visual: function(){ return flowSvg(["Mic / guitar", "Interface", "FL mixer", "Master", "Your ears"], ZELDA); }},
+   {text:"In Options, Audio settings, choose your interface's ASIO driver on Windows, or its device on a Mac. While recording, a small buffer, like 128 or 256 samples, keeps the delay low."},
+   {text:"Open the Mixer and pick an empty insert track. In the insert's input menu, choose your interface's input: input 1 for a mic, for example."},
+   {text:"Arm the insert for recording with its record button, and set your level so the loudest bits peak around minus 12 to minus 6 dB. Never let it hit red."},
+   {text:"Press the record button, choose recording audio into the Playlist as an audio clip, turn on the metronome and a count-in, then press play and perform."},
+   {text:"Tips: record without heavy effects (you can add them later), use a pop filter for vocals, and plug guitar into the instrument input, adding an amp-sim plugin afterwards."}],
+  quiz:[["What connects a mic to your computer for good recordings?", ["An audio interface", "A USB stick", "A webcam", "A guitar pedal"], 0, "Preamps, inputs and outputs."],
+        ["Where do you choose which input a track records from?", ["The mixer insert's input menu", "The piano roll", "The browser", "The tempo box"], 0, "Then arm it."],
+        ["A good recording level peaks around…", ["-12 to -6 dB, never clipping", "0 dB, in the red", "-60 dB", "as loud as possible"], 0, "Headroom keeps it clean."],
+        ["To keep latency low while recording, use…", ["a small buffer size", "a huge buffer", "more plugins", "a longer cable"], 0, "128 or 256 samples."]]},
+ {id:"pr_mix", title:"Mixing in FL Studio", icon:"dial", blurb:"Balancing your tracks so everything can be heard.",
+  beats:[
+   {text:"Send every instrument to its own mixer insert, so each one gets its own volume, panning and effects.", visual: function(){ return flowSvg(["Drums", "Bass", "Guitar", "Vocal", "Master"], ZELDA); }},
+   {text:"Start with levels and panning: get a rough balance with the faders before any plugins. Leave headroom on the master."},
+   {text:"EQ: with Fruity Parametric EQ 2, cut low rumble below about 80 to 100 Hz on things that aren't bass or kick, and cut clashing frequencies before boosting."},
+   {text:"Compression evens out loud and soft moments, so a vocal sits steadily in the mix. Use gentle settings at first."},
+   {text:"Put reverb and delay on send tracks, and send a little of each instrument to them. That glues everything into one space."},
+   {text:"Check your mix quietly, on headphones and on a phone speaker, compare it with a song you like, and take breaks: ears get tired."}],
+  quiz:[["Why give each instrument its own mixer insert?", ["Separate volume, pan and effects", "It's required to save", "To make it louder", "To record faster"], 0, "Control per instrument."],
+        ["A common EQ move on non-bass tracks is…", ["cutting the lows below about 80-100 Hz", "boosting everything", "cutting all highs", "removing the mids entirely"], 0, "Clears room for bass and kick."],
+        ["Reverb is often placed on…", ["a send track", "every insert separately", "the piano roll", "nothing"], 0, "Shared space, less CPU."],
+        ["Compression mainly…", ["evens out loud and soft moments", "changes the key", "adds echo", "pans sound"], 0, "Steadier dynamics."]]},
+ {id:"pr_master", title:"Mastering basics", icon:"gauge", blurb:"The final polish before you share your song.",
+  beats:[
+   {text:"Mastering is the last step: gentle EQ and compression on the whole mix, then a limiter at the very end of the master chain.", visual: function(){ return flowSvg(["Mix", "EQ", "Glue comp", "Limiter", "Export"], ZELDA); }},
+   {text:"The limiter, like Fruity Limiter, stops peaks going over a ceiling. Set the ceiling around minus 1 dB so the file doesn't distort after streaming conversion."},
+   {text:"Streaming services turn loud songs down to about the same loudness, often around minus 14 LUFS, so squashing your song super loud doesn't win. A loudness meter helps."},
+   {text:"Export a WAV at 24-bit for the master; make MP3s from that. Listen on several speakers before you release."}],
+  quiz:[["What goes last on the master chain?", ["A limiter", "A reverb", "A synth", "A metronome"], 0, "It catches the peaks."],
+        ["A safe limiter ceiling is around…", ["-1 dB", "+6 dB", "-40 dB", "0 dB exactly with no margin"], 0, "Room for conversion."],
+        ["Streaming services often normalise to about…", ["-14 LUFS", "0 LUFS", "-40 LUFS", "+10 LUFS"], 0, "Loudness wars don't pay."],
+        ["Export your master as…", ["a 24-bit WAV", "a 64 kbps MP3", "a screenshot", "MIDI"], 0, "Make MP3s from it."]]},
+ {id:"pr_pedals", title:"Guitar pedals", icon:"note", blurb:"What each kind of pedal does, the usual order, and a board you can hear.",
+  beats:[
+   {text:"Pedals change your guitar's sound before it reaches the amp. Switch some on and strum!", visual: function(){ return pedalboardHtml(); }},
+   {text:"Drive pedals add grit: overdrive is warm and light, distortion is heavy, fuzz is wild and woolly. Turn on Distortion and play the riff.", visual: function(){ return pedalboardHtml(); }},
+   {text:"Modulation pedals move the sound: chorus shimmers, tremolo pulses the volume, and phasers and flangers swoosh.", visual: function(){ return pedalboardHtml(); }},
+   {text:"Time pedals add space: delay repeats what you play, reverb puts you in a room or hall.", visual: function(){ return pedalboardHtml(); }},
+   {text:"A common order: tuner, wah, compressor, drive, modulation, delay, then reverb. Rules can be broken, but that's a great start.", visual: function(){ return flowSvg(["Tuner", "Comp", "Drive", "Chorus", "Delay", "Reverb"], ZELDA); }}],
+  quiz:[["Which pedal makes echoes?", ["Delay", "Compressor", "Tuner", "Wah"], 0, "Reverb makes a room sound."],
+        ["Overdrive vs distortion:", ["overdrive is lighter, distortion heavier", "they're opposites", "distortion is cleaner", "overdrive is a reverb"], 0, "Both add grit."],
+        ["Tremolo…", ["pulses the volume up and down", "changes the key", "adds echoes", "tunes the guitar"], 0, "Surf and vintage."],
+        ["A usual place for reverb is…", ["near the end of the chain", "first", "before the tuner", "inside the guitar"], 0, "Space after the sound is made."]]}
+];
+function infoSubject(key, name, list){
+  var cats = [], qs = [];
+  list.forEach(function(L){ cats.push({id:L.id, name:L.title}); CATNAME[L.id] = L.title; CAT_ICON[L.id] = L.icon;
+    L.quiz.forEach(function(q, i){ qs.push(Q(L.id + "_" + i, L.id, q[0], q[1], q[2], q[3])); }); });
+  SUBJECTS[key] = {key:key, name:name, cats:cats, questions:qs, storageKey:key + "_answers_v1"};
+}
+infoSubject("life", "Life & Skills", LIFE);
+infoSubject("prod", "Music Production", PRODUCTION);
+function infoStart(L, key, tag){
+  musStop(); threeStop();
+  var beats = [{text: L.blurb, pose:"present_r", eyes:"eyes_happy", visual: musCard(L.title, lessonHero(L.icon, L.title, L.blurb, [L.beats.length + " steps", L.quiz.length + " questions"]))}];
+  L.beats.forEach(function(b, i){
+    beats.push({text: b.text, pose: i % 2 ? "point_l" : "point_r", eyes:null, visual: musCard(L.title + " · " + (i + 1) + " of " + L.beats.length, b.visual ? b.visual() : lessonHero(L.icon, L.title, "", [])), onShow: b.onShow || calcInit});
+  });
+  var quiz = function(){ useSubject(key); learn = {catId:L.id, parts:[catQuestions(SUBJECTS[key], L.id)], part:0, backTo:"teacher"}; startSession("learn", L.id, shuffle(learn.parts[0].slice())); };
+  playLesson({title:L.title, tag:tag, beats:beats, manual:true, backTo:"teacher", nextLabel:"Finish", onEndTap:quiz,
+    finish:function(vis){
+      vis.innerHTML = '<div class="lcard">' + lessonHero("check", L.title + " done", L.quiz.length + " questions" + (L.jpTopic ? ", or learn the words in Japanese." : "."), []) +
+        '<div class="lbtns">' + (L.jpTopic ? '<button class="btn" id="infoJp" type="button">In Japanese</button>' : '') + '<button class="btn primary" id="infoQuiz" type="button">Start questions</button></div></div>';
+      document.getElementById("infoQuiz").addEventListener("click", quiz);
+      if (L.jpTopic) document.getElementById("infoJp").addEventListener("click", function(){ jpStart(L.jpTopic); });
+    }});
+}
+function infoModules(list, key, tag){
+  return list.map(function(L){ return {title:L.title, icon:L.icon, meta:L.beats.length + " steps · quiz",
+    progress:function(){ useSubject(key); var d = learnDone(L.id) >= 1; return {pct: d ? 100 : 0, label: d ? "done ✓" : L.beats.length + " steps · quiz", done: d}; },
+    start:function(){ infoStart(L, key, tag); }}; });
 }
 
 var TEACHER_SECTIONS = [
@@ -5646,6 +5963,10 @@ var TEACHER_SECTIONS = [
    modules:function(){ return SCIENCE.map(function(L){ return {title:L.title, icon:L.icon, meta:L.beats.length + " steps \u00b7 quiz" + (L.jpTopic ? " \u00b7 Japanese" : ""),
      progress:function(){ useSubject("sci"); var d = learnDone(L.id) >= 1; return {pct: d ? 100 : 0, label: d ? "done \u2713" : L.beats.length + " steps \u00b7 quiz", done: d}; },
      start:function(){ sciStart(L); }}; }); }},
+  {id:"production", title:"Music Production", icon:"headset", blurb:"Record, mix and master in FL Studio, and hear what guitar pedals do.",
+   modules:function(){ return infoModules(PRODUCTION, "prod", "Production"); }},
+  {id:"life", title:"Life & Skills", icon:"heart", blurb:"Dance a waltz, write a cheque, and get moving with an exercise timer.",
+   modules:function(){ return infoModules(LIFE, "life", "Life"); }},
   {id:"claude", title:"Claude Code", icon:"code", blurb:"Using Claude Code from your phone, narrated in Aoi's own voice.",
    modules:function(){ return [{title:"Claude Code on Your Phone", icon:"phone", meta:CLAUDE_CODE_BEATS.length + " scenes \u00b7 voiced", start:startTeacherLesson}]; }},
   {id:"ppl", title:"PPL Checkride", icon:"plane", blurb:"All 12 FAA knowledge areas. Each lesson teaches five points, then quizzes you on them.",
@@ -5656,6 +5977,13 @@ var TEACHER_SECTIONS = [
    modules:function(){ return RECIPES.map(function(r){ return {title:r.title, icon:"pot", meta:r.time + " \u00b7 " + r.steps.length + " steps", start:function(){ startCookAlong(r, "teacher"); }}; }); }},
   {id:"sales", title:"Sales", icon:"chat", blurb:"Meet a customer with a real reason to say no, learn how to answer it, then practise.",
    modules:function(){ return SALES_SCENARIOS.map(function(sc){ return {title:sc.title, icon:"chat", meta:sc.tips.length + " tips + practice", start:function(){ startSalesCoach(sc, "teacher"); }}; }); }}
+];
+var SECTION_GROUPS = [
+  ["Japanese", ["japan", "jpgrammar", "jpwords", "jpread", "jpsongs"]],
+  ["Music", ["music", "piano", "guitar", "jpop", "drums", "bass", "production"]],
+  ["Science & World", ["science"]],
+  ["Life, Home & Work", ["life", "kitchen", "sales", "claude"]],
+  ["Flying & Study", ["ppl", "gk"]]
 ];
 function openTeacherLib(secId){
   teacherSec = secId;
@@ -5672,7 +6000,13 @@ function renderTeacherLib(){
     setHeader("Learn with Aoi", "Teacher");
     lib.innerHTML = '<div class="libhead"><p>Pick a section. Aoi teaches every module in small steps, and the study ones end with questions.</p></div>';
     var list = document.createElement("div"); list.className = "seclist";
-    TEACHER_SECTIONS.forEach(function(x){
+    var byId = {}; TEACHER_SECTIONS.forEach(function(x){ byId[x.id] = x; });
+    var ordered = [];
+    SECTION_GROUPS.forEach(function(g){ var h = document.createElement("h2"); h.className = "secgroup"; h.textContent = g[0]; ordered.push(h);
+      g[1].forEach(function(id){ if (byId[id]){ ordered.push(byId[id]); delete byId[id]; } }); });
+    Object.keys(byId).forEach(function(id){ ordered.push(byId[id]); });
+    ordered.forEach(function(x){
+      if (x.nodeType){ list.appendChild(x); return; }
       var b = document.createElement("button"); b.type = "button"; b.className = "hubcard seccard";
       var n = x.modules().length;
       b.innerHTML = '<span class="lic">' + ico(x.icon) + '</span><span class="stxt"><h3>' + esc_(x.title) + '</h3><p>' + esc_(x.blurb) + '</p>' +
@@ -5811,6 +6145,18 @@ var RECIPES = [
   {id:"roasted-sheet-pan-veg", title:"Roasted Sheet-Pan Vegetables", time:"35 min", blurb:"Hands-off, and good with almost anything.",
    ingredients:["4 cups chopped vegetables (potatoes, carrots, broccoli, etc.)","3 tbsp olive oil","Salt, black pepper","1 tsp dried herbs (thyme, rosemary, or Italian blend)","1 clove garlic, minced (optional)"],
    steps:["Preheat the oven to 425°F (220°C).","Toss the vegetables with the olive oil, salt, pepper, herbs, and garlic on a sheet pan, spreading them in a single layer.","Roast for 20-30 minutes, flipping halfway, until tender and browned at the edges. Denser vegetables (potatoes, carrots) may need the full time; quicker ones (broccoli) can go in partway through."]},
+  {id:"miso-soup", title:"Miso Soup (\u5473\u564c\u6c41)", time:"10 min", blurb:"The everyday Japanese soup: dashi, tofu, wakame and miso.",
+   ingredients:["400ml water + 1 tsp instant dashi granules (or 400ml homemade dashi)","1 tbsp dried wakame seaweed","150g silken tofu, in small cubes","2 tbsp miso paste","1 spring onion, thinly sliced"],
+   steps:["Bring the water and dashi granules to a gentle simmer in a small pot.","Add the dried wakame; it swells in a minute or two.","Slide in the tofu cubes and warm them through for a minute.","Turn the heat to low. Put the miso in a ladle, dip it into the soup and stir until it dissolves, then mix it in. Don't let it boil after the miso goes in: boiling dulls its flavour.","Serve straight away, topped with spring onion."]},
+  {id:"veg-chicken-soup", title:"Chicken & Vegetable Soup", time:"40 min", blurb:"A cosy pot of soup for cold days.",
+   ingredients:["1 tbsp olive oil","1 onion, 2 carrots and 2 celery sticks, diced","2 cloves garlic, minced","300g chicken thighs","1 litre chicken stock","1 potato, diced","1/2 tsp dried thyme","Salt and pepper"],
+   steps:["Warm the oil in a big pot over medium heat and soften the onion, carrot and celery for about 5 minutes.","Add the garlic and stir for 30 seconds.","Add the chicken, stock, potato and thyme. Bring to a boil, then turn down and simmer, covered, for 20 to 25 minutes.","Lift out the chicken. It's done at 74\u00b0C (165\u00b0F) in the middle. Shred it with two forks and put it back.","Season with salt and pepper to taste, and serve with crusty bread."]},
+  {id:"dorayaki", title:"Dorayaki (\u3069\u3089\u713c\u304d)", time:"35 min", blurb:"Two fluffy honey pancakes hugging sweet red bean paste.",
+   ingredients:["2 eggs","60g sugar","1 tbsp honey","100g plain flour","1/2 tsp baking powder","2 to 3 tbsp water","200g anko (sweet red bean paste)","A little oil for the pan"],
+   steps:["Whisk the eggs, sugar and honey until pale and smooth.","Sift in the flour and baking powder and fold gently until just combined. Rest the batter for 15 minutes.","Stir in the water, a spoonful at a time, until the batter flows slowly like thick cream.","Wipe a non-stick pan with a little oil and heat it on low-medium. Pour about 3 tbsp of batter per pancake. When bubbles appear on top (about 2 minutes), flip and cook 30 seconds more.","Cool the pancakes under a clean towel so they stay soft. Spread anko on one, press a second on top, and enjoy."]},
+  {id:"shiratama", title:"Shiratama Dango (\u767d\u7389\u56e3\u5b50)", time:"20 min", blurb:"Soft, chewy rice-flour dumplings with kinako or anko.",
+   ingredients:["100g shiratamako (glutinous rice flour)","About 90ml water","Kinako (roasted soy flour) mixed with sugar, or anko, to serve"],
+   steps:["Put the shiratamako in a bowl and add the water a little at a time, kneading, until the dough is as soft as an earlobe: the classic Japanese test, \u8033\u305f\u3076\u304f\u3089\u3044.","Roll it into balls about 2cm across, and press a little dent in the middle of each so they cook evenly.","Drop them into boiling water. When they float, cook 1 to 2 minutes more.","Scoop them into a bowl of ice water to cool and firm up, then drain.","Serve with kinako sugar or anko. They're chewy, so cut them small for little kids and older people, and chew well."]},
   {id:"strawberry-parfait", title:"Strawberry Parfait", time:"15 min", blurb:"A Japanese-café-style parfait in a tall glass, no oven needed.",
    ingredients:["1 cup (about 150g) strawberries","1/2 cup (120ml) cold heavy cream","1 tbsp sugar","2 scoops vanilla ice cream (or 1 cup vanilla yogurt)","1/2 cup cornflakes or granola","1 tbsp strawberry jam","A wafer stick or a few biscuits, to top (optional)","A sprig of mint (optional)"],
    steps:["Rinse the strawberries and pat them dry. Keep 2 whole for the top; hull and slice the rest.","Whip the cold cream with the sugar until soft peaks form, about 2-3 minutes with a hand mixer. Keep it in the fridge until you build the parfait.","Spoon the jam into the bottom of a tall glass, then add a handful of sliced strawberries.","Add the cornflakes or granola, then a layer of whipped cream. Press a few strawberry slices against the glass so the layers show from the side.","Top with the ice cream (or yogurt), more cream, the whole strawberries, and the wafer stick and mint. Eat it straight away, before the crunchy layer goes soft."]},

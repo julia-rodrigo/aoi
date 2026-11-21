@@ -98,7 +98,7 @@ SONGS = [
   "quiz": [["かめ is…", ["a tortoise", "a hare", "a crow", "a frog"], 0, "うさぎ is the hare."],
            ["もしもし is also what you say…", ["answering the phone", "at dinner", "at bedtime", "when leaving"], 0, "もしもし = hello? on the phone."],
            ["お前 is…", ["a rough way to say 'you'", "a polite 'you'", "'me'", "'them'"], 0, "Use あなた or the person's name instead."],
-           ["のろい means…", ["slow", "fast", "cute", "far"], 0, "Not the same as のろい (呪い), a curse!"]]},
+           ["のろい means…", ["slow", "fast", "cute", "far"], 0, "Same sound as 呪い (a curse), but a different word!"]]},
 
  {"id": "js_akatonbo", "title": "Akatonbo", "jp": "赤とんぼ", "icon": "heart", "kind": "song",
   "blurb": "Red Dragonfly: a wistful 1920s song about childhood.",

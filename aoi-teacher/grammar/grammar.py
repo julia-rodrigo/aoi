@@ -208,7 +208,7 @@ LESSONS = [
    {"say": "で is where something happens, or how you do it, like by train.", "particle": ["で", "de", "where it happens, by what means"], "ex": "p_de"},
    {"say": "へ means 'toward'. It's written へ but said 'e'. It's close to に for going places.", "particle": ["へ", "e", "direction: toward"], "ex": "p_e"},
    {"say": "と means 'with', or 'and' between nouns.", "particle": ["と", "to", "with, and"], "ex": "p_to"},
-   {"say": "も means 'too' or 'also'. It replaces は or を.", "particle": ["も", "mo", "also, too"], "ex": "p_mo"},
+   {"say": "も means 'too' or 'also'. It replaces は, が or を.", "particle": ["も", "mo", "also, too"], "ex": "p_mo"},
    {"say": "の links two nouns, like 'of' or an apostrophe-s: 私の名前 is 'my name'.", "particle": ["の", "no", "of, 's"], "ex": "p_no"},
    {"say": "が points at the subject, and goes with likes and wants: 猫が好き, I like cats.", "particle": ["が", "ga", "subject; with likes and wants"], "ex": "p_ga"},
    {"say": "か at the end turns a polite sentence into a question.", "particle": ["か", "ka", "question"], "ex": "p_ka"}],

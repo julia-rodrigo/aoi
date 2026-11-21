@@ -275,6 +275,7 @@ details.jpRefWrap summary{cursor:pointer; font-family:var(--font-mono); font-siz
    that should reserve a row in the primary lesson view even collapsed. */
 .jpTranscriptLog{display:flex; flex-direction:column; gap:6px; padding:14px 16px; overflow-y:auto;}
 .jpTranscriptLog p{margin:0; font-size:12.5px; line-height:1.5; color:var(--muted);}
+.jpTranscriptLog .trja{display:block; margin-top:2px; font-size:12px; color:var(--text); opacity:.85;}
 .jpRefWrap > .jp-section{margin-top:8px;}
 .takecard .takehead{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;}
 .takecard .takename{font-size:13.5px; font-weight:600;}
@@ -1362,6 +1363,7 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 
 <script src="phrasebook/phrasebook.js"></script>
 <script src="grammar/japanese.js"></script>
+<script src="narration/narr.js"></script>
 <script>
 /* One voice at a time. Aoi's lines, lesson narration, phrase clips and her Japanese all use
    separate audio players; whenever one starts, every other one stops, so she never talks over
@@ -2598,24 +2600,23 @@ function startLearn(catId, partIndex, backTo){
   learn = {catId:catId, parts:parts, part:partIndex, backTo: backTo || (learn && learn.catId === catId && learn.backTo) || "subjectHome"};
   var pts = parts[partIndex], name = CATNAME[catId], icon = CAT_ICON[catId] || "book";
   var beats = [{
-    text: "Lesson " + (partIndex + 1) + " of " + parts.length + ": " + name + ". " + pts.length + " key points, then I'll ask you about them. Tap me or Next to move on.",
+    text: name + ". Here are the key points. Tap Next any time to skip ahead.",
     voice: "learn_intro", pose: "present_r", eyes: "eyes_happy",
     visual: '<div class="lcard">' + lessonHero(icon, name, activeSubject.name + " \u00b7 Lesson " + (partIndex + 1) + " of " + parts.length,
-      [pts.length + " points", pts.length + " questions"]) + '</div>'
+      [pts.length + " key points"]) + '</div>'
   }];
   pts.forEach(function(q, i){
-    beats.push({ text: q.explain, pose: i % 2 ? "present_l" : "point_r", eyes: null, visual: examVisual(q, i, pts.length, name) });
+    beats.push({ text: q.explain, pose: i % 2 ? "present_l" : "point_r", eyes: i === pts.length - 1 ? "eyes_happy" : null, visual: pointVisual(q, i, pts.length, name) });
   });
   playLesson({
-    title: name, tag: activeSubject.key === "ppl" ? "PPL" : "Learn", beats: beats, manual: true,
+    title: name, tag: activeSubject.key === "ppl" ? "PPL" : "Learn", beats: beats, manual: false,
     backTo: learn.backTo, nextLabel: "Finish lesson",
-    onEndTap: startLearnQuiz,
     finish: function(vis){
-      vis.innerHTML = '<div class="lcard">' + lessonHero("check", "Lesson " + (partIndex + 1) + " done",
-        "Now " + pts.length + " questions on exactly what you just learned.", []) +
-        '<div class="lbtns"><button class="btn primary" id="lessonQuizBtn" type="button">Start questions</button></div></div>';
-      document.getElementById("lessonQuizBtn").addEventListener("click", startLearnQuiz);
-      if (window.AoiHost) window.AoiHost.line("learn_quiz");
+      var subjKey = activeSubject.key, more = partIndex + 1 < parts.length;
+      lessonEnd(vis, {title: "Lesson " + (partIndex + 1) + " of " + parts.length + " done",
+        done: function(){ markLearnDone(catId, partIndex); },
+        again: function(){ useSubject(subjKey); startLearn(catId, partIndex, learn.backTo); },
+        next: more ? {label: "Next lesson", fn: function(){ useSubject(subjKey); startLearn(catId, partIndex + 1, learn.backTo); }} : null});
     }
   });
 }
@@ -3202,7 +3203,8 @@ function scheduleTeacherAdvance(textLen){
   clearLessonTimer();
   if (!lessonPlaying) return;
   var ms = (textLen / TEACHER_CPS + TEACHER_HOLD) * 1000 + 4000; /* generous margin beyond her real audio length */
-  if (LESSON.audioPaced && TUTOR_LESSON[tutorIdx] && TUTOR_LESSON[tutorIdx].audio) ms = Math.max(ms, 30000); /* the clip's end moves it on */
+  var cur = TUTOR_LESSON[tutorIdx];
+  if (cur && (narrFor(cur.text) || cur.sound || (LESSON.audioPaced && cur.audio))) ms = Math.max(ms, 45000); /* the last clip's end moves it on */
   lessonAdvanceTimer = setTimeout(function(){ teacherAdvance(); }, ms);
 }
 
@@ -3227,6 +3229,30 @@ function teacherFinish(){
   document.getElementById("teacherBackToLibBtn").addEventListener("click", function(){ openTeacherLib(teacherSec); });
   if (window.AoiHost) window.AoiHost.line("lesson_done", {pose:"present_r", eyes:"eyes_happy"});
 }
+
+/* Every Teacher lesson ends the same way, like the Claude Code lesson: no questions here (they all
+   live in the Quiz section), just a done card. o: {title, sub, done(), again(), extra:[{label, fn}],
+   next:{label, fn}}. done() records progress for the module list. */
+function lessonEnd(vis, o){
+  o = o || {};
+  if (o.done){ try{ o.done(); }catch(e){} }
+  var extra = o.extra || [];
+  vis.innerHTML = '<div class="lcard">' + lessonHero("check", o.title || "Lesson complete",
+      o.sub || "Nice work! When you want to test yourself, this lesson's questions are waiting in the Quiz section.", []) +
+    '<div class="lbtns">' + extra.map(function(x, i){ return '<button class="btn" type="button" data-lend="' + i + '">' + esc_(x.label) + '</button>'; }).join("") +
+    '<button class="btn" type="button" data-lend="again">Again</button>' +
+    '<button class="btn primary" type="button" data-lend="more">' + esc_(o.next ? o.next.label : "More lessons") + '</button></div></div>';
+  Array.prototype.forEach.call(vis.querySelectorAll("[data-lend]"), function(b){
+    b.addEventListener("click", function(){
+      var k = b.getAttribute("data-lend");
+      if (k === "again"){ if (o.again) o.again(); else { tutorIdx = 0; tutorTranscript = []; teacherEnded = false; setLessonPlaying(!LESSON.manual); tutorRenderBeat(); } }
+      else if (k === "more"){ if (o.next) o.next.fn(); else openTeacherLib(teacherSec); }
+      else extra[+k].fn();
+    });
+  });
+  if (window.AoiHost) window.AoiHost.line("lesson_done", {pose:"present_r", eyes:"eyes_happy"});
+}
+function markDoneIn(key, id, part){ useSubject(key); markLearnDone(id, part || 0); }
 
 function teacherTapAdvance(){
   if (teacherEnded){
@@ -3276,25 +3302,61 @@ document.getElementById("lessonPlayBtn").addEventListener("click", function(e){
 function tutorRenderTranscript(){
   var zone = document.getElementById("teacherTranscript");
   zone.innerHTML = tutorTranscript.map(function(t){
-    return "<p>" + t.replace(/&/g, "&amp;").replace(/</g, "&lt;") + "</p>";
+    var p = t.split("\u0001");
+    return "<p>" + esc_(p[0]) + (p[1] ? '<small class="trja" lang="ja">' + esc_(p[1]) + '</small>' : '') + "</p>";
   }).join("");
 }
 
+/* Aoi's narration. Every lesson line can have a recorded version in her voice (mostly Japanese,
+   with English words kept in English), listed in narration/narr.js by a hash of the English
+   caption: AOI_NARR[hash] = [clip file, the Japanese she says]. Lines without one stay silent. */
+function narrKey(t){
+  t = String(t || "").replace(/\s+/g, " ").trim();
+  var h = 0x811c9dc5;
+  for (var i = 0; i < t.length; i++){ h ^= t.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+  return ("0000000" + h.toString(16)).slice(-8);
+}
+function narrFor(text){ var N = window.AOI_NARR; return N ? N[narrKey(text)] || null : null; }
+/* One beat's sound, in order: her narration, then the beat's own sound (a strum, notes, a drum
+   beat), then its own clip (a Japanese example). Each waits for the one before, so she never
+   talks over herself or the music; when the last one ends the lesson moves on. */
+var tutorRun = 0;
 function tutorPlayCurrent(){
-  var beat = TUTOR_LESSON[tutorIdx];
-  $tutorAudio.pause();
-  if (!beat.audio){ $tutorAudio.onended = null; $tutorAudio.removeAttribute("src"); return; }
-  $tutorAudio.src = beat.audio;
+  var beat = TUTOR_LESSON[tutorIdx], run = ++tutorRun, nar = narrFor(beat.text);
+  $tutorAudio.pause(); $tutorAudio.onended = null; $tutorAudio.onerror = null;
+  var queue = [];
+  if (nar) queue.push({src: "audio/narr/" + nar[0]});
+  if (beat.sound) queue.push({fn: beat.sound});
+  if (beat.audio) queue.push({src: beat.audio});
+  else if (beat.say) queue.push({fn: function(){ deviceSay(beat.say); }, ms: 2400});
   var started = Date.now();
-  $tutorAudio.onended = function(){
-    if (!lessonPlaying) return;
-    if (!LESSON.audioPaced){ teacherAdvance(); return; }
-    /* Japanese lessons: Aoi says the Japanese while the caption shows the English, so leave
-       time to read the caption too before moving on. */
+  function live(){ return run === tutorRun && !views.teacherLesson.hidden; }
+  function done(){
+    if (!live() || !lessonPlaying) return;
     clearLessonTimer();
-    lessonAdvanceTimer = setTimeout(teacherAdvance, Math.max(1200, started + beat.text.length / TEACHER_CPS * 1000 - Date.now()));
-  };
-  if (lessonPlaying || LESSON.audioPaced) $tutorAudio.play().catch(function(){});
+    /* Leave time to read the English caption too before moving on. */
+    var read = LESSON.audioPaced ? beat.text.length / TEACHER_CPS * 1000 : 0;
+    lessonAdvanceTimer = setTimeout(teacherAdvance, Math.max(nar ? 900 : (LESSON.audioPaced ? 1200 : 0), started + read - Date.now()));
+  }
+  function step(i){
+    if (!live()) return;
+    if (i >= queue.length){ done(); return; }
+    var q = queue[i];
+    if (q.fn){
+      var r = null; try{ r = q.fn(); }catch(e){}
+      if (r && r.then) r.then(function(){ setTimeout(function(){ step(i + 1); }, 300); }, function(){ step(i + 1); });
+      else setTimeout(function(){ step(i + 1); }, q.ms || 2600);
+      return;
+    }
+    $tutorAudio.src = q.src;
+    $tutorAudio.onended = function(){ step(i + 1); };
+    var next = function(){ $tutorAudio.onerror = null; step(i + 1); };
+    /* a clip that can't load comes from the bundled copy where there is one, else stays silent */
+    $tutorAudio.onerror = function(){ if (!jpFallback($tutorAudio, function(){ return lessonPlaying || LESSON.audioPaced; }, next)) next(); };
+    if (lessonPlaying || LESSON.audioPaced) $tutorAudio.play().catch(function(){});
+  }
+  if (!queue.length){ $tutorAudio.removeAttribute("src"); return; }
+  step(0);
 }
 
 function tutorRenderBeat(){
@@ -3302,7 +3364,8 @@ function tutorRenderBeat(){
   musStop(); threeStop();
   document.getElementById("teacherVisual").innerHTML = beat.visual || "";
   window.scrollTo(0, 0);
-  tutorTranscript.push(beat.text);
+  var nj = narrFor(beat.text);
+  tutorTranscript.push(beat.text + (nj && nj[1] ? "\u0001" + nj[1] : ""));
   tutorRenderTranscript();
   if (window.AoiHost) window.AoiHost.say(beat.text, {pose: beat.pose || null, eyes: beat.eyes || null, voice: beat.voice});
   tutorPlayCurrent();
@@ -3317,14 +3380,11 @@ function tutorRenderBeat(){
     if (a) window.scrollTo(0, Math.max(0, a.getBoundingClientRect().top + (window.pageYOffset || 0) - 64));
   });
   if (beat.onShow){ var at = tutorIdx; setTimeout(function(){ if (tutorIdx === at && !views.teacherLesson.hidden) beat.onShow(); }, 350); }
-  if (beat.say && !beat.audio) deviceSay(beat.say);
 }
 
 document.getElementById("teacherReplayBtn").addEventListener("click", function(e){
   e.stopPropagation();
-  var b = TUTOR_LESSON[tutorIdx];
-  if (b && b.onShow){ b.onShow(); return; }
-  if (b && b.say && !b.audio){ deviceSay(b.say); return; }
+  musStop();
   tutorPlayCurrent();
   scheduleTeacherAdvance(TUTOR_LESSON[tutorIdx].text.length);
 });
@@ -3335,7 +3395,7 @@ function playLesson(lesson){
   clearLessonTimer();
   showView("teacherLesson", {backTo: lesson.backTo || "teacher"});
   setHeader(lesson.title, lesson.tag || "Teacher");
-  document.getElementById("teacherReplayBtn").hidden = !lesson.beats.some(function(b){ return b.audio || b.onShow || b.say; });
+  document.getElementById("teacherReplayBtn").hidden = !lesson.beats.some(function(b){ return b.audio || b.sound || b.say || narrFor(b.text); });
   lessonPlaying = !lesson.manual;
   var btn = document.getElementById("lessonPlayBtn");
   btn.innerHTML = lessonPlaying ? "&#10074;&#10074;" : "&#9654;";
@@ -3391,6 +3451,12 @@ function lessonHero(icon, title, sub, chips){
     (chips && chips.length ? '<div class="lchips">' + chips.map(function(c, i){
       return '<span class="lchip pop" style="animation-delay:' + (0.15 + i * 0.12).toFixed(2) + 's">' + esc_(c) + '</span>'; }).join('') + '</div>' : '') +
     '</div>';
+}
+/* A study point as a flashcard: the fact itself, not a multiple-choice question. */
+function pointVisual(q, i, n, name){
+  return '<div class="lcard"><div class="ctag">' + esc_(name) + ' \u00b7 Point ' + (i + 1) + ' of ' + n + '</div>' +
+    '<div class="examcard"><span class="elbl">Remember</span><div class="eq">' + esc_(q.q) + '</div>' +
+    '<div class="eopt pop ok" style="animation-delay:.15s"><span class="k">\u2713</span><span>' + esc_(q.choices[q.a]) + '</span></div></div></div>';
 }
 function examVisual(q, i, n, name){
   var L = ["A","B","C","D"];
@@ -3485,7 +3551,7 @@ function startSalesCoach(sc, backTo){
   sc.tips.forEach(function(t, i){
     beats.push({ text: t, pose: i % 2 ? "point_l" : "point_r", eyes: null, visual: trackVisual("How to answer it \u00b7 Tip " + (i + 1) + " of " + sc.tips.length, sc.tips, i) });
   });
-  playLesson({ title: sc.title, tag: "Sales", beats: beats, manual: true, backTo: backTo || "salesDetail", nextLabel: "Finish",
+  playLesson({ title: sc.title, tag: "Sales", beats: beats, manual: false, backTo: backTo || "salesDetail", nextLabel: "Finish",
     finish: function(vis){
       vis.innerHTML = '<div class="lcard">' + lessonHero("chat", "Your turn", chatAvailable()
           ? "Practise the pitch on " + name + " \u2014 Aoi plays the customer and won't fold just because you ask nicely."
@@ -3728,29 +3794,32 @@ function jpStopAudio(){
   if (jpSpeakingEl){ jpSpeakingEl.classList.remove("speaking"); jpSpeakingEl = null; }
 }
 /* Where the clips can't be served as separate files (the hosted preview has a cap on file
-   count), they ship as one script of base64 data, loaded only when a clip file fails. */
-var jpBundleWaiters = null;
-function jpBundle(cb){
-  if (window.JP_AUDIO_DATA){ cb(); return; }
-  if (jpBundleWaiters){ jpBundleWaiters.push(cb); return; }
-  jpBundleWaiters = [cb];
+   count), they ship as scripts of base64 data, loaded only when a clip file fails: the Japanese
+   lesson clips in grammar/jpaudio.js, and Aoi's narration in eight narration/narraudio_N.js
+   files, picked by the first hex digit of the clip name (0-1 in _0, 2-3 in _1...). */
+var clipBundleWaiters = {};
+function clipBundle(url, cb){
+  if (clipBundleWaiters[url] === true){ cb(); return; }
+  if (clipBundleWaiters[url]){ clipBundleWaiters[url].push(cb); return; }
+  clipBundleWaiters[url] = [cb];
   var sc = document.createElement("script");
-  sc.src = "grammar/jpaudio.js";
-  sc.onload = sc.onerror = function(){ var w = jpBundleWaiters; jpBundleWaiters = null; w.forEach(function(f){ f(); }); };
+  sc.src = url;
+  sc.onload = sc.onerror = function(){ var w = clipBundleWaiters[url]; clipBundleWaiters[url] = true; w.forEach(function(f){ f(); }); };
   document.head.appendChild(sc);
 }
-function jpFallback(audio, shouldPlay){
-  var src = audio.getAttribute("src") || "", m = /audio\/jp\/([0-9a-f]{12}\.mp3)$/.exec(src);
+function jpFallback(audio, shouldPlay, onFail){
+  var src = audio.getAttribute("src") || "", m = /audio\/(jp|narr)\/([0-9a-f]{12}\.mp3)$/.exec(src);
   if (!m) return false;
-  jpBundle(function(){
-    var d = window.JP_AUDIO_DATA && window.JP_AUDIO_DATA[m[1]];
-    if (!d || audio.getAttribute("src") !== src) return;
+  var url = m[1] === "jp" ? "grammar/jpaudio.js" : "narration/narraudio_" + (parseInt(m[2].charAt(0), 16) >> 1) + ".js";
+  clipBundle(url, function(){
+    var d = (window.JP_AUDIO_DATA && window.JP_AUDIO_DATA[m[2]]) || (window.NARR_AUDIO_DATA && window.NARR_AUDIO_DATA[m[2]]);
+    if (audio.getAttribute("src") !== src) return;
+    if (!d){ if (onFail) onFail(); return; }
     audio.src = "data:audio/mpeg;base64," + d;
     if (shouldPlay()) audio.play().catch(function(){});
   });
   return true;
 }
-$tutorAudio.addEventListener("error", function(){ jpFallback($tutorAudio, function(){ return lessonPlaying || LESSON.audioPaced; }); });
 function jpPlay(clip, el){
   jpStopAudio();
   try{ $tutorAudio.pause(); pbAudio.pause(); }catch(e){}
@@ -3865,26 +3934,20 @@ function jpModule(L, meta, start){
 /* ---- narrated lessons ---- */
 function jpPlayLesson(L, beats, opts){
   opts = opts || {};
-  playLesson({title: L.title, tag: opts.tag || "Japanese", beats: beats, manual: !opts.auto, audioPaced: true, backTo: "teacher",
+  playLesson({title: L.title, tag: opts.tag || "Japanese", beats: beats, manual: false, audioPaced: true, backTo: "teacher",
     nextLabel: "Finish",
-    onEndTap: function(){ jpStartQuiz(L); },
     finish: function(vis){
-      vis.innerHTML = '<div class="lcard">' + (opts.review ? opts.review() : '') +
-        lessonHero("check", L.title + " done", L.quiz.length + " questions on what you just learned.", []) +
-        '<div class="lbtns"><button class="btn" id="jpAgainBtn" type="button">Again</button>' +
-        '<button class="btn primary" id="jpQuizBtn" type="button">Start questions</button></div></div>';
-      document.getElementById("jpAgainBtn").addEventListener("click", function(){ jpStart(L.id); });
-      document.getElementById("jpQuizBtn").addEventListener("click", function(){ jpStartQuiz(L); });
-      if (window.AoiHost) window.AoiHost.line("learn_quiz");
+      lessonEnd(vis, {title: L.title + " done", done: function(){ markDoneIn("jp", L.id); }, again: function(){ jpStart(L.id); }});
+      if (opts.review){ var rv = document.createElement("div"); rv.innerHTML = opts.review(); vis.firstChild.insertBefore(rv, vis.firstChild.firstChild); jpApplyRomaji(); }
     }});
 }
 function jpIntro(L, chips, text){
-  return {text: text || (L.blurb + " Tap Next to go on, or press play and I'll keep going."), pose:"present_r", eyes:"eyes_happy",
+  return {text: text || L.blurb, pose:"present_r", eyes:"eyes_happy",
     visual: jpCard(L.title, lessonHero(L.icon, L.title, L.blurb, chips))};
 }
 function jpGrammarBeats(L){
   var n = L.beats.length;
-  var beats = [jpIntro(L, [n + " steps", L.quiz.length + " questions"])];
+  var beats = [jpIntro(L, [n + " steps"])];
   L.beats.forEach(function(b, i){
     var body = "";
     if (b.particle) body += '<div class="jpart"><span class="jpbig r-' + (JP_PARTICLE_ROLE[b.particle[0]] || "none") + '" lang="ja">' + esc_(b.particle[0]) +
@@ -3996,7 +4059,7 @@ function jpChartsLesson(){
     return {text: (c.kana ? c.title + ", " + c.en + ". " : c.title + ": " + c.en + ". ") + (c.kind || "Tap any form to hear it."),
       pose: i % 2 ? "point_l" : "point_r", eyes: null, visual: jpCard("Charts · " + (i + 1) + " of " + names.length, jpChart(nm))};
   });
-  playLesson({title: L.title, tag: "Japanese", beats: beats, manual: true, backTo: "teacher", nextLabel: "Done"});
+  playLesson({title: L.title, tag: "Japanese", beats: beats, manual: false, backTo: "teacher", nextLabel: "Done", finish: function(vis){ lessonEnd(vis, {title: "Charts done"}); }});
 }
 function jpStart(id){
   var L = jpFind(id);
@@ -4302,7 +4365,7 @@ document.addEventListener("click", function(e){
 function musLessonPlay(tokens, bpm){
   return function(){
     var notes = musParse(tokens), svgNotes = document.querySelectorAll("#teacherVisual .mnote");
-    musPlay(notes, "hum", bpm || 90, function(i){
+    return musPlay(notes, "hum", bpm || 90, function(i){
       Array.prototype.forEach.call(svgNotes, function(g){ g.classList.remove("on"); });
       if (svgNotes[i]) svgNotes[i].classList.add("on");
     }).then(function(){ Array.prototype.forEach.call(svgNotes, function(g){ g.classList.remove("on"); }); });
@@ -4318,7 +4381,7 @@ var MUSIC_LESSONS = [
    {text:"This curly sign is the treble clef. It wraps around the second line from the bottom, and that line is G.", tokens:"G4w", show:"G4w"},
    {text:"The lines, bottom to top, are E, G, B, D, F. Remember them as Every Good Boy Does Fine.", tokens:"E4q G4q B4q D5q F5q", show:"E4q G4q B4q D5q | F5q", names:"abc"},
    {text:"The spaces spell a word: F, A, C, E. FACE!", tokens:"F4q A4q C5q E5q", show:"F4q A4q C5q E5q", names:"abc"},
-   {text:"Middle C sits on its own short line below the staff, called a ledger line. It's right in the middle of a piano.", tokens:"C4w", show:"C4w", names:"abc"}],
+   {text:"Middle C sits on its own short line below the staff, called a ledger line. It's near the middle of a piano.", tokens:"C4w", show:"C4w", names:"abc"}],
   quiz:[["How many lines does a staff have?", ["5", "4", "6", "3"], 0, "Five lines, four spaces."],
         ["The treble clef curls around which line?", ["G", "C", "F", "E"], 0, "That's why it's also called the G clef."],
         ["The lines of the treble staff, bottom to top, are…", ["E G B D F", "F A C E", "C D E F G", "A B C D E"], 0, "Every Good Boy Does Fine."],
@@ -4364,25 +4427,18 @@ var MUSIC_LESSONS = [
 ];
 function musLessonBeats(L){
   var beats = [{text: L.blurb + " Tap any note on the staff to hear it.", pose:"present_r", eyes:"eyes_happy",
-    visual: musCard(L.title, lessonHero(L.icon, L.title, L.blurb, [L.beats.length + " steps", L.quiz.length + " questions"]))}];
+    visual: musCard(L.title, lessonHero(L.icon, L.title, L.blurb, [L.beats.length + " steps", "voiced"]))}];
   L.beats.forEach(function(b, i){
     var staff = b.show ? musStaff(musParse(b.show), {perRow: b.show.indexOf("|") > 0 ? 2 : 1, names: b.names || "", time: b.time, beats: b.beats}) : lessonHero("note", "Well done!", "", []);
-    beats.push({text: b.text, pose: i % 2 ? "point_l" : "point_r", eyes: null, onShow: b.tokens ? musLessonPlay(b.tokens, b.bpm) : null,
+    beats.push({text: b.text, pose: i % 2 ? "point_l" : "point_r", eyes: null, sound: b.tokens ? musLessonPlay(b.tokens, b.bpm) : null,
       visual: musCard(L.title + " · " + (i + 1) + " of " + L.beats.length, staff + (b.extra || ""))});
   });
   return beats;
 }
 function musStart(L){
   musStop();
-  playLesson({title: L.title, tag: "Music", beats: musLessonBeats(L), manual: true, backTo: "teacher", nextLabel: "Finish",
-    onEndTap: function(){ musQuiz(L); },
-    finish: function(vis){
-      vis.innerHTML = '<div class="lcard">' + lessonHero("check", L.title + " done", L.quiz.length + " questions on what you just learned.", []) +
-        '<div class="lbtns"><button class="btn" id="musAgainBtn" type="button">Again</button><button class="btn primary" id="musQuizBtn" type="button">Start questions</button></div></div>';
-      document.getElementById("musAgainBtn").addEventListener("click", function(){ musStart(L); });
-      document.getElementById("musQuizBtn").addEventListener("click", function(){ musQuiz(L); });
-      if (window.AoiHost) window.AoiHost.line("learn_quiz");
-    }});
+  playLesson({title: L.title, tag: "Music", beats: musLessonBeats(L), manual: false, backTo: "teacher", nextLabel: "Finish",
+    finish: function(vis){ lessonEnd(vis, {title: L.title + " done", done: function(){ markDoneIn("music", L.id); }, again: function(){ musStart(L); }}); }});
 }
 var MUS_CATS = [], MUS_QUESTIONS = [];
 MUSIC_LESSONS.forEach(function(L){
@@ -4827,20 +4883,16 @@ function chordsLesson(){
     visual: musCard("Guitar", '<div class="chordrow">' + CHORDS.map(function(c){ return '<button type="button" class="chordbtn" data-chord="' + c.shape + '">' + chordSvg(c) + '</button>'; }).join("") + '</div>')}];
   CHORDS.forEach(function(c, i){
     beats.push({text: c.text + " Its shape is " + c.shape.split("").join(" ") + ".", pose: i % 2 ? "point_l" : "point_r", eyes: null,
-      onShow: function(){ strum(c.shape); },
+      sound: function(){ strum(c.shape); },
       visual: musCard("Your first chords · " + (i + 1) + " of " + CHORDS.length, '<button type="button" class="chordbtn big" data-chord="' + c.shape + '">' + chordSvg(c) + '</button>' +
         '<p class="hint">× = don\'t play that string. ○ = play it open. Dots = press there.</p>')});
   });
   beats.push({text:"Try switching between C, G, Am and Em: that's the chords of countless pop songs. Tap each to hear it.", pose:"present_r", eyes:"eyes_happy",
     visual: musCard("Practice", '<div class="chordrow">' + ["C", "G", "Am", "Em"].map(function(n){ var c = CHORDS.filter(function(x){ return x.name === n; })[0];
       return '<button type="button" class="chordbtn" data-chord="' + c.shape + '">' + chordSvg(c) + '</button>'; }).join("") + '</div>')});
-  playLesson({title: L.title, tag: "Guitar", beats: beats, manual: true, backTo: "teacher", nextLabel: "Finish",
-    onEndTap: function(){ musQuiz(L); },
-    finish: function(vis){
-      vis.innerHTML = '<div class="lcard">' + lessonHero("check", "Chords done", L.quiz.length + " questions on the shapes.", []) +
-        '<div class="lbtns"><button class="btn primary" id="chQuizBtn" type="button">Start questions</button></div></div>';
-      document.getElementById("chQuizBtn").addEventListener("click", function(){ musQuiz(L); });
-    }});
+  playLesson({title: L.title, tag: "Guitar", beats: beats, manual: false, backTo: "teacher", nextLabel: "Finish",
+    finish: function(vis){ lessonEnd(vis, {title: "Chords done", done: function(){ markDoneIn("music", L.id); }, again: chordsLesson,
+      extra: [{label: "Chord library", fn: chordLibrary}]}); }});
 }
 document.getElementById("teacherVisual").addEventListener("click", function(e){
   var b = e.target.closest && e.target.closest("[data-chord]");
@@ -4990,16 +5042,13 @@ var GUITAR_LESSONS = [
 ];
 function guitarLesson(L){
   musStop();
-  var beats = [{text: L.blurb + " Tap any diagram to hear it.", pose:"present_r", eyes:"eyes_happy", visual: musCard(L.title, lessonHero("note", L.title, L.blurb, [L.beats.length + " steps", L.quiz.length + " questions"]))}];
+  var beats = [{text: L.blurb + " Tap any diagram to hear it.", pose:"present_r", eyes:"eyes_happy", visual: musCard(L.title, lessonHero("note", L.title, L.blurb, [L.beats.length + " steps", "voiced"]))}];
   L.beats.forEach(function(b, i){
-    beats.push({text: b.text, pose: i % 2 ? "point_l" : "point_r", eyes:null, onShow: function(){ strum(CHORD_SHAPE[b.chord]); },
+    beats.push({text: b.text, pose: i % 2 ? "point_l" : "point_r", eyes:null, sound: function(){ strum(CHORD_SHAPE[b.chord]); },
       visual: musCard(L.title + " · " + (i + 1) + " of " + L.beats.length, chordBtn(b.chord, true))});
   });
-  playLesson({title:L.title, tag:"Guitar", beats:beats, manual:true, backTo:"teacher", nextLabel:"Finish", onEndTap:function(){ musQuiz(L); },
-    finish:function(vis){
-      vis.innerHTML = '<div class="lcard">' + lessonHero("check", L.title + " done", L.quiz.length + " questions.", []) + '<div class="lbtns"><button class="btn primary" id="glQuiz" type="button">Start questions</button></div></div>';
-      document.getElementById("glQuiz").addEventListener("click", function(){ musQuiz(L); });
-    }});
+  playLesson({title:L.title, tag:"Guitar", beats:beats, manual:false, backTo:"teacher", nextLabel:"Finish",
+    finish:function(vis){ lessonEnd(vis, {title: L.title + " done", done: function(){ markDoneIn("music", L.id); }, again: function(){ guitarLesson(L); }}); }});
 }
 
 /* --- J-pop chord progressions --- */
@@ -5251,24 +5300,20 @@ var BAND_LESSONS = [
 ];
 function bandLesson(L){
   musStop();
-  var beats = [{text: L.blurb, pose:"present_r", eyes:"eyes_happy", visual: musCard(L.title, lessonHero("note", L.title, L.blurb, [L.beats.length + " steps", L.quiz.length + " questions"]))}];
+  var beats = [{text: L.blurb, pose:"present_r", eyes:"eyes_happy", visual: musCard(L.title, lessonHero("note", L.title, L.blurb, [L.beats.length + " steps", "voiced"]))}];
   L.beats.forEach(function(b, i){
     var vis = b.pattern ? drumGridStatic(drumPat(b.pattern)) : b.hit ? '<div class="dpads"><button type="button" class="dpad big" data-lhit="' + b.hit + '">' + ({K:"Kick", S:"Snare", H:"Hi-hat"})[b.hit] + '</button></div>'
       : '<div class="mtable bassnote"><span>' + midiName(b.note) + '</span></div>';
     beats.push({text: b.text, pose: i % 2 ? "point_l" : "point_r", eyes:null, visual: musCard(L.title + " · " + (i + 1) + " of " + L.beats.length, vis),
-      onShow: function(){
+      sound: function(){
         if (b.pattern){ var dp = drumPat(b.pattern), ctx = musCtx(); if (!ctx) return; for (var bar = 0; bar < 2; bar++) for (var s = 0; s < 16; s++) ["K", "S", "H"].forEach(function(k){ if (dp[k].charAt(s) === "x") drumHit(k, 0.1 + (bar * 16 + s) * 0.16); }); }
         else if (b.hit){ for (var k = 0; k < 4; k++) drumHit(b.hit, 0.05 + k * 0.4); }
         else musNote("bass", b.note, 0.05, 1.2);
       }});
   });
-  playLesson({title:L.title, tag: L.inst === "drums" ? "Drums" : "Bass", beats:beats, manual:true, backTo:"teacher", nextLabel:"Finish", onEndTap:function(){ musQuiz(L); },
-    finish:function(vis){
-      vis.innerHTML = '<div class="lcard">' + lessonHero("check", L.title + " done", "Questions, or jump straight into a jam.", []) +
-        '<div class="lbtns"><button class="btn" id="blJam" type="button">Jam now</button><button class="btn primary" id="blQuiz" type="button">Start questions</button></div></div>';
-      document.getElementById("blQuiz").addEventListener("click", function(){ musQuiz(L); });
-      document.getElementById("blJam").addEventListener("click", function(){ openGroove({prog: L.inst === "drums" ? "axis" : "komuro", you: L.inst, bpm: 84}); });
-    }});
+  playLesson({title:L.title, tag: L.inst === "drums" ? "Drums" : "Bass", beats:beats, manual:false, backTo:"teacher", nextLabel:"Finish",
+    finish:function(vis){ lessonEnd(vis, {title: L.title + " done", done: function(){ markDoneIn("music", L.id); }, again: function(){ bandLesson(L); },
+      extra: [{label: "Jam now", fn: function(){ openGroove({prog: L.inst === "drums" ? "axis" : "komuro", you: L.inst, bpm: 84}); }}]}); }});
 }
 function drumGridStatic(dp){ var keep = musState; musState = {step: -1}; var h = drumGridHtml(dp); musState = keep; return h; }
 document.getElementById("teacherVisual").addEventListener("click", function(e){
@@ -5355,7 +5400,7 @@ var PLANETS = [
  {img:"mars", credit:"NASA/JPL (Viking)", en:"Mars", jp:"火星", km:6792, au:1.52, year:"687 days", day:"24 h 40 min", col:"#c1440e",
   fact:"Red because of iron oxide (rust) in its dust. It has Olympus Mons, the tallest volcano known in the solar system."},
  {img:"jupiter", credit:"NASA/JPL/University of Arizona (Cassini)", en:"Jupiter", jp:"木星", km:142984, au:5.20, year:"11.9 years", day:"about 10 hours", col:"#d8b48a",
-  fact:"The biggest planet: more than eleven Earths would fit across it. Its Great Red Spot is a storm bigger than Earth."},
+  fact:"The biggest planet: about eleven Earths would fit across it. Its Great Red Spot is a storm bigger than Earth."},
  {img:"saturn", credit:"NASA/JPL/Space Science Institute (Cassini)", en:"Saturn", jp:"土星", km:120536, au:9.58, year:"29.5 years", day:"about 10.7 hours", col:"#e3cf8f", rings:true,
   fact:"Famous for its rings of ice and rock. It's so light for its size that, on average, it's less dense than water."},
  {img:"uranus", credit:"NASA/JPL (Voyager 2)", en:"Uranus", jp:"天王星", km:51118, au:19.2, year:"84 years", day:"about 17 hours", col:"#9fd6e0",
@@ -5415,7 +5460,7 @@ var SKY_CHARTS = [
   text:"Follow the two stars at the end of the Big Dipper's bowl, Merak then Dubhe, about five times their distance apart, and you reach Polaris, the North Star."},
  {id:"cassiopeia", title:"Cassiopeia & North Star", jp:"カシオペヤ座", center:[1.2, 74], stars:["caph","schedar","navi","ruchbah","segin","polaris"],
   lines:[["caph","schedar"],["schedar","navi"],["navi","ruchbah"],["ruchbah","segin"]],
-  text:"Cassiopeia is a W (or M) shape on the opposite side of the North Star from the Big Dipper, so one of them is always up."},
+  text:"Cassiopeia is a W (or M) shape on the opposite side of the North Star from the Big Dipper, so when one is low in the sky, the other is high."},
  {id:"summertri", title:"Summer Triangle & Tanabata", jp:"夏の大三角", center:[19.7, 30], stars:["vega","altair","deneb","sadr","albireo","gienah","deltacyg"],
   lines:[["deneb","sadr"],["sadr","albireo"],["gienah","sadr"],["sadr","deltacyg"]], tri:["vega","altair","deneb"],
   text:"Vega (織姫星), Altair (彦星) and Deneb make the Summer Triangle. In the Tanabata legend, the Milky Way flows between the two lovers, Vega and Altair. Deneb sits in the swan, Cygnus."}
@@ -5530,7 +5575,7 @@ var SCIENCE = [
    .concat(PLANETS.map(function(p, i){ return {text: p.en + ": " + p.fact, visual: function(){ return planetCard(i); }}; }))
    .concat([{text:"In Japanese, five planets are named after the old elements: water, metal, fire, wood and earth. They also give us the days of the week!", visual: function(){ return planetRow(-1) +
      '<div class="mtable"><span>月 <b>Mon</b></span><span>火 <b>Tue</b></span><span>水 <b>Wed</b></span><span>木 <b>Thu</b></span><span>金 <b>Fri</b></span><span>土 <b>Sat</b></span><span>日 <b>Sun</b></span></div>'; }}]),
-  quiz:[["Which is the biggest planet?", ["Jupiter", "Saturn", "Neptune", "Earth"], 0, "More than eleven Earths across."],
+  quiz:[["Which is the biggest planet?", ["Jupiter", "Saturn", "Neptune", "Earth"], 0, "About eleven Earths across."],
         ["Which planet is the hottest?", ["Venus", "Mercury", "Mars", "Jupiter"], 0, "Its thick air traps heat, about 465 °C."],
         ["Mars looks red because of…", ["iron oxide (rust) in its dust", "fire", "red oceans", "the Sun's light"], 0, "Rusty dust."],
         ["Which planet rolls around the Sun on its side?", ["Uranus", "Neptune", "Saturn", "Mercury"], 0, "Tilted about 98 degrees."],
@@ -5606,7 +5651,7 @@ SCIENCE.push({id:"sc_heart", title:"The heart", icon:"heart", jpTopic:"jw_heart"
   quiz:[["Where is the heart?", ["Behind the breastbone, between the lungs, tipped left", "Low on the left side of the belly", "Under the right ribs", "Behind the stomach"], 0, "Middle of the chest, tipped left."],
         ["How many chambers does the heart have?", ["4", "2", "3", "6"], 0, "Two atria, two ventricles."],
         ["The right side of the heart pumps blood to…", ["the lungs", "the brain only", "the whole body", "the legs only"], 0, "The left side pumps it to the body."],
-        ["The coronary arteries…", ["supply the heart muscle itself", "carry air", "drain the lungs", "connect the kidneys"], 0, "A blockage causes a heart attack."],
+        ["The coronary arteries…", ["supply the heart muscle itself", "carry air", "drain the lungs", "connect the kidneys"], 0, "A blockage can cause a heart attack."],
         ["In an anatomy picture, the person's left side is…", ["on your right", "on your left", "at the top", "hidden"], 0, "You're facing them."],
         ["A typical adult resting heart rate is…", ["60 to 100 beats a minute", "10 to 20", "150 to 200", "1 a second exactly"], 0, "About 100,000 beats a day."]]});
 var SCI_CATS = [], SCI_QUESTIONS = [];
@@ -5622,17 +5667,13 @@ function sciQuiz(L){
 }
 function sciStart(L){
   musStop();
-  var beats = [{text: L.blurb, pose:"present_r", eyes:"eyes_happy", visual: musCard(L.title, lessonHero(L.icon, L.title, L.blurb, [L.beats.length + " steps", L.quiz.length + " questions"]))}];
+  var beats = [{text: L.blurb, pose:"present_r", eyes:"eyes_happy", visual: musCard(L.title, lessonHero(L.icon, L.title, L.blurb, [L.beats.length + " steps", "voiced"]))}];
   L.beats.forEach(function(b, i){
     beats.push({text: b.text, pose: i % 2 ? "point_l" : "point_r", eyes:null, visual: musCard(L.title + " \u00b7 " + (i + 1) + " of " + L.beats.length, b.visual ? b.visual() : lessonHero(L.icon, L.title, "", [])), onShow: b.onShow || calcInit});
   });
-  playLesson({title:L.title, tag:"Science", beats:beats, manual:true, backTo:"teacher", nextLabel:"Finish", onEndTap:function(){ sciQuiz(L); },
-    finish:function(vis){
-      vis.innerHTML = '<div class="lcard">' + lessonHero("check", L.title + " done", L.quiz.length + " questions" + (L.jpTopic ? ", or learn the words in Japanese." : "."), []) +
-        '<div class="lbtns">' + (L.jpTopic ? '<button class="btn" id="sciJp" type="button">In Japanese</button>' : '') + '<button class="btn primary" id="sciQuiz" type="button">Start questions</button></div></div>';
-      document.getElementById("sciQuiz").addEventListener("click", function(){ sciQuiz(L); });
-      if (L.jpTopic) document.getElementById("sciJp").addEventListener("click", function(){ jpStart(L.jpTopic); });
-    }});
+  playLesson({title:L.title, tag:"Science", beats:beats, manual:false, backTo:"teacher", nextLabel:"Finish",
+    finish:function(vis){ lessonEnd(vis, {title: L.title + " done", done: function(){ markDoneIn("sci", L.id); }, again: function(){ sciStart(L); },
+      extra: L.jpTopic ? [{label: "The words in Japanese", fn: function(){ jpStart(L.jpTopic); }}] : []}); }});
   calcInit();
 }
 
@@ -5900,42 +5941,37 @@ infoSubject("life", "Life & Skills", LIFE);
 infoSubject("prod", "Music Production", PRODUCTION);
 function infoStart(L, key, tag){
   musStop(); threeStop();
-  var beats = [{text: L.blurb, pose:"present_r", eyes:"eyes_happy", visual: musCard(L.title, lessonHero(L.icon, L.title, L.blurb, [L.beats.length + " steps", L.quiz.length + " questions"]))}];
+  var beats = [{text: L.blurb, pose:"present_r", eyes:"eyes_happy", visual: musCard(L.title, lessonHero(L.icon, L.title, L.blurb, [L.beats.length + " steps", "voiced"]))}];
   L.beats.forEach(function(b, i){
     beats.push({text: b.text, pose: i % 2 ? "point_l" : "point_r", eyes:null, visual: musCard(L.title + " · " + (i + 1) + " of " + L.beats.length, b.visual ? b.visual() : lessonHero(L.icon, L.title, "", [])), onShow: b.onShow || calcInit});
   });
-  var quiz = function(){ useSubject(key); learn = {catId:L.id, parts:[catQuestions(SUBJECTS[key], L.id)], part:0, backTo:"teacher"}; startSession("learn", L.id, shuffle(learn.parts[0].slice())); };
-  playLesson({title:L.title, tag:tag, beats:beats, manual:true, backTo:"teacher", nextLabel:"Finish", onEndTap:quiz,
-    finish:function(vis){
-      vis.innerHTML = '<div class="lcard">' + lessonHero("check", L.title + " done", L.quiz.length + " questions" + (L.jpTopic ? ", or learn the words in Japanese." : "."), []) +
-        '<div class="lbtns">' + (L.jpTopic ? '<button class="btn" id="infoJp" type="button">In Japanese</button>' : '') + '<button class="btn primary" id="infoQuiz" type="button">Start questions</button></div></div>';
-      document.getElementById("infoQuiz").addEventListener("click", quiz);
-      if (L.jpTopic) document.getElementById("infoJp").addEventListener("click", function(){ jpStart(L.jpTopic); });
-    }});
+  playLesson({title:L.title, tag:tag, beats:beats, manual:false, backTo:"teacher", nextLabel:"Finish",
+    finish:function(vis){ lessonEnd(vis, {title: L.title + " done", done: function(){ markDoneIn(key, L.id); }, again: function(){ infoStart(L, key, tag); },
+      extra: L.jpTopic ? [{label: "The words in Japanese", fn: function(){ jpStart(L.jpTopic); }}] : []}); }});
 }
 function infoModules(list, key, tag){
-  return list.map(function(L){ return {title:L.title, icon:L.icon, meta:L.beats.length + " steps · quiz",
-    progress:function(){ useSubject(key); var d = learnDone(L.id) >= 1; return {pct: d ? 100 : 0, label: d ? "done ✓" : L.beats.length + " steps · quiz", done: d}; },
+  return list.map(function(L){ return {title:L.title, icon:L.icon, meta:L.beats.length + " steps · voiced",
+    progress:function(){ useSubject(key); var d = learnDone(L.id) >= 1; return {pct: d ? 100 : 0, label: d ? "done ✓" : L.beats.length + " steps · voiced", done: d}; },
     start:function(){ infoStart(L, key, tag); }}; });
 }
 
 var TEACHER_SECTIONS = [
   {id:"japan", title:"Japan Travel", icon:"torii", blurb:"Phrases for your trip, polite or casual, in standard Japanese, Osaka-ben or Kyoto-ben. Aoi says every one.",
    modules:function(){ var d = JP_LEARN.dialect;
-     return [jpModule(d, d.beats.length + " examples \u00b7 quiz", function(){ jpStart(d.id); })].concat(
+     return [jpModule(d, d.beats.length + " examples \u00b7 voiced", function(){ jpStart(d.id); })].concat(
        JP_TRAVEL.map(function(x){ return {title:x.title, icon:x.icon, meta:x.phrases.length + (x.hear ? " to listen for" : " phrases"), start:function(){ openPhrasebook(x.id); }}; })); }},
   {id:"jpgrammar", title:"Japanese Grammar", icon:"layers", blurb:"How a Japanese sentence works: word order, particles, tenses, adjectives, questions and requests. Every example is voiced.",
-   modules:function(){ return JP_LEARN.grammar.map(function(L){ return jpModule(L, L.beats.length + " steps \u00b7 quiz", function(){ jpStart(L.id); }); })
+   modules:function(){ return JP_LEARN.grammar.map(function(L){ return jpModule(L, L.beats.length + " steps \u00b7 voiced", function(){ jpStart(L.id); }); })
      .concat([{title:"Verb & adjective charts", icon:"layers", meta:"9 charts \u00b7 tap to hear", start:jpChartsLesson}]); }},
-  {id:"jpwords", title:"Japanese Words", icon:"chat", blurb:"Directions, ordering, animals, birds, insects, plants, magic, clothes, the face and body, and saying you're sick. Each ends with a chant and a quiz.",
-   modules:function(){ return JP_LEARN.topics.map(function(L){ return jpModule(L, L.words.length + " words \u00b7 chant \u00b7 quiz", function(){ jpStart(L.id); }); }); }},
+  {id:"jpwords", title:"Japanese Words", icon:"chat", blurb:"Directions, ordering, animals, plants, magic, clothes, the body, saying you're sick, and slang both ways: Japanese slang in English, English slang in Japanese. Each ends with a chant.",
+   modules:function(){ return JP_LEARN.topics.map(function(L){ return jpModule(L, L.words.length + " words \u00b7 chant \u00b7 voiced", function(){ jpStart(L.id); }); }); }},
   {id:"jpread", title:"Read with Aoi", icon:"book", blurb:"Old tales in easy Japanese, each in six versions: polite or casual, standard, Osaka or Kyoto. Hide the romaji to practise reading kanji.",
    modules:function(){ return JP_LEARN.reads.filter(function(L){ return L.kind === "story"; }).map(function(L){ return jpModule(L, L.jp + " \u00b7 " + L.lines.length + " lines \u00b7 6 versions", function(){ jpStart(L.id); }); }); }},
   {id:"jpsongs", title:"Songs & Poetry", icon:"heart", blurb:"Traditional songs and famous haiku, line by line: what each word means, the grammar, and how you'd say it today in polite, casual, Osaka or Kyoto Japanese.",
    modules:function(){ return JP_LEARN.reads.filter(function(L){ return L.kind === "song" || L.kind === "poem"; }).map(function(L){ return jpModule(L, L.jp + " \u00b7 " + L.lines.length + (L.kind === "poem" ? " poems" : " lines"), function(){ jpStart(L.id); }); })
      .concat([{title:"Your Song", icon:"heart", meta:"paste lyrics \u00b7 Aoi explains", start:openMySong}]); }},
   {id:"music", title:"Music with Aoi", icon:"note", blurb:"Learn to read sheet music (with Japan's \u30c9\u30ec\u30df), then follow the notes of Japanese songs while Aoi hums them.",
-   modules:function(){ return MUSIC_LESSONS.map(function(L){ return musModule(L, L.beats.length + " steps \u00b7 quiz", function(){ musStart(L); }); })
+   modules:function(){ return MUSIC_LESSONS.map(function(L){ return musModule(L, L.beats.length + " steps \u00b7 voiced", function(){ musStart(L); }); })
      .concat(MUSIC_SONGS.map(function(sg){ return {title:sg.jp, icon:"note", meta:(sg.lyrics ? "Sing along \u00b7 " : "Follow the notes \u00b7 ") + sg.title, start:function(){ openSheet(sg.id); }}; }))
      .concat(myTunes().map(function(sg){ return {title:sg.title, icon:"note", meta:"Your tune \u00b7 follow the notes", start:function(){ openSheet(sg.id); }}; })); }},
   {id:"piano", title:"Piano by Ear", icon:"note", blurb:"Japanese songs on the keys: play along as they light up, or learn them by ear phrase by phrase.",
@@ -5943,9 +5979,9 @@ var TEACHER_SECTIONS = [
      .concat(myTunes().map(function(sg){ return {title:sg.title, icon:"note", meta:"Your tune \u00b7 by ear or play along", start:function(){ openEar("piano", sg.id); }}; }))
      .concat([{title:"Free play & record", icon:"note", meta:"play anything, record a tune", start:function(){ openEar("piano", null); }}]); }},
   {id:"guitar", title:"Guitar", icon:"note", blurb:"Eight easy chords, then Japanese songs: strum along with the chord chart, play the tune on the fretboard, or learn it by ear.",
-   modules:function(){ return [musModule({id:"gu_chords", title:"Your first chords"}, "8 chords \u00b7 quiz", chordsLesson),
+   modules:function(){ return [musModule({id:"gu_chords", title:"Your first chords"}, "8 chords \u00b7 voiced", chordsLesson),
        {title:"Chord library", icon:"note", meta:"30 chords: sevenths, barre, power", start:chordLibrary}]
-     .concat(GUITAR_LESSONS.map(function(L){ return musModule(L, L.beats.length + " steps \u00b7 quiz", function(){ guitarLesson(L); }); }))
+     .concat(GUITAR_LESSONS.map(function(L){ return musModule(L, L.beats.length + " steps \u00b7 voiced", function(){ guitarLesson(L); }); }))
      .concat(MUSIC_SONGS.map(function(sg){ return {title:sg.jp, icon:"note", meta:sg.title + " \u00b7 by ear, play or strum along", start:function(){ openEar("guitar", sg.id); }}; }))
      .concat([{title:"Free play", icon:"note", meta:"just the fretboard", start:function(){ openEar("guitar", null); }}]); }},
   {id:"jpop", title:"J-pop Chords & Aoi Song", icon:"note", blurb:"The chord progressions behind J-pop and anime songs. Jam with Aoi's band, then let her write you a song.",
@@ -5954,14 +5990,14 @@ var TEACHER_SECTIONS = [
               {title:"Aoi writes a rock anthem", icon:"heart", meta:"stomp-stomp-clap, power chords, Aoi's choir", start:function(){ aoiSongNew(null, "anthem"); }}])
      .concat(aoiSongs().map(function(sg){ return {title:sg.title, icon:"heart", meta:sg.jp + " \u00b7 " + (sg.style === "anthem" ? progById(sg.prog).en : progById(sg.prog).jp), start:function(){ openSheet(sg.id); }}; })); }},
   {id:"drums", title:"Drums", icon:"note", blurb:"Kick, snare and hi-hat: learn the beats, then drum along with Aoi's band.",
-   modules:function(){ return [musModule(BAND_LESSONS[0], BAND_LESSONS[0].beats.length + " steps \u00b7 quiz", function(){ bandLesson(BAND_LESSONS[0]); })]
+   modules:function(){ return [musModule(BAND_LESSONS[0], BAND_LESSONS[0].beats.length + " steps \u00b7 voiced", function(){ bandLesson(BAND_LESSONS[0]); })]
      .concat(DRUM_PATTERNS.map(function(d){ return {title:d.name, icon:"note", meta:d.jp + " \u00b7 play along", start:function(){ openGroove({prog: "axis", you: "drums", drum: d.id, bpm: d.id === "jpop16" ? 84 : 92}); }}; })); }},
   {id:"bass", title:"Bass", icon:"note", blurb:"Root notes, octaves and fifths: hold down the groove with Aoi's band.",
-   modules:function(){ return [musModule(BAND_LESSONS[1], BAND_LESSONS[1].beats.length + " steps \u00b7 quiz", function(){ bandLesson(BAND_LESSONS[1]); })]
+   modules:function(){ return [musModule(BAND_LESSONS[1], BAND_LESSONS[1].beats.length + " steps \u00b7 voiced", function(){ bandLesson(BAND_LESSONS[1]); })]
      .concat(BASS_PATTERNS.map(function(d){ return {title:d.name, icon:"note", meta:"bass line \u00b7 play along", start:function(){ openGroove({prog: "komuro", you: "bass", bass: d.id, bpm: 84}); }}; })); }},
   {id:"science", title:"Science & World", icon:"globe", blurb:"Planets to scale, real star charts, Pythagoras, compound growth and the power of 15 minutes a day. Every picture is drawn from real data.",
-   modules:function(){ return SCIENCE.map(function(L){ return {title:L.title, icon:L.icon, meta:L.beats.length + " steps \u00b7 quiz" + (L.jpTopic ? " \u00b7 Japanese" : ""),
-     progress:function(){ useSubject("sci"); var d = learnDone(L.id) >= 1; return {pct: d ? 100 : 0, label: d ? "done \u2713" : L.beats.length + " steps \u00b7 quiz", done: d}; },
+   modules:function(){ return SCIENCE.map(function(L){ return {title:L.title, icon:L.icon, meta:L.beats.length + " steps \u00b7 voiced" + (L.jpTopic ? " \u00b7 Japanese" : ""),
+     progress:function(){ useSubject("sci"); var d = learnDone(L.id) >= 1; return {pct: d ? 100 : 0, label: d ? "done \u2713" : L.beats.length + " steps \u00b7 voiced", done: d}; },
      start:function(){ sciStart(L); }}; }); }},
   {id:"production", title:"Music Production", icon:"headset", blurb:"Record, mix and master in FL Studio, and hear what guitar pedals do.",
    modules:function(){ return infoModules(PRODUCTION, "prod", "Production"); }},
@@ -5969,7 +6005,7 @@ var TEACHER_SECTIONS = [
    modules:function(){ return infoModules(LIFE, "life", "Life"); }},
   {id:"claude", title:"Claude Code", icon:"code", blurb:"Using Claude Code from your phone, narrated in Aoi's own voice.",
    modules:function(){ return [{title:"Claude Code on Your Phone", icon:"phone", meta:CLAUDE_CODE_BEATS.length + " scenes \u00b7 voiced", start:startTeacherLesson}]; }},
-  {id:"ppl", title:"PPL Checkride", icon:"plane", blurb:"All 12 FAA knowledge areas. Each lesson teaches five points, then quizzes you on them.",
+  {id:"ppl", title:"PPL Checkride", icon:"plane", blurb:"All 12 FAA knowledge areas. Each lesson teaches five key points, narrated by Aoi. The questions are in the Quiz section.",
    modules:function(){ return subjectModules("ppl"); }},
   {id:"gk", title:"General Knowledge", icon:"globe", blurb:"The body, the planet and how things work, from your 105-topic list.",
    modules:function(){ return subjectModules("gk"); }},
@@ -6227,7 +6263,7 @@ var SALES_SCENARIOS = [
          "If price comes up, compare the cost against his actual usage, not a generic ‘it pays for itself’ line."]},
   {id:"budget-frozen", title:"Budget's Frozen This Quarter", product:"a team collaboration tool",
    persona:"Priya liked the product in the demo but says budget approval is frozen until next quarter.",
-   disposition:"genuinely budget-constrained, not necessarily uninterested",
+   disposition:"is genuinely budget-constrained, not necessarily uninterested",
    tips:["Ask if there's a smaller starting tier, or a pilot, that fits an existing smaller budget line.",
          "Find out exactly when budget reopens and offer to lock in today's pricing for a later start date.",
          "Don't push past a real financial constraint — respect it, and offer a concrete next step instead of pressure."]},
@@ -6245,13 +6281,13 @@ var SALES_SCENARIOS = [
          "A one-time trial treatment, not a long contract, lowers the identity threat of switching."]},
   {id:"underinsured", title:"“I Already Have Insurance”", product:"supplemental life insurance",
    persona:"Keisha has basic employer-provided life insurance and assumes that's sufficient. She hasn't really thought about the gap.",
-   disposition:"underinformed about her actual coverage, not resistant as such",
+   disposition:"is underinformed about her actual coverage, not resistant as such",
    tips:["Ask what her employer coverage actually covers — many people overestimate it — rather than just asserting it isn't enough.",
          "Use her own numbers (income, dependents) to show any real gap, not generic industry statistics.",
          "Avoid fear-based pressure — present the gap as information she can decide what to do with."]},
   {id:"tech-skeptic-senior", title:"The Tech-Skeptic Retiree", product:"a medical alert wearable device",
    persona:"Robert is 72, independent, and feels that a ‘medical alert button’ makes him seem old and dependent.",
-   disposition:"the resistance is emotional/identity-based, not about price or features",
+   disposition:"resists for emotional, identity reasons, not price or features",
    tips:["The real objection here is emotional, not logical — address identity before features.",
          "Reframe it as staying independent longer, not as fragility.",
          "If a family member is part of the conversation, let their perspective support rather than lead — Robert needs to feel it's his choice."]},
@@ -6263,7 +6299,7 @@ var SALES_SCENARIOS = [
          "It's fine to lose a price-only customer when the gap genuinely reflects a real quality difference — don't undercut your own value."]},
   {id:"burned-before", title:"Burned by a Similar Product Before", product:"a meal-kit delivery subscription",
    persona:"Chris tried a different meal kit two years ago, found the portions small and the food often arrived spoiled, and canceled.",
-   disposition:"skeptical specifically because of a bad past experience, not the category itself",
+   disposition:"is skeptical specifically because of a bad past experience, not the category itself",
    tips:["Acknowledge the past bad experience specifically, rather than being vaguely defensive or bad-mouthing competitors.",
          "Address the SPECIFIC failures — portion size, spoilage — with concrete, verifiable claims, not generic reassurance.",
          "A low-commitment trial (a single box, an easy cancel) matters more here than usual, since trust was already broken once."]}

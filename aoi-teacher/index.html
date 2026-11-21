@@ -774,6 +774,44 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 .cute-beat{transform-origin:186px 165px; animation:cutebeat 1s ease-in-out infinite;}
 @keyframes cutebeat{0%,60%,100%{transform:scale(1);} 15%{transform:scale(1.06);} 30%{transform:scale(1);} 45%{transform:scale(1.04);}}
 @media (prefers-reduced-motion: reduce){ .cute-beat{animation:none;} }
+.crrow{display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px;}
+.crrow.one{grid-template-columns:minmax(0,320px); justify-content:center;}
+.crcard{border:2px solid #2b2d42; border-radius:16px; padding:10px 8px; text-align:center; background:var(--surface-2); background:color-mix(in srgb, var(--cc) 22%, var(--surface)); display:flex; flex-direction:column; align-items:center; gap:6px;}
+.crpic{width:92px; height:92px; border-radius:50%; display:grid; place-items:center; border:3px solid #2b2d42; background:var(--cc); background:radial-gradient(circle at 35% 30%, rgba(255,255,255,.75), var(--cc) 70%);}
+.crpic svg{width:72px; height:72px;}
+.crpic{border-radius:50%!important;} .fbmore .sw,.fbmore .sw::after{border-radius:99px!important;} .fbmore .sw::after{border-radius:50%!important;}
+.cremo{font-size:46px; line-height:1; letter-spacing:-6px; font-family:"Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",sans-serif;}
+.crtxt{display:flex; flex-direction:column; align-items:center; gap:1px;} .crtxt b{font-size:14px;} .crjp{font-size:15px; font-weight:700;} .crtxt small{font-size:11px; color:var(--muted);}
+.crfacts{display:flex; flex-wrap:wrap; justify-content:center; gap:4px; margin-top:4px;} .crfacts span{font-size:11px; font-weight:700; padding:2px 7px; border-radius:99px; background:var(--surface); border:1px solid var(--line);}
+.r5words{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px;} .r5words span{display:flex; flex-direction:column; padding:8px 10px; border:1px solid var(--line); border-radius:10px; background:var(--surface-2);}
+.r5words b{font-size:17px;} .r5words small{font-size:11px; color:var(--muted);} .r5words i{font-style:normal; font-size:13px;}
+.r5photo img{max-height:240px; border-radius:12px; border:2px solid #2b2d42;}
+.gates{display:flex; flex-direction:column; gap:10px; align-items:center;} .bitrow,.gout{display:flex; flex-wrap:wrap; gap:8px; justify-content:center;}
+.bit{min-width:64px; padding:10px 12px; border:2px solid #2b2d42; border-radius:12px; background:var(--surface); font-weight:800; font-size:15px; display:inline-flex; flex-direction:column; align-items:center; color:var(--fg); cursor:pointer;}
+.bit b{font-size:22px;} .bit.on{background:#06d6a0;} .bit.sm{min-width:34px; padding:6px 0; font-size:18px;}
+.gout span{padding:8px 10px; border:2px dashed var(--line); border-radius:10px; font-weight:700;} .gout span.on{border-style:solid; border-color:#2b2d42; background:#ffd166; color:#2b2d42;}
+.addrow{display:flex; align-items:center; gap:6px;} .addrow span{width:42px; font-weight:800; text-align:right;} .addrow em{font-style:normal; font-weight:800; width:34px; text-align:left;} .addrow.sum{border-top:2px solid var(--fg); padding-top:6px;}
+.adds{margin:0; font-size:15px;} .gtab td,.gtab th{text-align:center;}
+.modwrap{display:flex; flex-direction:column; gap:4px;} .modwrap .modcard{flex:1;}
+.fbrow{display:flex; align-items:center; justify-content:space-between; gap:6px; padding:0 4px;}
+.fbheart{border:none; background:none; font-size:20px; line-height:1; color:#ef476f; cursor:pointer; padding:4px 6px;}
+.fbmore{display:flex; align-items:center; gap:6px; font-size:12px; font-weight:700; color:var(--muted); cursor:pointer;}
+.fbmore input{position:absolute; opacity:0; width:1px; height:1px;}
+.fbmore .sw{width:30px; height:18px; border-radius:99px; background:var(--line); position:relative; transition:background .15s;}
+.fbmore .sw::after{content:""; position:absolute; left:2px; top:2px; width:14px; height:14px; border-radius:50%; background:#fff; transition:left .15s;}
+.fbmore input:checked + .sw{background:var(--accent);} .fbmore input:checked + .sw::after{left:14px;}
+.fbmore input:focus-visible + .sw{outline:2px solid var(--accent-2); outline-offset:2px;}
+#teacherLib > .lcard{margin-top:12px; padding:12px; border:2px solid var(--line); background:var(--surface);}
+.vbars{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px;}
+.vbars li{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) 28px; align-items:center; gap:8px;}
+.vname{display:flex; flex-direction:column; min-width:0;} .vname b{font-size:13px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;} .vname small{font-size:11px; color:var(--muted);}
+.vtrack{height:12px; background:var(--surface-2); border-radius:4px; overflow:hidden;} .vtrack i{display:block; height:100%; background:var(--accent); border-radius:0 4px 4px 0;}
+.vnum{font-weight:800; font-size:13px; text-align:right; color:var(--fg);}
+.vlist{margin:0; padding-left:18px; display:flex; flex-direction:column; gap:6px; font-size:13px;} .vlist small{color:var(--muted);}
+.wishform{display:flex; gap:8px;} .wishform input{flex:1; min-width:0; padding:10px; border:2px solid var(--line); border-radius:10px; background:var(--surface); color:var(--fg); font:inherit;}
+.reportdlg{border:2px solid #2b2d42; border-radius:16px; padding:16px; max-width:min(420px, calc(100vw - 32px)); background:var(--surface); color:var(--fg);}
+.reportdlg::backdrop{background:rgba(7,16,52,.45);} .reportdlg h3{margin:0 0 8px;} .rline{margin:0 0 6px; font-size:13px; color:var(--muted);} .rline.ja{color:var(--fg);}
+.rkinds{display:flex; flex-wrap:wrap; gap:10px; margin:8px 0; font-size:14px;} .reportdlg textarea{width:100%; box-sizing:border-box; padding:8px; border:2px solid var(--line); border-radius:10px; background:var(--surface); color:var(--fg); font:inherit;}
 .realplate{border:2px dashed var(--line); border-radius:10px; padding:6px 10px;} .realplate summary{cursor:pointer; font-weight:700; font-size:13px;}
 .secgroup{margin:16px 0 4px; font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent-2);}
 .pedals{display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:8px;}
@@ -863,6 +901,7 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
       <button class="navbtn" id="btnBack" hidden type="button" aria-label="Back">&larr;</button>
       <button class="navbtn" id="teacherReplayBtn" hidden type="button" aria-label="Replay her line">&#128266;</button>
       <button class="navbtn" id="teacherTranscriptBtn" hidden type="button" aria-label="Transcript">&#128220;</button>
+      <button class="navbtn" id="lessonReportBtn" hidden type="button" aria-label="Report a problem with this line">&#9873;</button>
       <button class="navbtn" id="quizTranscriptBtn" hidden type="button" aria-label="Transcript">&#128220;</button>
       <button class="navbtn" id="lessonPlayBtn" hidden type="button" aria-label="Pause">&#10074;&#10074;</button>
       <button class="themebtn" id="themeToggle" type="button" aria-label="Toggle theme">&#9728;</button>
@@ -916,6 +955,22 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
   <div id="view-teacher" hidden>
     <div id="teacherLib"></div>
   </div>
+
+  <dialog id="reportDlg" class="reportdlg" aria-labelledby="reportTitle">
+    <form id="reportForm">
+      <h3 id="reportTitle">Report a problem</h3>
+      <p class="rline" id="reportLine"></p>
+      <p class="rline ja" id="reportJa" lang="ja"></p>
+      <div class="rkinds">
+        <label><input type="radio" name="rkind" value="Translation" checked> Translation</label>
+        <label><input type="radio" name="rkind" value="Fact"> A fact</label>
+        <label><input type="radio" name="rkind" value="Audio"> Audio</label>
+        <label><input type="radio" name="rkind" value="Other"> Other</label>
+      </div>
+      <textarea id="reportNote" maxlength="300" rows="3" placeholder="What's wrong? (optional)"></textarea>
+      <div class="lbtns"><button class="btn" id="reportCancel" type="button">Cancel</button><button class="btn primary" type="submit">Send</button></div>
+    </form>
+  </dialog>
 
   <!-- TEACHER LESSON: Claude Code on your phone, narrated beat by beat in Japanese (real audio),
        English text on screen -- same paced-lesson pattern as Singing/Aoi's Day. -->
@@ -2330,6 +2385,7 @@ function showView(name, opts){
   playBtn.hidden = (name !== "teacherLesson");
   document.getElementById("teacherReplayBtn").hidden = (name !== "teacherLesson");
   document.getElementById("teacherTranscriptBtn").hidden = (name !== "teacherLesson");
+  document.getElementById("lessonReportBtn").hidden = (name !== "teacherLesson");
   document.getElementById("quizTranscriptBtn").hidden = (name !== "quiz");
   /* activeLessonAdvance (tap-to-advance, see handleAoiTap() in the Aoi host script) stays set
      for ANY paced-lesson view (TEACH_VIEWS), not just the Teacher lesson -- Daytrip and Japanese
@@ -2394,7 +2450,7 @@ function renderQuizSelect(){
   SUBJECTS.gk.questions.forEach(function(q){ if (Object.prototype.hasOwnProperty.call(gkAns, q.id)) gkAnswered++; });
   var more = document.getElementById("quizMore");
   more.innerHTML = "";
-  [["jp", "Japanese"], ["music", "Music"], ["prod", "Music Production"], ["sci", "Science & World"], ["life", "Life & Skills"]].forEach(function(x){
+  [["jp", "Japanese"], ["fan", "Fantasy & Anime"], ["music", "Music"], ["prod", "Music Production"], ["sci", "Science & World"], ["ani", "Animals"], ["tech", "Chips & Code"], ["life", "Life & Skills"]].forEach(function(x){
     var sub = SUBJECTS[x[0]]; if (!sub) return;
     var ans = loadAnswers(sub), done = sub.questions.filter(function(q){ return Object.prototype.hasOwnProperty.call(ans, q.id); }).length;
     var b = document.createElement("button"); b.type = "button"; b.className = "hubcard";
@@ -3433,6 +3489,7 @@ var ICON_PATHS = {
   check:'<circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/>',
   note:'<path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/>',
   torii:'<path d="M2.5 5.5c3 .8 16 .8 19 0"/><path d="M4.5 9h15"/><path d="M7 6v15M17 6v15"/><path d="M12 6v3"/>',
+  star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1-4.4-4.3 6.1-.9z"/>',
   cell:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M6.5 8.5h.01M17 15.5h.01M8 16.5h.01"/>'
 };
 function ico(name){
@@ -5955,6 +6012,424 @@ function infoModules(list, key, tag){
     start:function(){ infoStart(L, key, tag); }}; });
 }
 
+/* ---------- Round 5: Fantasy, Yokai & Anime; Animals & Dinosaurs; Chips & Code; herbs ----------
+   Pictures: the main picture is a bright cartoon card (emoji or a small drawing made for this
+   app), and "See the real picture" opens a public-domain or freely licensed image from
+   Wikimedia Commons, credited under it (images/fantasy, images/dinos, images/herbs, images/pets).
+   No anime screenshots or characters: only folklore, history and facts. */
+var R5_IMG = {"kitsune":["fantasy/kitsune.jpg","Kitsunebi (fox fires), Toriyama Sekien, 1776.","Public domain, via Wikimedia Commons."],"tanuki":["fantasy/tanuki.jpg","Tanuki, Toriyama Sekien, 1776.","Public domain, via Wikimedia Commons."],"kappa":["fantasy/kappa.jpg","Kappa, Toriyama Sekien, 1776.","Public domain, via Wikimedia Commons."],"tengu":["fantasy/tengu.jpg","Tengu, Toriyama Sekien, 1776.","Public domain, via Wikimedia Commons."],"oni":["fantasy/oni.jpg","Oni, Toriyama Sekien, 1779.","Public domain, via Wikimedia Commons."],"nekomata":["fantasy/nekomata.jpg","Nekomata, Toriyama Sekien, 1776.","Public domain, via Wikimedia Commons."],"rokurokubi":["fantasy/rokurokubi.jpg","Rokurokubi, Toriyama Sekien, about 1781.","Public domain, via Wikimedia Commons."],"phoenix":["fantasy/phoenix.jpg","A phoenix, from the Aberdeen Bestiary, about 1200.","Public domain, via Wikimedia Commons."],"mint":["herbs/mint.jpg","Peppermint, Köhler's Medizinal-Pflanzen, 1887.","Public domain, via Wikimedia Commons."],"foxglove":["herbs/foxglove.jpg","Foxglove, Köhler's Medizinal-Pflanzen, 1887.","Public domain, via Wikimedia Commons."],"tama":["pets/tama.jpg","Station master Tama at Kishi Station, 2007.","CC BY-SA 3.0, Sanpei at Japanese Wikipedia, via Wikimedia Commons."]}; /* key -> [file, caption, credit] */
+function crCard(o){
+  return '<div class="crcard" style="--cc:' + (o.c || "#8ecae6") + '"><div class="crpic">' + (o.svg || '<span class="cremo" aria-hidden="true">' + o.e + '</span>') + '</div>' +
+    '<div class="crtxt"><b>' + esc_(o.name) + '</b>' + (o.jp ? '<span class="crjp" lang="ja">' + esc_(o.jp) + '</span>' : '') + (o.ro ? '<small>' + esc_(o.ro) + '</small>' : '') +
+    (o.facts ? '<div class="crfacts">' + o.facts.map(function(f){ return '<span>' + esc_(f) + '</span>'; }).join("") + '</div>' : '') + '</div></div>';
+}
+function crRow(list){ return '<div class="crrow' + (list.length === 1 ? ' one' : '') + '">' + list.map(crCard).join("") + '</div>'; }
+function r5Pic(key, label, open){
+  var p = R5_IMG[key]; if (!p) return "";
+  return '<details class="realplate"' + (open ? ' open' : '') + '><summary>' + esc_(label || "See the real old picture") + '</summary><figure class="sciimg"><img src="images/' + p[0] + '" alt="' + esc_(p[1]) + '" loading="lazy">' +
+    '<figcaption>' + esc_(p[1]) + ' ' + esc_(p[2]) + '</figcaption></figure></details>';
+}
+function r5Photo(key){
+  var p = R5_IMG[key]; if (!p) return "";
+  return '<figure class="sciimg r5photo"><img src="images/' + p[0] + '" alt="' + esc_(p[1]) + '" loading="lazy"><figcaption>' + esc_(p[1]) + ' ' + esc_(p[2]) + '</figcaption></figure>';
+}
+function r5Words(list){
+  return '<div class="r5words">' + list.map(function(w){ return '<span><b lang="ja">' + esc_(w[0]) + '</b><small>' + esc_(w[1]) + '</small><i>' + esc_(w[2]) + '</i></span>'; }).join("") + '</div>';
+}
+/* Small drawings for creatures that have no emoji. */
+var R5_SVG = {
+  slime: '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M14 80 C10 50 30 22 50 18 C70 22 90 50 86 80 Z" fill="#4cc9f0" stroke="#2b2d42" stroke-width="4" stroke-linejoin="round"/><path d="M50 18 C52 10 58 8 60 4" fill="none" stroke="#2b2d42" stroke-width="4" stroke-linecap="round"/><ellipse cx="36" cy="54" rx="5" ry="7" fill="#2b2d42"/><ellipse cx="64" cy="54" rx="5" ry="7" fill="#2b2d42"/><path d="M38 66 Q50 76 62 66" fill="none" stroke="#2b2d42" stroke-width="4" stroke-linecap="round"/><ellipse cx="30" cy="36" rx="7" ry="4" fill="#fff" opacity=".7" transform="rotate(-30 30 36)"/></svg>',
+  kappa: '<svg viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="56" r="32" fill="#80b918" stroke="#2b2d42" stroke-width="4"/><ellipse cx="50" cy="26" rx="22" ry="8" fill="#a8dadc" stroke="#2b2d42" stroke-width="4"/><ellipse cx="50" cy="25" rx="14" ry="4" fill="#4cc9f0"/><path d="M28 30 L22 22 M36 26 L33 17 M64 26 L67 17 M72 30 L78 22" stroke="#2b2d42" stroke-width="3" stroke-linecap="round"/><circle cx="38" cy="54" r="6" fill="#fff" stroke="#2b2d42" stroke-width="3"/><circle cx="62" cy="54" r="6" fill="#fff" stroke="#2b2d42" stroke-width="3"/><circle cx="39" cy="55" r="2.5" fill="#2b2d42"/><circle cx="63" cy="55" r="2.5" fill="#2b2d42"/><path d="M40 70 L60 70 L50 78 Z" fill="#ffb703" stroke="#2b2d42" stroke-width="3" stroke-linejoin="round"/></svg>',
+  goblin: '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M8 40 L30 46 L28 58 Z M92 40 L70 46 L72 58 Z" fill="#90be6d" stroke="#2b2d42" stroke-width="4" stroke-linejoin="round"/><circle cx="50" cy="54" r="28" fill="#90be6d" stroke="#2b2d42" stroke-width="4"/><circle cx="40" cy="48" r="5" fill="#ffd166" stroke="#2b2d42" stroke-width="2.5"/><circle cx="60" cy="48" r="5" fill="#ffd166" stroke="#2b2d42" stroke-width="2.5"/><path d="M36 66 Q50 76 64 66" fill="none" stroke="#2b2d42" stroke-width="4" stroke-linecap="round"/><path d="M44 69 L46 74 L48 70 M54 70 L56 74 L58 69" fill="#fff" stroke="#2b2d42" stroke-width="1.5"/></svg>',
+  chip: '<svg viewBox="0 0 100 100" aria-hidden="true"><rect x="22" y="22" width="56" height="56" rx="6" fill="#3a86ff" stroke="#2b2d42" stroke-width="4"/><rect x="36" y="36" width="28" height="28" rx="3" fill="#8ecae6" stroke="#2b2d42" stroke-width="3"/><path d="M30 22V10M42 22V10M58 22V10M70 22V10M30 78V90M42 78V90M58 78V90M70 78V90M22 30H10M22 42H10M22 58H10M22 70H10M78 30H90M78 42H90M78 58H90M78 70H90" stroke="#2b2d42" stroke-width="4" stroke-linecap="round"/></svg>'
+};
+
+/* ---- CPU vs GPU, the phone chip, and the logic-gate playground ---- */
+function coresSvg(){
+  var out = '<svg class="sci cute" viewBox="0 0 340 150" role="img" aria-label="A CPU with 8 big cores next to a GPU with 256 tiny cores">';
+  out += '<text x="80" y="16" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">CPU: a few big cores</text><text x="255" y="16" text-anchor="middle" font-size="13" font-weight="700" fill="currentColor">GPU: thousands of small ones</text>';
+  out += '<rect x="10" y="26" width="140" height="116" rx="10" fill="#ffd166" stroke="#2b2d42" stroke-width="2.5"/>';
+  for (var i = 0; i < 8; i++){ out += '<rect x="' + (20 + (i % 4) * 32) + '" y="' + (38 + Math.floor(i / 4) * 50) + '" width="26" height="40" rx="5" fill="#ef476f" stroke="#2b2d42" stroke-width="2"/>'; }
+  out += '<rect x="180" y="26" width="150" height="116" rx="10" fill="#caf0f8" stroke="#2b2d42" stroke-width="2.5"/>';
+  for (var j = 0; j < 256; j++){ out += '<rect x="' + (186 + (j % 16) * 8.6) + '" y="' + (32 + Math.floor(j / 16) * 6.6) + '" width="6.6" height="4.8" rx="1" fill="#06d6a0" stroke="#2b2d42" stroke-width=".6"/>'; }
+  return out + '</svg>';
+}
+function socSvg(hl){
+  var blocks = [["CPU big", 10, 30, 90, 50, "#ef476f"], ["CPU little", 10, 86, 90, 40, "#f78c6b"], ["GPU", 108, 30, 110, 60, "#06d6a0"], ["NPU (AI)", 226, 30, 104, 44, "#9b5de5"],
+    ["ISP (camera)", 226, 80, 104, 46, "#ffd166"], ["Modem 5G", 108, 96, 110, 30, "#4cc9f0"], ["Memory controller", 10, 132, 208, 24, "#adb5bd"], ["Wi-Fi / BT", 226, 132, 104, 24, "#8ecae6"]];
+  var out = '<svg class="sci cute" viewBox="0 0 340 168" role="img" aria-label="A phone chip: CPU, GPU, NPU, ISP, modem, memory and radios on one piece of silicon"><rect x="2" y="2" width="336" height="164" rx="14" fill="#e9ecef" stroke="#2b2d42" stroke-width="3"/><text x="170" y="20" text-anchor="middle" font-size="12" font-weight="700" fill="#2b2d42">System on a chip (SoC)</text>';
+  blocks.forEach(function(b){ var on = !hl || hl.indexOf(b[0].split(" ")[0]) >= 0;
+    out += '<rect x="' + b[1] + '" y="' + b[2] + '" width="' + b[3] + '" height="' + b[4] + '" rx="8" fill="' + b[5] + '" fill-opacity="' + (on ? 1 : .25) + '" stroke="#2b2d42" stroke-width="2"/><text x="' + (b[1] + b[3] / 2) + '" y="' + (b[2] + b[4] / 2 + 4) + '" text-anchor="middle" font-size="11" font-weight="700" fill="#2b2d42" opacity="' + (on ? 1 : .4) + '">' + b[0] + '</text>'; });
+  return out + '</svg>';
+}
+function pipelineSvg(){
+  return flowSvg(["Triangles", "Vertex shader", "Rasterize", "Pixel shader", "Screen"], ["#ffd166", "#06d6a0", "#4cc9f0", "#ef476f", "#9b5de5"]);
+}
+function devSvg(){
+  return flowSvg(["Write code", "Compile", "Test", "Git commit", "Ship"], ["#ffd166", "#06d6a0", "#4cc9f0", "#9b5de5", "#ef476f"]);
+}
+var gateState = {a: 0, b: 0, x: [0, 1, 0, 1], y: [0, 0, 1, 1]};
+function bitBtn(name, v){ return '<button type="button" class="bit' + (v ? ' on' : '') + '" data-bit="' + name + '" aria-pressed="' + (v ? 'true' : 'false') + '">' + name.replace(/\d/, "") + '<b>' + v + '</b></button>'; }
+function gatesHtml(mode){
+  var a = gateState.a, b = gateState.b;
+  if (mode === "gates") return '<div class="gates"><div class="bitrow">' + bitBtn("A", a) + bitBtn("B", b) + '</div><div class="gout">' +
+    [["AND", a & b], ["OR", a | b], ["XOR", a ^ b], ["NOT A", 1 - a], ["NAND", 1 - (a & b)]].map(function(g){ return '<span class="' + (g[1] ? 'on' : '') + '">' + g[0] + ' <b>' + g[1] + '</b></span>'; }).join("") + '</div><p class="sci-note">Tap A and B to flip them between 0 and 1.</p></div>';
+  if (mode === "tables") return '<table class="mtable gtab"><tr><th>A</th><th>B</th><th>AND</th><th>OR</th><th>XOR</th></tr>' +
+    [[0,0],[0,1],[1,0],[1,1]].map(function(r){ return '<tr><td>' + r[0] + '</td><td>' + r[1] + '</td><td>' + (r[0] & r[1]) + '</td><td>' + (r[0] | r[1]) + '</td><td>' + (r[0] ^ r[1]) + '</td></tr>'; }).join("") + '</table>';
+  if (mode === "half") return '<div class="gates"><div class="bitrow">' + bitBtn("A", a) + bitBtn("B", b) + '</div><div class="gout"><span class="' + ((a ^ b) ? 'on' : '') + '">Sum = A XOR B <b>' + (a ^ b) + '</b></span><span class="' + ((a & b) ? 'on' : '') + '">Carry = A AND B <b>' + (a & b) + '</b></span></div>' +
+    '<p class="adds">' + a + ' + ' + b + ' = <b>' + (a & b) + '' + (a ^ b) + '</b> in binary (' + (a + b) + ')</p></div>';
+  /* the 4-bit adder: four full adders chained by their carries */
+  var x = gateState.x, y = gateState.y, xv = 0, yv = 0, out = [], c = 0, carries = [];
+  for (var i = 3; i >= 0; i--){ xv = xv * 2 + x[3 - i]; yv = yv * 2 + y[3 - i]; }
+  for (var k = 3; k >= 0; k--){ var s = x[k] ^ y[k] ^ c; carries.unshift(c); c = (x[k] & y[k]) | (c & (x[k] ^ y[k])); out.unshift(s); }
+  var nib = function(arr, nm){ return arr.map(function(v, i){ return '<button type="button" class="bit sm' + (v ? ' on' : '') + '" data-bit="' + nm + i + '">' + v + '</button>'; }).join(""); };
+  return '<div class="gates"><div class="addrow"><span>A</span>' + nib(x, "x") + '<em>' + xv + '</em></div><div class="addrow"><span>B</span>' + nib(y, "y") + '<em>' + yv + '</em></div>' +
+    '<div class="addrow sum"><span>A+B</span><b class="bit sm' + (c ? ' on' : '') + '">' + c + '</b>' + out.map(function(v){ return '<b class="bit sm' + (v ? ' on' : '') + '">' + v + '</b>'; }).join("") + '<em>' + (xv + yv) + '</em></div>' +
+    '<p class="sci-note">Tap the bits. Each column is one full adder; its carry moves one column left.</p></div>';
+}
+document.getElementById("teacherVisual").addEventListener("click", function(e){
+  var t = e.target.closest && e.target.closest("[data-bit]"); if (!t) return;
+  var n = t.getAttribute("data-bit");
+  if (n === "A") gateState.a ^= 1; else if (n === "B") gateState.b ^= 1;
+  else if (n.charAt(0) === "x") gateState.x[+n.charAt(1)] ^= 1; else if (n.charAt(0) === "y") gateState.y[+n.charAt(1)] ^= 1;
+  var box = t.closest(".gates"); if (!box) return;
+  var mode = box.parentNode.getAttribute("data-gmode") || "gates";
+  box.parentNode.innerHTML = gatesHtml(mode);
+});
+function gatesBox(mode){ return '<div data-gmode="' + mode + '">' + gatesHtml(mode) + '</div>'; }
+
+var FANTASY = [
+ {id:"fa_dragons", title:"Dragons, East and West", icon:"star", blurb:"Fire-breathing Western dragons and rain-bringing Eastern ones, and why dragons rule isekai.",
+  beats:[
+   {text:"Dragons appear in stories all over the world, but East and West imagined them very differently.",
+    visual:function(){ return crRow([{e:"🐉", name:"Western dragon", jp:"ドラゴン", ro:"doragon", c:"#ef476f", facts:["wings", "fire"]}, {e:"🐲", name:"Eastern dragon", jp:"龍・竜", ro:"ryū, tatsu", c:"#06d6a0", facts:["no wings", "rain"]}]); }},
+   {text:"The Western dragon is a huge winged reptile that often breathes fire and guards treasure. In old European stories, like Saint George's, it's a monster for a hero to defeat.",
+    visual:function(){ return crRow([{e:"🐉", name:"Western dragon", jp:"ドラゴン", ro:"doragon", c:"#ef476f", facts:["bat wings", "breathes fire", "hoards gold"]}]) + r5Pic("dragon_west"); }},
+   {text:"The Eastern dragon, from China, is long like a snake and has no wings, yet it flies through the clouds. It brings rain and good luck, and it was a symbol of the emperor.",
+    visual:function(){ return crRow([{e:"🐲", name:"Eastern dragon", jp:"龍", ro:"ryū", c:"#06d6a0", facts:["snake body", "flies without wings", "brings rain"]}]) + r5Pic("dragon_east", "See Hokusai's dragon (1800s)"); }},
+   {text:"In Japanese the dragon is 龍 or 竜, read ryū or tatsu. Ryūjin, 龍神, is the dragon god of the sea, and in the tale of Urashima Tarō his undersea palace is Ryūgū-jō.",
+    visual:function(){ return r5Words([["龍・竜", "りゅう / たつ", "dragon"], ["龍神", "りゅうじん", "dragon god of the sea"], ["竜宮城", "りゅうぐうじょう", "the dragon palace"], ["ドラゴン", "doragon", "a Western-style dragon"]]); }},
+   {text:"Count the claws! Chinese imperial dragons were usually drawn with five, and Japanese dragons often with three.",
+    visual:function(){ return crRow([{e:"🐲", name:"China", jp:"五本爪", ro:"go-hon zume", c:"#ffd166", facts:["often 5 claws"]}, {e:"🐲", name:"Japan", jp:"三本爪", ro:"san-bon zume", c:"#8ecae6", facts:["often 3 claws"]}]); }},
+   {text:"The dragon, 辰 tatsu, is one of the twelve zodiac animals. 2024 was a dragon year, and the next one is 2036.",
+    visual:function(){ return crRow([{e:"🐲", name:"Year of the Dragon", jp:"辰年", ro:"tatsu-doshi", c:"#f78c6b", facts:["2012", "2024", "next: 2036"]}]); }},
+   {text:"In isekai and fantasy anime, dragons are often the strongest creatures of all: a final boss, a wise ancient guardian, or a surprisingly friendly ally.",
+    visual:function(){ return crRow([{e:"🐉", name:"Boss", jp:"ボス", ro:"bosu", c:"#ef476f"}, {e:"🐲", name:"Guardian", jp:"守り神", ro:"mamorigami", c:"#06d6a0"}, {e:"🤝", name:"Ally", jp:"仲間", ro:"nakama", c:"#ffd166"}]); }}],
+  quiz:[["Western dragons usually have…", ["wings and fire breath", "no legs at all", "fins and gills", "three heads, always"], 0, "Big bat-like wings, and often fire."],
+        ["In Chinese and Japanese stories, the dragon brings…", ["rain and good luck", "earthquakes", "snow only", "bad dreams"], 0, "Eastern dragons are water and weather spirits."],
+        ["龍 can be read…", ["りゅう or たつ", "ねこ or いぬ", "おに or かみ", "ほし or そら"], 0, "Also written 竜."],
+        ["The next Year of the Dragon is…", ["2036", "2025", "2030", "2048"], 0, "Every 12 years: 2012, 2024, 2036."],
+        ["Ryūjin, 龍神, is the dragon god of…", ["the sea", "fire", "the moon", "mountains"], 0, "His palace is Ryūgū-jō in Urashima Tarō."]]},
+
+ {id:"fa_yokai", title:"Yokai of Japan", icon:"star", blurb:"Foxes, tanuki, kappa, tengu and oni: Japan's folklore creatures, with real Edo-period drawings.",
+  beats:[
+   {text:"Yokai, 妖怪, are the spirits and creatures of Japanese folklore. Some are spooky, some are silly, and some are kind.",
+    visual:function(){ return crRow([{e:"🦊", name:"Kitsune", jp:"狐", c:"#f78c6b"}, {e:"🦝", name:"Tanuki", jp:"狸", c:"#bc8a5f"}, {svg:R5_SVG.kappa, name:"Kappa", jp:"河童", c:"#80b918"}, {e:"👺", name:"Tengu", jp:"天狗", c:"#ef476f"}, {e:"👹", name:"Oni", jp:"鬼", c:"#9b5de5"}]); }},
+   {text:"Kitsune, the fox. Foxes are messengers of Inari, the god of rice, so Inari shrines have fox statues. Old stories say a fox grows more tails as it gets older and wiser, up to nine.",
+    visual:function(){ return crRow([{e:"🦊", name:"Kitsune", jp:"狐", ro:"kitsune", c:"#f78c6b", facts:["Inari's messenger", "up to 9 tails", "shape-shifter"]}]) + r5Pic("kitsune", "See the real old picture: fox fires"); }},
+   {text:"Tanuki, the raccoon dog, is a real animal in Japan! In stories it's a jolly shape-shifter that puts a leaf on its head to transform. Tanuki statues in big straw hats welcome guests outside restaurants. The emoji is a raccoon, its lookalike.",
+    visual:function(){ return crRow([{e:"🦝", name:"Tanuki", jp:"狸", ro:"tanuki", c:"#bc8a5f", facts:["a real animal", "leaf on its head", "statues at shops"]}]) + r5Pic("tanuki"); }},
+   {text:"Kappa live in rivers. A kappa has a dish of water on its head, and if the water spills, it loses its strength! Kappa love cucumbers, which is why cucumber sushi rolls are called kappa-maki.",
+    visual:function(){ return crRow([{svg:R5_SVG.kappa, name:"Kappa", jp:"河童", ro:"kappa", c:"#80b918", facts:["water dish on its head", "loves cucumbers", "kappa-maki"]}]) + r5Pic("kappa"); }},
+   {text:"Tengu are mountain spirits with red faces and long noses, or crow beaks. They're masters of martial arts and fly with feathered fans.",
+    visual:function(){ return crRow([{e:"👺", name:"Tengu", jp:"天狗", ro:"tengu", c:"#ef476f", facts:["long nose", "feather fan", "martial arts"]}]) + r5Pic("tengu"); }},
+   {text:"Oni are ogres with horns, tiger-skin pants and iron clubs. On Setsubun, around February 3rd, families throw roasted soybeans and shout 鬼は外、福は内: demons out, good luck in!",
+    visual:function(){ return crRow([{e:"👹", name:"Oni", jp:"鬼", ro:"oni", c:"#9b5de5", facts:["horns", "iron club", "Setsubun beans"]}]) + r5Words([["鬼は外", "おにはそと", "demons out!"], ["福は内", "ふくはうち", "good luck in!"]]) + r5Pic("oni"); }},
+   {text:"A cat that lives for a very long time may become a nekomata, with its tail split in two. And rokurokubi look like ordinary people, until their necks stretch at night!",
+    visual:function(){ return crRow([{e:"🐈", name:"Nekomata", jp:"猫又", ro:"nekomata", c:"#ffd166", facts:["two tails"]}, {e:"🦒", name:"Rokurokubi", jp:"ろくろ首", ro:"rokurokubi", c:"#8ecae6", facts:["stretchy neck"]}]) + r5Pic("nekomata"); }},
+   {text:"Old picture scrolls show the Hyakki Yagyō, the night parade of a hundred demons. In the 1700s the artist Toriyama Sekien drew hundreds of yokai in picture books, and his drawings still shape how yokai look in manga and anime today.",
+    visual:function(){ return r5Words([["妖怪", "ようかい", "yokai"], ["百鬼夜行", "ひゃっきやぎょう", "night parade of 100 demons"], ["鳥山石燕", "とりやませきえん", "Toriyama Sekien, artist"]]) + r5Pic("rokurokubi", "See Sekien's rokurokubi (1781)"); }}],
+  quiz:[["A kappa loses its strength when…", ["the water on its head spills", "it eats cucumbers", "it sees the moon", "it hears a bell"], 0, "Keep that dish full!"],
+        ["Foxes are the messengers of…", ["Inari, god of rice", "the sea dragon", "the moon", "oni"], 0, "That's why Inari shrines have fox statues."],
+        ["On Setsubun, people shout…", ["鬼は外、福は内", "いただきます", "あけましておめでとう", "なんでやねん"], 0, "Demons out, good luck in!"],
+        ["The tanuki is…", ["a real animal, the raccoon dog", "only imaginary", "a kind of fish", "a type of oni"], 0, "Nyctereutes, a real canid in Japan."],
+        ["Tengu are known for…", ["long noses and feather fans", "water dishes", "nine tails", "stretchy necks"], 0, "Mountain spirits and martial artists."]]},
+
+ {id:"fa_isekai", title:"Isekai creatures", icon:"star", blurb:"Slimes, elves, dwarves, goblins, fairies, mermaids, griffins and phoenixes, and where they really come from.",
+  beats:[
+   {text:"Isekai, 異世界, means another world. In isekai stories, the hero is transported or reborn into a fantasy world full of creatures like these.",
+    visual:function(){ return crRow([{svg:R5_SVG.slime, name:"Slime", jp:"スライム", c:"#4cc9f0"}, {e:"🧝", name:"Elf", jp:"エルフ", c:"#80b918"}, {svg:R5_SVG.goblin, name:"Goblin", jp:"ゴブリン", c:"#90be6d"}, {e:"🧚", name:"Fairy", jp:"妖精", c:"#f9c6ff"}]); }},
+   {text:"The slime. In Western tabletop games slimes were dangerous oozes, but Japanese RPGs in the 1980s turned the slime into a cute, smiling beginner enemy. Now slimes are a symbol of isekai.",
+    visual:function(){ return crRow([{svg:R5_SVG.slime, name:"Slime", jp:"スライム", ro:"suraimu", c:"#4cc9f0", facts:["gooey", "first enemy", "secretly cute"]}]); }},
+   {text:"Elves come from Norse and Germanic folklore. Modern fantasy, starting with Tolkien's The Lord of the Rings, made them tall, graceful, long-lived archers with pointed ears.",
+    visual:function(){ return crRow([{e:"🧝", name:"Elf", jp:"エルフ", ro:"erufu", c:"#80b918", facts:["pointed ears", "long life", "archery"]}]); }},
+   {text:"Dwarves are also from Norse myth, where they forged the gods' treasures, like Thor's hammer, Mjölnir. In fantasy they're short, bearded miners and smiths.",
+    visual:function(){ return crRow([{e:"🧔⛏️", name:"Dwarf", jp:"ドワーフ", ro:"dowāfu", c:"#bc8a5f", facts:["miner", "smith", "made Mjölnir"]}]); }},
+   {text:"Goblins are small, mischievous creatures from European folklore, and orcs were made famous by Tolkien. In isekai, goblins are often the first real fight for a new adventurer.",
+    visual:function(){ return crRow([{svg:R5_SVG.goblin, name:"Goblin", jp:"ゴブリン", ro:"goburin", c:"#90be6d", facts:["mischievous", "travels in groups"]}, {e:"🐗", name:"Orc", jp:"オーク", ro:"ōku", c:"#a7c957", facts:["Tolkien made them famous"]}]); }},
+   {text:"Fairies, yōsei, are small winged nature spirits. Mermaids, ningyo, are half human and half fish. Japan has its own mermaid legend: a girl who ate ningyo flesh lived for 800 years, the tale of Yao Bikuni.",
+    visual:function(){ return crRow([{e:"🧚", name:"Fairy", jp:"妖精", ro:"yōsei", c:"#f9c6ff", facts:["tiny", "wings", "nature spirit"]}, {e:"🧜‍♀️", name:"Mermaid", jp:"人魚", ro:"ningyo", c:"#4cc9f0", facts:["half fish", "Yao Bikuni: 800 years"]}]); }},
+   {text:"Mix-and-match creatures! A griffin has an eagle's head and wings on a lion's body. A unicorn is a horse with one spiral horn. And the phoenix bursts into flame and is reborn from its ashes, which is why Japanese calls it 不死鳥, the bird that never dies.",
+    visual:function(){ return crRow([{e:"🦅+🦁", name:"Griffin", jp:"グリフォン", ro:"gurifon", c:"#ffd166"}, {e:"🦄", name:"Unicorn", jp:"ユニコーン", ro:"yunikōn", c:"#f9c6ff"}, {e:"🔥🐦", name:"Phoenix", jp:"不死鳥", ro:"fushichō", c:"#f78c6b"}]) + r5Pic("unicorn", "See the real unicorn tapestry (about 1500)") + r5Pic("phoenix", "See a phoenix from a medieval bestiary"); }},
+   {text:"Isekai stories borrow from video games too: a Demon Lord, 魔王 maō, rules the monsters, adventurers join a guild, and a status screen shows their level and skills, just like an RPG.",
+    visual:function(){ return r5Words([["異世界", "いせかい", "another world"], ["魔王", "まおう", "Demon Lord"], ["冒険者", "ぼうけんしゃ", "adventurer"], ["ギルド", "girudo", "guild"], ["レベル", "reberu", "level"], ["転生", "てんせい", "reincarnation"]]); }}],
+  quiz:[["異世界 (isekai) means…", ["another world", "a dragon", "a magic school", "a summer festival"], 0, "異 different + 世界 world."],
+        ["Elves come originally from…", ["Norse and Germanic folklore", "Japanese yokai", "Egyptian myths", "1990s video games"], 0, "Tolkien made the modern version famous."],
+        ["In Norse myth, dwarves forged…", ["Thor's hammer, Mjölnir", "Excalibur", "the Moon", "the first slime"], 0, "They were the gods' master smiths."],
+        ["不死鳥 is…", ["the phoenix", "the griffin", "the unicorn", "a goblin"], 0, "The bird that never dies."],
+        ["A griffin is…", ["eagle + lion", "horse + horn", "fish + human", "cat + snake"], 0, "Eagle's head and wings, lion's body."]]},
+
+ {id:"fa_witches", title:"Witches & wizards", icon:"star", blurb:"Brooms and cauldrons, Halloween, Baba Yaga, Merlin, Japan's onmyōji, and magical girls.",
+  beats:[
+   {text:"Witches, majo 魔女, and wizards, mahōtsukai 魔法使い, appear in stories all over the world.",
+    visual:function(){ return crRow([{e:"🧙‍♀️", name:"Witch", jp:"魔女", ro:"majo", c:"#9b5de5"}, {e:"🧙‍♂️", name:"Wizard", jp:"魔法使い", ro:"mahōtsukai", c:"#4361ee"}]); }},
+   {text:"In European folklore, witches brew potions in cauldrons, keep black cats, and fly on broomsticks.",
+    visual:function(){ return crRow([{e:"🧹", name:"Broom", jp:"ほうき", c:"#ffd166"}, {e:"🐈", name:"Black cat", jp:"黒猫", c:"#adb5bd"}, {e:"🧪", name:"Potion", jp:"薬", c:"#06d6a0"}]); }},
+   {text:"Halloween, on October 31st, comes from Samhain, an old Celtic festival marking the end of the harvest, when spirits were believed to come close. Witches became a favourite Halloween costume, and Japan dresses up for it too.",
+    visual:function(){ return crRow([{e:"🎃", name:"Halloween", jp:"ハロウィン", ro:"harowin", c:"#f78c6b", facts:["31 October", "from Samhain"]}]); }},
+   {text:"Russia has Baba Yaga, a witch whose hut walks around on chicken legs! And Merlin is the famous wizard of the King Arthur legends, adviser to the king.",
+    visual:function(){ return crRow([{e:"🛖🐔", name:"Baba Yaga's hut", jp:"バーバ・ヤガー", c:"#bc8a5f", facts:["chicken legs!"]}, {e:"🧙‍♂️", name:"Merlin", jp:"マーリン", c:"#4361ee", facts:["King Arthur's wizard"]}]); }},
+   {text:"Japan's own wizard was the onmyōji, a court diviner who read the stars and calendars. Abe no Seimei, who lived about a thousand years ago, became a legend who could command spirits called shikigami.",
+    visual:function(){ return r5Words([["陰陽師", "おんみょうじ", "onmyōji, court diviner"], ["安倍晴明", "あべのせいめい", "Abe no Seimei (921–1005)"], ["式神", "しきがみ", "spirit helpers"]]); }},
+   {text:"Shrine maidens, miko 巫女, serve at Shinto shrines today, helping with ceremonies and sacred dances. In anime they often fight spirits with paper charms called ofuda.",
+    visual:function(){ return r5Words([["巫女", "みこ", "shrine maiden"], ["お札", "おふだ", "paper charm"], ["神社", "じんじゃ", "Shinto shrine"]]); }},
+   {text:"Witch anime is a genre of its own: magical girls, mahō shōjo 魔法少女, transform with a wand or a charm and save the day. The genre began in Japan in the 1960s and is still going strong.",
+    visual:function(){ return crRow([{e:"🪄✨", name:"Magical girl", jp:"魔法少女", ro:"mahō shōjo", c:"#f9c6ff", facts:["transforms", "since the 1960s"]}]); }}],
+  quiz:[["魔女 means…", ["witch", "wizard", "fairy", "demon"], 0, "魔 magic + 女 woman."],
+        ["Halloween grew out of…", ["Samhain, a Celtic harvest festival", "Setsubun", "Christmas", "Tanabata"], 0, "31 October, the end of the harvest."],
+        ["Baba Yaga's hut stands on…", ["chicken legs", "a turtle", "clouds", "a broom"], 0, "From Russian folklore."],
+        ["Japan's court diviner-wizard was the…", ["onmyōji", "samurai", "ninja", "sumo wrestler"], 0, "Abe no Seimei is the most famous."],
+        ["魔法少女 is…", ["the magical girl genre", "a dragon", "a shrine", "a school uniform"], 0, "Girls who transform to save the day."]]},
+
+ {id:"fa_anime", title:"Types of anime", icon:"star", blurb:"Shōnen, shōjo, isekai, mecha, slice of life and more: how anime genres work.",
+  beats:[
+   {text:"Anime has many genres, and Japan also sorts series by who they were first made for, based on the manga magazines they ran in.",
+    visual:function(){ return r5Words([["アニメ", "anime", "animation"], ["漫画", "まんが", "comics"], ["ジャンル", "janru", "genre"]]); }},
+   {text:"Shōnen, 少年, means boy: action, friendship, training and rivals. Shōjo, 少女, means girl: feelings, romance and friendship. Anyone can enjoy either!",
+    visual:function(){ return crRow([{e:"💪🔥", name:"Shōnen", jp:"少年", c:"#ef476f", facts:["action", "rivals", "training"]}, {e:"💖🌸", name:"Shōjo", jp:"少女", c:"#f9c6ff", facts:["feelings", "romance", "friends"]}]); }},
+   {text:"Seinen, 青年, is aimed at adult men and josei, 女性, at adult women: often more grown-up stories about work, life and love.",
+    visual:function(){ return crRow([{e:"🌃", name:"Seinen", jp:"青年", c:"#4361ee"}, {e:"☕", name:"Josei", jp:"女性", c:"#bc8a5f"}]); }},
+   {text:"Isekai, 異世界: someone is transported or reborn into another world. Many began as web novels and light novels, and the genre boomed in the 2010s.",
+    visual:function(){ return crRow([{e:"🚪✨", name:"Isekai", jp:"異世界", c:"#06d6a0", facts:["another world", "light novels", "2010s boom"]}]); }},
+   {text:"Magical girls, mahō shōjo 魔法少女, transform to fight evil. Mecha, メカ, are giant robots piloted from inside.",
+    visual:function(){ return crRow([{e:"🪄", name:"Magical girl", jp:"魔法少女", c:"#f9c6ff"}, {e:"🤖", name:"Mecha", jp:"メカ・ロボット", c:"#adb5bd"}]); }},
+   {text:"Slice of life, nichijō-kei 日常系, follows everyday school or work life. Iyashikei, 癒し系, healing anime, is calm and cosy, made to help you relax.",
+    visual:function(){ return crRow([{e:"🍱", name:"Slice of life", jp:"日常系", c:"#ffd166"}, {e:"🍵🍃", name:"Iyashikei", jp:"癒し系", c:"#80b918"}]); }},
+   {text:"There's much more: sports, idols, romantic comedy, horror and sci-fi. Tap the heart on lessons you like, and switch on More please to ask for more of them!",
+    visual:function(){ return r5Words([["スポーツ", "supōtsu", "sports"], ["アイドル", "aidoru", "idol"], ["ラブコメ", "rabukome", "romantic comedy"], ["ホラー", "horā", "horror"], ["SF", "esu efu", "sci-fi"]]); }}],
+  quiz:[["少年 (shōnen) anime was first made for…", ["boys", "girls", "adult women", "grandparents"], 0, "Labels come from manga magazine audiences."],
+        ["A story where someone is reborn in a fantasy world is…", ["isekai", "mecha", "josei", "iyashikei"], 0, "異世界, another world."],
+        ["癒し系 (iyashikei) anime is…", ["calm and healing", "about giant robots", "horror", "sports"], 0, "Made to help you relax."],
+        ["メカ (mecha) means…", ["giant robots", "magic wands", "school life", "idols"], 0, "Piloted from inside."],
+        ["Josei, 女性, is aimed at…", ["adult women", "young boys", "pets", "pilots"], 0, "Seinen is for adult men."]]},
+
+ {id:"fa_days", title:"Creature festivals & special days", icon:"star", blurb:"Setsubun oni, Cat Day, Dog Day, carp that become dragons, Obon and Halloween in Japan.",
+  beats:[
+   {text:"Japan's calendar is full of days for creatures, real and imaginary. Here are the fun ones.",
+    visual:function(){ return crRow([{e:"👹", name:"Setsubun", jp:"節分", c:"#9b5de5"}, {e:"🎏", name:"Children's Day", jp:"こどもの日", c:"#4cc9f0"}, {e:"🐱", name:"Cat Day", jp:"猫の日", c:"#ffd166"}, {e:"🐶", name:"Dog Day", jp:"犬の日", c:"#f78c6b"}]); }},
+   {text:"Setsubun, around February 3rd, marks the start of spring in the old calendar. Someone wears an oni mask, and everyone throws roasted soybeans and shouts 鬼は外、福は内!",
+    visual:function(){ return crRow([{e:"👹🫘", name:"Setsubun", jp:"節分", ro:"setsubun", c:"#9b5de5", facts:["about 3 February", "bean throwing"]}]); }},
+   {text:"February 22nd is Cat Day, 猫の日, because 2/22 can be read ニャンニャンニャン, nyan nyan nyan! And November 1st is Dog Day, 犬の日, because 11/1 is ワンワンワン, wan wan wan.",
+    visual:function(){ return crRow([{e:"🐱", name:"Cat Day", jp:"猫の日", c:"#ffd166", facts:["2/22", "nyan nyan nyan"]}, {e:"🐶", name:"Dog Day", jp:"犬の日", c:"#f78c6b", facts:["11/1", "wan wan wan"]}]); }},
+   {text:"On Children's Day, May 5th, families fly carp streamers, koinobori. A legend says a carp that swims up a waterfall called the Dragon Gate becomes a dragon, so 登竜門 means a gateway to success.",
+    visual:function(){ return crRow([{e:"🎏", name:"Koinobori", jp:"鯉のぼり", c:"#4cc9f0", facts:["5 May"]}, {e:"🐟➡️🐲", name:"Carp to dragon", jp:"登竜門", ro:"tōryūmon", c:"#06d6a0", facts:["gateway to success"]}]); }},
+   {text:"At Obon in summer, families welcome their ancestors' spirits home. Some make little animals from vegetables: a cucumber horse so the spirits arrive fast, and an eggplant cow so they leave slowly.",
+    visual:function(){ return crRow([{e:"🥒🐎", name:"Cucumber horse", jp:"精霊馬", ro:"shōryōuma", c:"#80b918", facts:["come quickly"]}, {e:"🍆🐄", name:"Eggplant cow", jp:"精霊牛", ro:"shōryōushi", c:"#9b5de5", facts:["leave slowly"]}]); }},
+   {text:"Fushimi Inari Taisha in Kyoto, the head Inari shrine, has thousands of red torii gates and many fox statues, often holding a key or a jewel in their mouths.",
+    visual:function(){ return crRow([{e:"⛩️🦊", name:"Fushimi Inari", jp:"伏見稲荷大社", c:"#ef476f", facts:["thousands of torii", "fox guardians"]}]); }},
+   {text:"And on October 31st, Japan's cities fill with Halloween costumes too: witches, yokai and anime characters side by side.",
+    visual:function(){ return crRow([{e:"🎃🧙‍♀️👻", name:"Halloween in Japan", jp:"ハロウィン", c:"#f78c6b", facts:["31 October", "costumes"]}]); }}],
+  quiz:[["Cat Day in Japan is…", ["February 22nd", "November 1st", "May 5th", "October 31st"], 0, "2/22 = nyan nyan nyan."],
+        ["Dog Day in Japan is…", ["November 1st", "February 22nd", "January 1st", "July 7th"], 0, "11/1 = wan wan wan."],
+        ["登竜門 comes from a carp that…", ["swims up a waterfall and becomes a dragon", "flies to the Moon", "turns into a fox", "eats cucumbers"], 0, "It means a gateway to success."],
+        ["At Obon, the cucumber horse helps spirits…", ["arrive quickly", "leave quickly", "find food", "sleep"], 0, "The eggplant cow takes them back slowly."],
+        ["Fushimi Inari is famous for…", ["thousands of red torii and fox statues", "a giant Buddha", "snow monkeys", "deer"], 0, "The head shrine of Inari, in Kyoto."]]}
+];
+
+var ANIMALS = [
+ {id:"an_dinos", title:"Dinosaurs", icon:"globe", blurb:"Triassic to Cretaceous, T. rex and Stegosaurus, why birds are dinosaurs, and Japan's own dinosaurs.",
+  beats:[
+   {text:"Dinosaurs ruled the land for about 165 million years. In Japanese they're 恐竜, kyōryū, terrible dragons, and the English name means terrible lizard.",
+    visual:function(){ return crRow([{e:"🦖", name:"Tyrannosaurus", jp:"ティラノサウルス", c:"#ef476f"}, {e:"🦕", name:"Sauropod", jp:"竜脚類", c:"#80b918"}]) + r5Words([["恐竜", "きょうりゅう", "dinosaur"], ["化石", "かせき", "fossil"]]); }},
+   {text:"The Age of Dinosaurs, the Mesozoic Era, has three periods: the Triassic, about 252 to 201 million years ago, the Jurassic, 201 to 145, and the Cretaceous, 145 to 66.",
+    visual:function(){ return flowSvg(["Triassic 252–201", "Jurassic 201–145", "Cretaceous 145–66"], ["#ffd166", "#06d6a0", "#4cc9f0"]) + '<p class="sci-note">Millions of years ago.</p>'; }},
+   {text:"Tyrannosaurus rex lived right at the end, about 68 to 66 million years ago. It was around 12 metres long, with teeth as big as bananas.",
+    visual:function(){ return crRow([{e:"🦖", name:"T. rex", jp:"ティラノサウルス", ro:"tiranosaurusu", c:"#ef476f", facts:["about 12 m", "68–66 million years ago", "banana-sized teeth"]}]); }},
+   {text:"Sauropods, like Brachiosaurus, were plant-eaters with very long necks. Some, like Argentinosaurus, may have been over 30 metres long: the biggest land animals ever.",
+    visual:function(){ return crRow([{e:"🦕", name:"Sauropods", jp:"竜脚類", ro:"ryūkyakurui", c:"#80b918", facts:["long necks", "plant-eaters", "up to 30 m+"]}]) + r5Pic("bronto", "See an 1897 painting of sauropods"); }},
+   {text:"Stegosaurus, with plates on its back and spikes on its tail, lived in the Jurassic. It died out about 80 million years before T. rex appeared, so we live closer in time to T. rex than T. rex did to Stegosaurus!",
+    visual:function(){ return crRow([{e:"🦕", name:"Stegosaurus", jp:"ステゴサウルス", ro:"sutegosaurusu", c:"#06d6a0", facts:["back plates", "tail spikes", "Jurassic"]}]) + r5Pic("stego", "See Charles R. Knight's 1901 Stegosaurus"); }},
+   {text:"Flying pterosaurs and the sea's plesiosaurs were not dinosaurs, just their reptile cousins. But birds are dinosaurs! They evolved from small feathered dinosaurs, so a chicken is a living relative of T. rex.",
+    visual:function(){ return crRow([{e:"🐔", name:"Birds", jp:"鳥", ro:"tori", c:"#ffd166", facts:["real dinosaurs!"]}, {e:"🪽🦎", name:"Pterosaurs", jp:"翼竜", ro:"yokuryū", c:"#adb5bd", facts:["not dinosaurs"]}]); }},
+   {text:"About 66 million years ago, an asteroid around 10 kilometres wide hit Chicxulub, in what is now Mexico. Together with huge volcanic eruptions, it ended the age of the non-bird dinosaurs.",
+    visual:function(){ return crRow([{e:"☄️", name:"Chicxulub impact", jp:"隕石", ro:"inseki", c:"#f78c6b", facts:["66 million years ago", "about 10 km wide"]}]) + r5Pic("dino_old", "See how dinosaurs were painted in 1897"); }},
+   {text:"Japan has dinosaurs too! Fukui Prefecture has many finds, like Fukuiraptor, and a big dinosaur museum. Kamuysaurus, named after the Ainu word for a god, was found at Mukawa in Hokkaido.",
+    visual:function(){ return r5Words([["フクイラプトル", "fukuiraputoru", "Fukuiraptor"], ["カムイサウルス", "kamuisaurusu", "Kamuysaurus, the 'god' dinosaur"], ["福井県", "ふくいけん", "Fukui Prefecture"]]); }}],
+  quiz:[["恐竜 (kyōryū) is Japanese for…", ["dinosaur", "dragon", "fossil", "volcano"], 0, "Literally 'terrible dragon'."],
+        ["T. rex lived in the…", ["late Cretaceous", "Triassic", "early Jurassic", "Ice Age"], 0, "About 68 to 66 million years ago."],
+        ["Which of these IS a dinosaur?", ["a chicken", "a pterosaur", "a plesiosaur", "a crocodile"], 0, "Birds evolved from feathered dinosaurs."],
+        ["The asteroid that ended the dinosaurs' age hit…", ["Chicxulub, Mexico", "Hokkaido", "the Moon", "Antarctica"], 0, "About 66 million years ago."],
+        ["Kamuysaurus was found in…", ["Mukawa, Hokkaido", "Kyoto", "Okinawa", "Mexico"], 0, "Named 2019, after the Ainu word kamuy."]]},
+
+ {id:"an_dogs", title:"Dogs in Japanese", icon:"heart", blurb:"Japan's six native breeds, Hachikō, the most popular pet dogs, and Dog Day.",
+  beats:[
+   {text:"Dog is 犬, inu, and Japanese dogs say ワンワン, wan wan. Japan has six native breeds, called 日本犬, nihon-ken.",
+    visual:function(){ return r5Words([["犬", "いぬ", "dog"], ["子犬", "こいぬ", "puppy"], ["ワンワン", "wan wan", "woof woof"], ["日本犬", "にほんけん", "Japanese breeds"]]); }},
+   {text:"All six, Akita, Kai, Kishu, Shiba, Shikoku and Hokkaido, are protected as Natural Monuments, 天然記念物.",
+    visual:function(){ return crRow([{e:"🐕", name:"Akita", jp:"秋田犬", c:"#f78c6b"}, {e:"🐕", name:"Kai", jp:"甲斐犬", c:"#6c584c"}, {e:"🐕", name:"Kishu", jp:"紀州犬", c:"#e9ecef"}, {e:"🐕", name:"Shiba", jp:"柴犬", c:"#ffb703"}, {e:"🐕", name:"Shikoku", jp:"四国犬", c:"#adb5bd"}, {e:"🐕", name:"Hokkaido", jp:"北海道犬", c:"#caf0f8"}]); }},
+   {text:"The Shiba Inu, 柴犬, is the smallest: a foxy face, a curled tail, and a famously loud Shiba scream when it's unhappy.",
+    visual:function(){ return r5Photo("shiba") + crRow([{e:"🐕", name:"Shiba Inu", jp:"柴犬", ro:"shiba-inu", c:"#ffb703", facts:["smallest native breed", "curled tail"]}]); }},
+   {text:"The Akita, 秋田犬, is the biggest. Hachikō, an Akita, waited at Shibuya Station for his owner every day for almost ten years after his owner died. His statue there is a famous meeting place.",
+    visual:function(){ return r5Photo("akita") + crRow([{e:"🐕", name:"Akita", jp:"秋田犬", ro:"akita-inu", c:"#f78c6b", facts:["biggest native breed", "Hachikō"]}]); }},
+   {text:"The Kai Ken, 甲斐犬, from Yamanashi, has a tiger-striped brindle coat. The Kishu is usually white, the Shikoku looks like a little wolf, and the tough Hokkaido Ken was bred for snowy Hokkaido.",
+    visual:function(){ return r5Photo("kai") + crRow([{e:"🐕", name:"Kai Ken", jp:"甲斐犬", c:"#6c584c", facts:["tiger stripes"]}, {e:"🐕", name:"Hokkaido", jp:"北海道犬", c:"#caf0f8", facts:["snow-tough"]}]); }},
+   {text:"Japan's most popular pet breeds are mostly small: the Toy Poodle, the Chihuahua, the Miniature Dachshund and the Pomeranian, with the Shiba close behind.",
+    visual:function(){ return r5Photo("poodle") + r5Words([["トイ・プードル", "toi pūdoru", "Toy Poodle"], ["チワワ", "chiwawa", "Chihuahua"], ["ミニチュア・ダックスフンド", "minichua dakkusufundo", "Miniature Dachshund"], ["ポメラニアン", "pomeranian", "Pomeranian"]]); }},
+   {text:"November 1st is Dog Day in Japan, 犬の日, because 11/1 sounds like ワンワンワン. Give your dog an extra walk!",
+    visual:function(){ return crRow([{e:"🐶🎉", name:"Dog Day", jp:"犬の日", ro:"inu no hi", c:"#f78c6b", facts:["1 November", "wan wan wan"]}]); }}],
+  quiz:[["Japan has how many native dog breeds?", ["6", "2", "12", "1"], 0, "Akita, Kai, Kishu, Shiba, Shikoku and Hokkaido."],
+        ["The smallest native breed is the…", ["Shiba", "Akita", "Kishu", "Hokkaido"], 0, "柴犬."],
+        ["Hachikō was…", ["an Akita who waited at Shibuya", "a Shiba from a TV show", "a cat", "a wolf"], 0, "He waited almost ten years."],
+        ["The Kai Ken is known for…", ["its tiger-striped coat", "being white", "having no tail", "swimming"], 0, "Brindle, from Yamanashi."],
+        ["犬の日 (Dog Day) is…", ["November 1st", "February 22nd", "August 8th", "May 5th"], 0, "11/1 = wan wan wan."]]},
+
+ {id:"an_cats", title:"Cats in Japanese", icon:"heart", blurb:"Japanese Bobtails, calico cats, maneki-neko, a cat station master, cat islands and Cat Day.",
+  beats:[
+   {text:"Cat is 猫, neko, and cats say ニャー, nyā. Japan loves cats!",
+    visual:function(){ return r5Words([["猫", "ねこ", "cat"], ["子猫", "こねこ", "kitten"], ["ニャー", "nyā", "meow"], ["肉球", "にくきゅう", "paw pads"]]); }},
+   {text:"The Japanese Bobtail has a short, fluffy pom-pom tail from a natural gene, and it has lived in Japan for centuries.",
+    visual:function(){ return r5Photo("bobtail") + crRow([{e:"🐈", name:"Japanese Bobtail", jp:"ジャパニーズ・ボブテイル", c:"#ffd166", facts:["pom-pom tail"]}]); }},
+   {text:"A calico, 三毛猫 mikeneko, three-fur cat, is white, orange and black. Almost every calico is female: the orange and black colours come from the X chromosome, so a cat needs two Xs to show both. Male calicos are very rare.",
+    visual:function(){ return r5Photo("calico") + crRow([{e:"🐈", name:"Calico", jp:"三毛猫", ro:"mikeneko", c:"#f78c6b", facts:["white, orange, black", "almost all female"]}]); }},
+   {text:"The beckoning cat, 招き猫 maneki-neko, waves customers into shops. Many say a raised left paw invites customers and a raised right paw invites money and luck.",
+    visual:function(){ return r5Photo("maneki") + crRow([{e:"🐱👋", name:"Maneki-neko", jp:"招き猫", ro:"maneki-neko", c:"#ffffff", facts:["left paw: customers", "right paw: money"]}]); }},
+   {text:"In 2007, a calico called Tama became station master of Kishi Station in Wakayama, and the tourists she drew helped save the little railway line.",
+    visual:function(){ return r5Photo("tama") + crRow([{e:"🐱🚉", name:"Station master Tama", jp:"たま駅長", ro:"tama ekichō", c:"#ffd166", facts:["Kishi Station", "from 2007"]}]); }},
+   {text:"Japan has cat islands, like Tashirojima and Aoshima, where the cats outnumber the people.",
+    visual:function(){ return crRow([{e:"🏝️🐈🐈🐈", name:"Cat islands", jp:"猫島", ro:"nekojima", c:"#4cc9f0", facts:["Tashirojima", "Aoshima"]}]); }},
+   {text:"Popular breeds in Japan include the Scottish Fold and the Munchkin. The Fold's ears come from a cartilage gene that can cause painful joint problems, so many vets urge caution about breeding them. Plenty of Japan's cats are happy mixed breeds, 雑種.",
+    visual:function(){ return r5Photo("fold") + r5Words([["スコティッシュフォールド", "sukottisshu fōrudo", "Scottish Fold"], ["マンチカン", "manchikan", "Munchkin"], ["雑種", "ざっしゅ", "mixed breed"]]); }},
+   {text:"February 22nd is Cat Day, 猫の日, because 2/22 sounds like ニャンニャンニャン!",
+    visual:function(){ return crRow([{e:"🐱🎉", name:"Cat Day", jp:"猫の日", ro:"neko no hi", c:"#ffd166", facts:["22 February", "nyan nyan nyan"]}]); }}],
+  quiz:[["三毛猫 (mikeneko) are almost always…", ["female", "male", "black", "kittens"], 0, "Orange and black both need an X chromosome."],
+        ["A maneki-neko is…", ["a beckoning cat figure", "a cat café", "a cat island", "a cat breed"], 0, "It waves customers in."],
+        ["Tama the cat was…", ["a railway station master", "a sumo champion", "a TV chef", "a temple guard"], 0, "At Kishi Station, Wakayama."],
+        ["Cat Day in Japan is…", ["February 22nd", "November 1st", "March 3rd", "December 25th"], 0, "2/22 = nyan nyan nyan."],
+        ["The Japanese Bobtail is known for…", ["its short pom-pom tail", "having no fur", "being huge", "swimming"], 0, "A natural gene."]]}
+];
+
+var TECH = [
+ {id:"tc_gpu", title:"How a GPU works", icon:"code", blurb:"Thousands of small cores working at once: graphics, shaders, VRAM, and why AI runs on GPUs.",
+  beats:[
+   {text:"A GPU, graphics processing unit, is a chip built to do thousands of small calculations at the same time.",
+    visual:function(){ return crRow([{svg:R5_SVG.chip, name:"GPU", jp:"グラフィックスプロセッサー", c:"#06d6a0", facts:["parallel", "graphics", "AI"]}]); }},
+   {text:"A CPU has a few powerful cores that are great at doing different jobs one after another. A GPU has thousands of simpler cores that all do the same kind of job at once. That's called parallel processing.",
+    visual:function(){ return coresSvg(); }},
+   {text:"A Full HD screen is 1920 by 1080 pixels: over 2 million. The GPU works out the colour of every one of them 60 or more times every second.",
+    visual:function(){ return crRow([{e:"🖥️", name:"1920 × 1080", jp:"画素", ro:"gaso, pixels", c:"#4cc9f0", facts:["2,073,600 pixels", "60+ times a second"]}]); }},
+   {text:"The graphics pipeline: 3D models are made of triangles. A vertex shader moves and turns the triangles, rasterizing turns them into pixels, and a pixel shader colours each pixel with light and textures.",
+    visual:function(){ return pipelineSvg(); }},
+   {text:"GPUs have their own fast memory, VRAM, so textures and models sit right next to the cores that need them.",
+    visual:function(){ return crRow([{e:"💾⚡", name:"VRAM", jp:"ビデオメモリ", c:"#9b5de5", facts:["very fast", "next to the cores"]}]); }},
+   {text:"AI runs on GPUs because neural networks are mostly giant matrix multiplications: the same multiply and add, millions of times over. Modern GPUs even have special matrix units, like NVIDIA's Tensor Cores, just for this.",
+    visual:function(){ return crRow([{e:"🧠✖️", name:"Matrix maths", jp:"行列計算", ro:"gyōretsu keisan", c:"#ef476f", facts:["multiply and add", "millions at once"]}]); }},
+   {text:"Programmers talk to GPUs through APIs: Vulkan, DirectX and Apple's Metal for graphics, and CUDA, NVIDIA's platform, for general computing. And the 3D planets and heart in this app are drawn by your phone's GPU, through WebGL!",
+    visual:function(){ return r5Words([["Vulkan", "cross-platform", "graphics"], ["DirectX", "Windows", "graphics"], ["Metal", "Apple", "graphics"], ["CUDA", "NVIDIA", "general computing"], ["WebGL", "browsers", "this app's 3D"]]); }}],
+  quiz:[["A GPU is built for…", ["many small calculations at once", "one big task at a time", "storing photos", "making phone calls"], 0, "Parallel processing."],
+        ["A Full HD screen has about how many pixels?", ["2 million", "2 thousand", "200 million", "20"], 0, "1920 × 1080 = 2,073,600."],
+        ["A pixel shader…", ["colours each pixel", "stores files", "charges the battery", "sends Wi-Fi"], 0, "With light and textures."],
+        ["AI runs well on GPUs because neural networks are mostly…", ["matrix multiplications", "text files", "random guesses", "sound waves"], 0, "Multiply and add, over and over."],
+        ["CUDA is…", ["NVIDIA's platform for computing on GPUs", "a type of screen", "a phone brand", "a game"], 0, "Graphics use Vulkan, DirectX or Metal."]]},
+
+ {id:"tc_soc", title:"How phone chips work", icon:"phone", blurb:"A whole computer on one chip: big and little CPU cores, GPU, NPU, camera ISP, modem, and why phones get hot.",
+  beats:[
+   {text:"A phone chip is a system on a chip, an SoC: a whole computer squeezed onto one piece of silicon about the size of a fingernail.",
+    visual:function(){ return socSvg(); }},
+   {text:"Its CPU has two kinds of cores: big fast ones for heavy work, and small efficient ones that handle light jobs and save battery. Arm calls this idea big.LITTLE.",
+    visual:function(){ return socSvg(["CPU"]); }},
+   {text:"There's a GPU for graphics, an NPU or neural engine for AI features like face unlock and photo tricks, and an ISP, image signal processor, that turns the camera sensor's data into photos.",
+    visual:function(){ return socSvg(["GPU", "NPU", "ISP"]); }},
+   {text:"The modem connects to mobile networks like 4G and 5G, with radios for Wi-Fi and Bluetooth too, though some phones use a separate modem chip.",
+    visual:function(){ return socSvg(["Modem", "Wi-Fi"]); }},
+   {text:"Most phone chips use the Arm instruction set: Apple's A-series, Qualcomm's Snapdragon, Google's Tensor and MediaTek's Dimensity are all Arm-based.",
+    visual:function(){ return r5Words([["A-series", "Apple", "iPhone"], ["Snapdragon", "Qualcomm", "many Androids"], ["Tensor", "Google", "Pixel"], ["Dimensity", "MediaTek", "many Androids"]]); }},
+   {text:"Transistors are tiny on and off switches, and a flagship phone chip has well over 10 billion of them. Names like 3 nanometre are labels for a manufacturing generation, not an exact measurement.",
+    visual:function(){ return crRow([{e:"🔌", name:"Transistor", jp:"トランジスタ", ro:"toranjisuta", c:"#ffd166", facts:["on/off switch", "10+ billion per chip"]}]); }},
+   {text:"Heat is the enemy. Phones have no fans, so when the chip gets too hot it slows itself down to stay safe. That's called thermal throttling.",
+    visual:function(){ return crRow([{e:"🔥📱", name:"Thermal throttling", jp:"熱で速度が下がる", c:"#ef476f", facts:["no fan", "slows down to cool"]}]); }}],
+  quiz:[["SoC stands for…", ["system on a chip", "speed of computing", "screen on case", "software of code"], 0, "A whole computer on one chip."],
+        ["big.LITTLE means…", ["big fast cores plus small efficient cores", "two screens", "a big battery", "little apps"], 0, "Power when needed, battery saving otherwise."],
+        ["The ISP handles…", ["camera images", "phone calls", "charging", "Wi-Fi"], 0, "Image signal processor."],
+        ["Most phone chips use the … instruction set.", ["Arm", "x86", "MIDI", "HTML"], 0, "Snapdragon, A-series, Tensor, Dimensity."],
+        ["Thermal throttling is when a chip…", ["slows down because it's too hot", "speeds up in the cold", "turns off Wi-Fi", "charges faster"], 0, "Phones have no fans."]]},
+
+ {id:"tc_tools", title:"How developers build software (and chips)", icon:"code", blurb:"Code, editors, compilers, Git, debuggers, SDKs, AI helpers like Claude Code, and how chips are designed.",
+  beats:[
+   {text:"Software starts as source code: text written in a programming language like Python, JavaScript, Swift or C.",
+    visual:function(){ return devSvg(); }},
+   {text:"Developers write code in an editor or an IDE, an integrated development environment, like VS Code, Android Studio or Xcode. It highlights mistakes and helps you type.",
+    visual:function(){ return r5Words([["VS Code", "editor", "everything"], ["Android Studio", "IDE", "Android apps"], ["Xcode", "IDE", "iPhone apps"]]); }},
+   {text:"A compiler translates code into the machine instructions a chip can run. Some languages, like Python, use an interpreter, which runs the code step by step instead.",
+    visual:function(){ return flowSvg(["Source code", "Compiler", "Machine code", "Chip runs it"], ["#ffd166", "#06d6a0", "#4cc9f0", "#9b5de5"]); }},
+   {text:"Git keeps every version of your code, so you can undo mistakes and work with a team. GitHub hosts Git projects online. This app lives in one!",
+    visual:function(){ return crRow([{e:"🌳", name:"Git", jp:"バージョン管理", ro:"bājon kanri", c:"#f78c6b", facts:["every version saved", "teamwork"]}]); }},
+   {text:"A debugger lets you pause a program and look inside it, line by line. Tests are small programs that check your program still works after every change.",
+    visual:function(){ return crRow([{e:"🐞🔍", name:"Debugger", jp:"デバッガー", c:"#ef476f"}, {e:"✅", name:"Tests", jp:"テスト", c:"#06d6a0"}]); }},
+   {text:"SDKs, software development kits, give you ready-made tools for a platform, like the Android SDK for Android apps. Package managers like npm and pip fetch libraries other people wrote.",
+    visual:function(){ return r5Words([["SDK", "kit", "tools for a platform"], ["npm", "JavaScript", "packages"], ["pip", "Python", "packages"]]); }},
+   {text:"AI coding assistants like Claude Code can read a whole project, write code, run the tests and explain errors. This app was built that way!",
+    visual:function(){ return crRow([{e:"🤖💻", name:"Claude Code", jp:"AIコーディング", c:"#4361ee", facts:["reads the project", "writes and tests code"]}]); }},
+   {text:"Chips are coded too! Engineers describe circuits in hardware description languages like Verilog or VHDL, test them in simulators, try them on FPGAs, which are chips you can rewire with code, then send the design to a factory, called a foundry.",
+    visual:function(){ return flowSvg(["Verilog", "Simulate", "FPGA", "Foundry"], ["#ffd166", "#06d6a0", "#4cc9f0", "#9b5de5"]); }}],
+  quiz:[["A compiler…", ["turns code into machine instructions", "draws pictures", "charges phones", "stores passwords"], 0, "Interpreters run code step by step instead."],
+        ["Git is for…", ["keeping every version of your code", "making music", "sending email", "drawing chips"], 0, "GitHub hosts Git projects online."],
+        ["An IDE is…", ["an integrated development environment", "an internet device", "a type of chip", "a game controller"], 0, "Like Android Studio or Xcode."],
+        ["Chips are described in languages like…", ["Verilog or VHDL", "HTML only", "Japanese", "MIDI"], 0, "Hardware description languages."],
+        ["An FPGA is…", ["a chip you can rewire with code", "a phone brand", "a kind of battery", "a screen"], 0, "Great for testing chip designs."]]},
+
+ {id:"tc_chip", title:"Build a simple chip", icon:"layers", blurb:"Tap the switches: logic gates, then a half adder, then a 4-bit adder, the heart of a CPU.",
+  beats:[
+   {text:"Every chip is built from logic gates: tiny circuits that take 1s and 0s in and give 1s and 0s out. Tap A and B and watch the gates change!",
+    visual:function(){ return gatesBox("gates"); }},
+   {text:"AND gives 1 only if both inputs are 1. OR gives 1 if either is. NOT flips a bit, and XOR gives 1 when the inputs are different. Here's every case in a truth table.",
+    visual:function(){ return gatesBox("tables"); }},
+   {text:"Gates are made of transistors acting as switches. A CMOS NAND gate needs just four transistors, and any circuit at all can be built from NAND gates alone.",
+    visual:function(){ return crRow([{e:"🔌×4", name:"NAND gate", jp:"NANDゲート", c:"#ffd166", facts:["4 transistors", "can build anything"]}]); }},
+   {text:"Let's build a half adder, which adds two bits. The sum is A XOR B, and the carry is A AND B. Try 1 plus 1: sum 0, carry 1, which is 10, two in binary!",
+    visual:function(){ return gatesBox("half"); }},
+   {text:"A full adder also takes a carry in, so adders can be chained. Four full adders make a 4-bit adder that adds numbers up to 15 plus 15. Tap the bits!",
+    visual:function(){ return gatesBox("add4"); }},
+   {text:"This is the heart of a CPU's ALU, the arithmetic logic unit. Real chips repeat blocks like this billions of times.",
+    visual:function(){ return crRow([{svg:R5_SVG.chip, name:"ALU", jp:"演算装置", ro:"enzan sōchi", c:"#4cc9f0", facts:["adds", "compares", "logic"]}]); }},
+   {text:"Want to make a real one? Beginners can design chips in Verilog, test them on an FPGA board, and even join open projects like Tiny Tapeout, which puts many small designs from different people onto one real chip.",
+    visual:function(){ return flowSvg(["Gates", "Adder", "Verilog", "FPGA", "Real chip"], ["#ffd166", "#06d6a0", "#4cc9f0", "#9b5de5", "#ef476f"]); }}],
+  quiz:[["AND gives 1 when…", ["both inputs are 1", "either input is 1", "the inputs differ", "both are 0"], 0, "OR is either; XOR is different."],
+        ["1 + 1 in binary is…", ["10", "11", "2", "01"], 0, "Sum 0, carry 1."],
+        ["A half adder's sum is…", ["A XOR B", "A AND B", "NOT A", "A OR B"], 0, "The carry is A AND B."],
+        ["Any circuit can be built from only…", ["NAND gates", "batteries", "screens", "resistors"], 0, "NAND is a universal gate."],
+        ["The ALU is…", ["the CPU's arithmetic logic unit", "a kind of battery", "a screen type", "a Wi-Fi chip"], 0, "Where the adding happens."]]}
+];
+
+var HERB_LESSON = {id:"lf_herbs", title:"Herbs & herbal teas, safely", icon:"pot", blurb:"Mint, ginger, chamomile, Japanese herbs and Kampo, and the golden safety rules. Knowledge, not medical advice.",
+  beats:[
+   {text:"Herbs, ハーブ, and medicinal plants, 薬草 yakusō, have been used for flavour and healing for thousands of years. This lesson is knowledge, not medical advice.",
+    visual:function(){ return crRow([{e:"🌿", name:"Mint", jp:"ミント", c:"#80b918"}, {e:"🫚", name:"Ginger", jp:"生姜", c:"#ffd166"}, {e:"🌼", name:"Chamomile", jp:"カモミール", c:"#fff3b0"}, {e:"🍃", name:"Shiso", jp:"紫蘇", c:"#06d6a0"}]); }},
+   {text:"Peppermint tea is a classic after-dinner drink, and its menthol gives that cool feeling. Peppermint oil capsules have some research support for easing irritable bowel symptoms.",
+    visual:function(){ return crRow([{e:"🌿🍵", name:"Peppermint", jp:"ペパーミント", c:"#80b918", facts:["menthol", "after-dinner tea"]}]) + r5Pic("mint", "See the real 1887 botanical drawing"); }},
+   {text:"Ginger, shōga 生姜, has good evidence for easing nausea, including morning sickness, though pregnant people should check with their doctor. In Japan, pickled ginger, gari, comes with sushi.",
+    visual:function(){ return crRow([{e:"🫚", name:"Ginger", jp:"生姜", ro:"shōga", c:"#ffd166", facts:["eases nausea", "gari with sushi"]}]) + r5Pic("ginger", "See the real 1887 botanical drawing"); }},
+   {text:"Chamomile tea is a gentle, caffeine-free bedtime drink. It's in the daisy family, so people allergic to ragweed may react to it.",
+    visual:function(){ return crRow([{e:"🌼🍵", name:"Chamomile", jp:"カモミール", ro:"kamomīru", c:"#fff3b0", facts:["no caffeine", "daisy family"]}]) + r5Pic("chamomile", "See the real 1887 botanical drawing"); }},
+   {text:"Japanese kitchens have their own herbs: shiso 紫蘇, mitsuba 三つ葉, myōga 茗荷 and yuzu peel. Green shiso leaves garnish sashimi.",
+    visual:function(){ return r5Words([["紫蘇・大葉", "しそ・おおば", "shiso leaf"], ["三つ葉", "みつば", "Japanese parsley"], ["茗荷", "みょうが", "myōga ginger"], ["柚子", "ゆず", "yuzu citrus"]]); }},
+   {text:"Kampo, 漢方, is Japan's traditional herbal medicine, adapted from Chinese medicine. In Japan, doctors can prescribe about 148 Kampo formulas through national health insurance.",
+    visual:function(){ return r5Words([["漢方", "かんぽう", "Kampo medicine"], ["生薬", "しょうやく", "crude herbal drug"], ["薬局", "やっきょく", "pharmacy"]]); }},
+   {text:"Natural doesn't mean safe! St John's wort can stop some medicines working, including birth control pills and some heart drugs. Foxglove is beautiful but poisonous; it gave us the heart medicine digoxin, used at an exact dose.",
+    visual:function(){ return crRow([{e:"⚠️🌼", name:"St John's wort", jp:"セイヨウオトギリソウ", c:"#ffd166", facts:["interacts with medicines"]}, {e:"☠️🌸", name:"Foxglove", jp:"ジギタリス", c:"#f9c6ff", facts:["poisonous", "source of digoxin"]}]) + r5Pic("foxglove", "See foxglove in an 1887 drawing"); }},
+   {text:"Golden rules: buy from reliable shops, never eat a wild plant you can't identify for certain, and tell your doctor or pharmacist about any herbs or supplements you take, especially if you're pregnant or on medicine.",
+    visual:function(){ return trackVisual("Golden rules", ["Buy from reliable shops.", "Never eat a wild plant you can't identify for certain.", "Tell your doctor or pharmacist about herbs and supplements.", "Extra care if pregnant or on medicine."], 3); }}],
+  quiz:[["薬草 (yakusō) means…", ["medicinal plant", "poison", "tea cup", "salad"], 0, "薬 medicine + 草 plant."],
+        ["Ginger has good evidence for easing…", ["nausea", "broken bones", "toothache", "hair loss"], 0, "Including morning sickness, with a doctor's OK."],
+        ["Chamomile is in the … family.", ["daisy", "mint", "ginger", "rose"], 0, "Ragweed allergies may react."],
+        ["St John's wort can…", ["stop some medicines working", "cure every cold", "replace vaccines", "nothing at all"], 0, "Always tell your pharmacist."],
+        ["漢方 (Kampo) is…", ["Japan's traditional herbal medicine", "a sushi style", "a martial art", "a tea ceremony"], 0, "About 148 formulas are covered by insurance."]]};
+LIFE.push(HERB_LESSON);
+infoSubject("fan", "Fantasy, Yokai & Anime", FANTASY);
+infoSubject("ani", "Animals & Dinosaurs", ANIMALS);
+infoSubject("tech", "Chips & Code", TECH);
+/* LIFE was already registered as a subject before the herbs lesson joined it. */
+infoSubject("life", "Life & Skills", LIFE);
+
 var TEACHER_SECTIONS = [
   {id:"japan", title:"Japan Travel", icon:"torii", blurb:"Phrases for your trip, polite or casual, in standard Japanese, Osaka-ben or Kyoto-ben. Aoi says every one.",
    modules:function(){ var d = JP_LEARN.dialect;
@@ -6001,7 +6476,13 @@ var TEACHER_SECTIONS = [
      start:function(){ sciStart(L); }}; }); }},
   {id:"production", title:"Music Production", icon:"headset", blurb:"Record, mix and master in FL Studio, and hear what guitar pedals do.",
    modules:function(){ return infoModules(PRODUCTION, "prod", "Production"); }},
-  {id:"life", title:"Life & Skills", icon:"heart", blurb:"Dance a waltz, write a cheque, and get moving with an exercise timer.",
+  {id:"fantasy", title:"Fantasy, Yokai & Anime", icon:"star", blurb:"Dragons, yokai, isekai creatures, witches, anime genres and creature festivals, with real old pictures.",
+   modules:function(){ return infoModules(FANTASY, "fan", "Fantasy"); }},
+  {id:"animals", title:"Animals & Dinosaurs", icon:"globe", blurb:"Dinosaurs, Japan's dog breeds and Japanese cat culture, with real photos.",
+   modules:function(){ return infoModules(ANIMALS, "ani", "Animals"); }},
+  {id:"tech", title:"Chips & Code", icon:"code", blurb:"How GPUs and phone chips work, how developers build software, and build a tiny chip yourself.",
+   modules:function(){ return infoModules(TECH, "tech", "Tech"); }},
+  {id:"life", title:"Life & Skills", icon:"heart", blurb:"Dance a waltz, write a cheque, get moving with an exercise timer, and herbs and teas, safely.",
    modules:function(){ return infoModules(LIFE, "life", "Life"); }},
   {id:"claude", title:"Claude Code", icon:"code", blurb:"Using Claude Code from your phone, narrated in Aoi's own voice.",
    modules:function(){ return [{title:"Claude Code on Your Phone", icon:"phone", meta:CLAUDE_CODE_BEATS.length + " scenes \u00b7 voiced", start:startTeacherLesson}]; }},
@@ -6016,8 +6497,9 @@ var TEACHER_SECTIONS = [
 ];
 var SECTION_GROUPS = [
   ["Japanese", ["japan", "jpgrammar", "jpwords", "jpread", "jpsongs"]],
+  ["Fantasy & Anime", ["fantasy"]],
   ["Music", ["music", "piano", "guitar", "jpop", "drums", "bass", "production"]],
-  ["Science & World", ["science"]],
+  ["Science, Nature & Tech", ["science", "animals", "tech"]],
   ["Life, Home & Work", ["life", "kitchen", "sales", "claude"]],
   ["Flying & Study", ["ppl", "gk"]]
 ];
@@ -6031,10 +6513,15 @@ function renderTeacherLib(){
   lib.innerHTML = "";
   var sec = null;
   TEACHER_SECTIONS.forEach(function(x){ if (x.id === teacherSec) sec = x; });
+  if (teacherSec === "__votes"){ renderVotes(); return; }
   if (!sec){
     teacherSec = null;
     setHeader("Learn with Aoi", "Teacher");
-    lib.innerHTML = '<div class="libhead"><p>Pick a section. Aoi teaches every module in small steps, and the study ones end with questions.</p></div>';
+    lib.innerHTML = '<div class="libhead"><p>Pick a section. Aoi teaches every module in small steps; the questions wait in the Quiz section.</p></div>';
+    var vb = document.createElement("button"); vb.type = "button"; vb.className = "hubcard seccard votecard";
+    vb.innerHTML = '<span class="lic">' + ico("heart") + '</span><span class="stxt"><h3>Loves &amp; requests</h3><p>What everyone loves, what they want next, and problems to fix.</p></span>';
+    vb.addEventListener("click", openVotes);
+    lib.appendChild(vb);
     var list = document.createElement("div"); list.className = "seclist";
     var byId = {}; TEACHER_SECTIONS.forEach(function(x){ byId[x.id] = x; });
     var ordered = [];
@@ -6057,16 +6544,187 @@ function renderTeacherLib(){
   lib.innerHTML = '<div class="libhead"><p>' + esc_(sec.blurb) + '</p></div>';
   var grid = document.createElement("div"); grid.className = "grid catgrid";
   sec.modules().forEach(function(m){
+    var wrap = document.createElement("div"); wrap.className = "modwrap";
     var b = document.createElement("button"); b.type = "button"; b.className = "card modcard";
     var pr = m.progress ? m.progress() : null;
     b.innerHTML = '<div class="mtop">' + ico(m.icon) + '<h3>' + esc_(m.title) + '</h3></div>' +
       '<div class="meta"><span' + (pr && pr.done ? ' class="done"' : '') + '>' + esc_(pr ? pr.label : (m.meta || "")) + '</span></div>' +
       (pr ? '<div class="bar"><i style="width:' + pct(pr.pct) + '%"></i></div>' : '');
     b.addEventListener("click", m.start);
-    grid.appendChild(b);
+    wrap.appendChild(b);
+    wrap.insertAdjacentHTML("beforeend", fbRow(fbKey(sec.id, m.title)));
+    grid.appendChild(wrap);
   });
   lib.appendChild(grid);
 }
+/* ---------- Loves, "More please", problem reports, and the Loves & requests page ----------
+   Every module card has a heart and a "More please" switch, and the lesson header has a flag for
+   reporting a problem with the line on screen (a wrong translation, a fact, the audio). They are
+   kept on this device. Where the page runs as a shared claude.ai page they are also saved to its
+   shared store, one document per person (votes/<their id>), so the Loves & requests page can
+   chart what everyone loves and wants next. Elsewhere (the APK) the page shows this device's
+   votes and offers to send them on with the phone's share sheet. */
+var FB_KEY = "aoi_feedback_v1";
+var fb = (function(){
+  try{ var o = JSON.parse(localStorage.getItem(FB_KEY) || "{}");
+    return {likes: o.likes || {}, more: o.more || {}, reports: o.reports || [], wishes: o.wishes || []}; }
+  catch(e){ return {likes: {}, more: {}, reports: [], wishes: []}; }
+})();
+var fbShared = {db: null, uid: null, docs: [], live: false, failed: false};
+function fbKey(secId, title){ return secId + "/" + title; }
+function fbSave(){ try{ localStorage.setItem(FB_KEY, JSON.stringify(fb)); }catch(e){} fbPush(); }
+var fbTimer = null, fbWriting = false, fbAgain = false;
+function fbPush(){ if (!fbShared.db || !fbShared.uid) return; clearTimeout(fbTimer); fbTimer = setTimeout(fbWrite, 800); }
+function fbBody(){
+  return {likes: Object.keys(fb.likes), more: Object.keys(fb.more), reports: fb.reports.slice(-40), wishes: fb.wishes.slice(-20), at: Date.now()};
+}
+function fbWrite(){
+  if (fbWriting){ fbAgain = true; return; }
+  fbWriting = true;
+  fbShared.db.doc("votes/" + fbShared.uid).set(fbBody()).catch(function(e){ if (e && e.code === "invalid_argument") fbShared.failed = true; })
+    .then(function(){ fbWriting = false; if (fbAgain){ fbAgain = false; fbWrite(); } });
+}
+/* Merge what this person saved on another device before writing this device's copy back. */
+function fbMerge(v){
+  if (!v) return false;
+  var changed = false;
+  (v.likes || []).forEach(function(k){ if (!fb.likes[k]){ fb.likes[k] = 1; changed = true; } });
+  (v.more || []).forEach(function(k){ if (!fb.more[k]){ fb.more[k] = 1; changed = true; } });
+  var seen = {}; fb.reports.concat(fb.wishes).forEach(function(r){ seen[r.at + "|" + r.t] = 1; });
+  (v.reports || []).forEach(function(r){ if (r && !seen[r.at + "|" + r.t]){ fb.reports.push(r); changed = true; } });
+  (v.wishes || []).forEach(function(r){ if (r && !seen[r.at + "|" + r.t]){ fb.wishes.push(r); changed = true; } });
+  return changed;
+}
+(function fbConnect(tries){
+  if (!window.claude || typeof window.claude.use !== "function"){ if (tries < 20) setTimeout(function(){ fbConnect(tries + 1); }, 500); return; }
+  Promise.all([window.claude.use("db"), window.claude.use("user")]).then(function(r){
+    var db = r[0], user = r[1];
+    if (!db || !user) return;
+    return user.id().then(function(uid){
+      if (!uid) return;
+      fbShared.db = db; fbShared.uid = uid;
+      return db.doc("votes/" + uid).get().then(function(snap){
+        if (snap.exists && fbMerge(snap.data())){ try{ localStorage.setItem(FB_KEY, JSON.stringify(fb)); }catch(e){} }
+        if (Object.keys(fb.likes).length || Object.keys(fb.more).length || fb.reports.length || fb.wishes.length) fbPush();
+        db.collection("votes").onSnapshot(function(s){
+          fbShared.docs = s.docs.map(function(d){ return {id: d.id, v: d.data() || {}}; });
+          fbShared.live = true;
+          if (votesOpen()) renderVotes();
+        }, function(){ fbShared.live = false; });
+      });
+    });
+  }).catch(function(){});
+})(0);
+
+/* Every module, by key, with its section, for the charts. */
+function fbModules(){
+  var all = {};
+  TEACHER_SECTIONS.forEach(function(s){ s.modules().forEach(function(m){ all[fbKey(s.id, m.title)] = {title: m.title, sec: s.title}; }); });
+  return all;
+}
+/* Everyone's votes (this device's own, fresher copy in place of its stored one). */
+function fbTally(){
+  var people = fbShared.docs.filter(function(d){ return d.id !== fbShared.uid; }).map(function(d){ return d.v; });
+  people.push(fbBody());
+  var likes = {}, more = {}, reports = [], wishes = [];
+  people.forEach(function(v){
+    (v.likes || []).forEach(function(k){ likes[k] = (likes[k] || 0) + 1; });
+    (v.more || []).forEach(function(k){ more[k] = (more[k] || 0) + 1; });
+    (v.reports || []).forEach(function(r){ reports.push(r); });
+    (v.wishes || []).forEach(function(r){ wishes.push(r); });
+  });
+  reports.sort(function(a, b){ return (b.at || 0) - (a.at || 0); });
+  wishes.sort(function(a, b){ return (b.at || 0) - (a.at || 0); });
+  return {likes: likes, more: more, reports: reports, wishes: wishes, people: people.length};
+}
+function votesOpen(){ return teacherSec === "__votes" && !views.teacher.hidden; }
+function openVotes(){ openTeacherLib("__votes"); }
+/* A ranked bar list: one series, so the title names it and every bar carries its own label. */
+function voteBars(counts, mods, emptyText){
+  var rows = Object.keys(counts).filter(function(k){ return mods[k]; }).sort(function(a, b){ return counts[b] - counts[a] || mods[a].title.localeCompare(mods[b].title); }).slice(0, 10);
+  if (!rows.length) return '<p class="sci-note">' + esc_(emptyText) + '</p>';
+  var max = counts[rows[0]];
+  return '<ol class="vbars">' + rows.map(function(k){
+    var n = counts[k], w = Math.max(6, n / max * 100);
+    return '<li title="' + esc_(mods[k].title + ": " + n + (n === 1 ? " vote" : " votes")) + '"><span class="vname"><b>' + esc_(mods[k].title) + '</b><small>' + esc_(mods[k].sec) + '</small></span>' +
+      '<span class="vtrack"><i style="width:' + w.toFixed(1) + '%"></i></span><span class="vnum">' + n + '</span></li>';
+  }).join("") + '</ol>';
+}
+function renderVotes(){
+  var lib = document.getElementById("teacherLib");
+  var mods = fbModules(), t = fbTally();
+  setHeader("Loves & requests", "Teacher");
+  var where = fbShared.db ? (fbShared.live ? "Everyone using this page: " + t.people + (t.people === 1 ? " person" : " people") + " so far." : "Connecting to everyone's votes…")
+    : "These are this device's votes. Use Share to send them to the app's makers.";
+  lib.innerHTML = '<div class="libhead"><p>Tap ♥ on lessons you love and switch on <b>More please</b> for topics you want more of. In a lesson, the ⚑ button reports a problem with the line on screen, like a wrong translation.</p><p class="sci-note">' + esc_(where) + '</p></div>' +
+    '<div class="lcard"><div class="ctag">Most loved</div>' + voteBars(t.likes, mods, "No hearts yet. Tap ♥ on a module you enjoyed.") + '</div>' +
+    '<div class="lcard"><div class="ctag">Most wanted next: "More please"</div>' + voteBars(t.more, mods, "No requests yet. Switch on More please on a module card.") + '</div>' +
+    '<div class="lcard"><div class="ctag">What should Aoi teach next?</div><form id="wishForm" class="wishform"><input id="wishText" maxlength="160" placeholder="e.g. Japanese festivals, chemistry, Godot" aria-label="A topic you would like"><button class="btn primary" type="submit">Ask</button></form>' +
+      (t.wishes.length ? '<ul class="vlist">' + t.wishes.slice(0, 20).map(function(w){ return '<li>' + esc_(w.t) + '</li>'; }).join("") + '</ul>' : '<p class="sci-note">No requests yet.</p>') + '</div>' +
+    '<div class="lcard"><div class="ctag">Reported problems</div>' + (t.reports.length ? '<ul class="vlist">' + t.reports.slice(0, 30).map(function(r){
+        return '<li><b>' + esc_(r.kind || "Problem") + '</b> · ' + esc_(r.m || "") + (r.line ? '<br><small>“' + esc_(r.line.slice(0, 140)) + '”</small>' : '') + (r.note ? '<br>' + esc_(r.note) : '') + '</li>'; }).join("") + '</ul>'
+      : '<p class="sci-note">Nothing reported. Use the ⚑ button inside a lesson.</p>') + '</div>' +
+    (!fbShared.db ? '<div class="lbtns"><button class="btn" id="votesShare" type="button">Share my votes</button></div>' : '');
+  document.getElementById("wishForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var v = document.getElementById("wishText").value.trim(); if (!v) return;
+    fb.wishes.push({t: v.slice(0, 160), at: Date.now()}); fbSave(); renderVotes();
+  });
+  var sh = document.getElementById("votesShare");
+  if (sh) sh.addEventListener("click", fbShareText);
+}
+function fbShareText(){
+  var mods = fbModules(), name = function(k){ return mods[k] ? mods[k].title + " (" + mods[k].sec + ")" : k; };
+  var txt = "Aoi Teacher feedback\n\nLoved: " + (Object.keys(fb.likes).map(name).join("; ") || "none") +
+    "\nMore please: " + (Object.keys(fb.more).map(name).join("; ") || "none") +
+    "\nWishes: " + (fb.wishes.map(function(w){ return w.t; }).join("; ") || "none") +
+    "\nProblems:\n" + (fb.reports.map(function(r){ return "- " + (r.kind || "") + " in " + (r.m || "") + ": \"" + (r.line || "") + "\" " + (r.note || ""); }).join("\n") || "none");
+  if (navigator.share) navigator.share({title: "Aoi Teacher feedback", text: txt}).catch(function(){});
+  else { try{ navigator.clipboard.writeText(txt); }catch(e){} alert("Copied your feedback. Paste it into a message to the app's makers."); }
+}
+/* The heart and switch under each module card. */
+function fbRow(key){
+  var liked = !!fb.likes[key], more = !!fb.more[key];
+  return '<div class="fbrow"><button type="button" class="fbheart' + (liked ? ' on' : '') + '" data-fblike="' + esc_(key) + '" aria-pressed="' + liked + '" aria-label="Love this module">' + (liked ? '♥' : '♡') + '</button>' +
+    '<label class="fbmore"><input type="checkbox" data-fbmore="' + esc_(key) + '"' + (more ? ' checked' : '') + '><span class="sw" aria-hidden="true"></span>More please</label></div>';
+}
+document.getElementById("teacherLib").addEventListener("click", function(e){
+  var b = e.target.closest && e.target.closest("[data-fblike]"); if (!b) return;
+  var k = b.getAttribute("data-fblike");
+  if (fb.likes[k]) delete fb.likes[k]; else fb.likes[k] = 1;
+  fbSave();
+  var on = !!fb.likes[k]; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); b.textContent = on ? "♥" : "♡";
+});
+document.getElementById("teacherLib").addEventListener("change", function(e){
+  var c = e.target; if (!c || !c.hasAttribute || !c.hasAttribute("data-fbmore")) return;
+  var k = c.getAttribute("data-fbmore");
+  if (c.checked) fb.more[k] = 1; else delete fb.more[k];
+  fbSave();
+});
+/* ⚑ in a lesson: report the line on screen. */
+document.getElementById("lessonReportBtn").addEventListener("click", function(e){
+  e.stopPropagation();
+  var b = TUTOR_LESSON[tutorIdx] || {}, nj = narrFor(b.text || "");
+  document.getElementById("reportLine").textContent = b.text || "";
+  document.getElementById("reportJa").textContent = nj ? nj[1] : "";
+  document.getElementById("reportNote").value = "";
+  var d = document.getElementById("reportDlg");
+  setLessonPlaying(false);
+  if (d.showModal) d.showModal(); else d.setAttribute("open", "");
+});
+document.getElementById("reportForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  var d = document.getElementById("reportDlg");
+  var kind = (document.querySelector('#reportForm input[name="rkind"]:checked') || {}).value || "Other";
+  var b = TUTOR_LESSON[tutorIdx] || {}, nj = narrFor(b.text || "");
+  fb.reports.push({kind: kind, m: (LESSON && LESSON.title) || "", line: (b.text || "").slice(0, 300), ja: nj ? nj[1].slice(0, 200) : "",
+    note: document.getElementById("reportNote").value.trim().slice(0, 300), at: Date.now(), t: kind + (b.text || "").slice(0, 40)});
+  fbSave();
+  d.close ? d.close() : d.removeAttribute("open");
+  if (window.AoiHost) window.AoiHost.say("Thank you! I've noted that problem.", {pose: "present_r", eyes: "eyes_happy"});
+});
+document.getElementById("reportCancel").addEventListener("click", function(){ var d = document.getElementById("reportDlg"); d.close ? d.close() : d.removeAttribute("open"); });
+
 
 /* ---------- hints ----------
    Built in, so they work with no AI and no key: the first two taps each cross out one wrong

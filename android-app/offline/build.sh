@@ -17,6 +17,8 @@ mkdir -p app/src/main/assets/www/grammar
 cp ../../aoi-teacher/grammar/japanese.js app/src/main/assets/www/grammar/
 mkdir -p app/src/main/assets/www/narration
 cp ../../aoi-teacher/narration/narr.js app/src/main/assets/www/narration/
+mkdir -p app/src/main/assets/www/feedback
+cp ../../aoi-teacher/feedback/votes.js app/src/main/assets/www/feedback/
 # Drafts and notes inside the audio folder are not app content.
 find app/src/main/assets/www -name '*.md' -delete
 python3 make_icons.py

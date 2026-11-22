@@ -1398,6 +1398,12 @@
 "text": "Time pedals add space: delay repeats what you play, reverb puts you in a room or hall."
 },
 {
+"key": "65c86d5c",
+"sec": "production",
+"mod": "Guitar pedals",
+"text": "Now play the riffs: a bright J-pop riff, a rock riff, chugging J-rock power chords, a clean arpeggio, and the 王道進行 and 小室進行 chord progressions. Switch pedals on and off to hear how each one changes them."
+},
+{
 "key": "3fcfd099",
 "sec": "production",
 "mod": "Guitar pedals",
@@ -1650,10 +1656,10 @@
 "text": "Slice of life, nichijō-kei 日常系, follows everyday school or work life. Iyashikei, 癒し系, healing anime, is calm and cosy, made to help you relax."
 },
 {
-"key": "ec30bb00",
+"key": "e1878d28",
 "sec": "fantasy",
 "mod": "Types of anime",
-"text": "There's much more: sports, idols, romantic comedy, horror and sci-fi. Tap the heart on lessons you like, and switch on More please to ask for more of them!"
+"text": "There's much more: sports, idols, romantic comedy, horror and sci-fi. Tap the heart on lessons you like, and tap it again to ask for more like them!"
 },
 {
 "key": "e5d1eb9b",

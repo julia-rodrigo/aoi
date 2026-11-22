@@ -779,7 +779,7 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 .crcard{border:2px solid #2b2d42; border-radius:16px; padding:10px 8px; text-align:center; background:var(--surface-2); background:color-mix(in srgb, var(--cc) 22%, var(--surface)); display:flex; flex-direction:column; align-items:center; gap:6px;}
 .crpic{width:92px; height:92px; border-radius:50%; display:grid; place-items:center; border:3px solid #2b2d42; background:var(--cc); background:radial-gradient(circle at 35% 30%, rgba(255,255,255,.75), var(--cc) 70%);}
 .crpic svg{width:72px; height:72px;}
-.crpic{border-radius:50%!important;} .fbmore .sw,.fbmore .sw::after{border-radius:99px!important;} .fbmore .sw::after{border-radius:50%!important;}
+.crpic{border-radius:50%!important;}
 .cremo{font-size:46px; line-height:1; letter-spacing:-6px; font-family:"Noto Color Emoji","Apple Color Emoji","Segoe UI Emoji",sans-serif;}
 .crtxt{display:flex; flex-direction:column; align-items:center; gap:1px;} .crtxt b{font-size:14px;} .crjp{font-size:15px; font-weight:700;} .crtxt small{font-size:11px; color:var(--muted);}
 .crfacts{display:flex; flex-wrap:wrap; justify-content:center; gap:4px; margin-top:4px;} .crfacts span{font-size:11px; font-weight:700; padding:2px 7px; border-radius:99px; background:var(--surface); border:1px solid var(--line);}
@@ -797,13 +797,11 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 .adds{margin:0; font-size:15px;} .gtab td,.gtab th{text-align:center;}
 .modwrap{display:flex; flex-direction:column; gap:4px;} .modwrap .modcard{flex:1;}
 .fbrow{display:flex; align-items:center; justify-content:space-between; gap:6px; padding:0 4px;}
-.fbheart{border:none; background:none; font-size:20px; line-height:1; color:#ef476f; cursor:pointer; padding:4px 6px;}
-.fbmore{display:flex; align-items:center; gap:6px; font-size:12px; font-weight:700; color:var(--muted); cursor:pointer;}
-.fbmore input{position:absolute; opacity:0; width:1px; height:1px;}
-.fbmore .sw{width:30px; height:18px; border-radius:99px; background:var(--line); position:relative; transition:background .15s;}
-.fbmore .sw::after{content:""; position:absolute; left:2px; top:2px; width:14px; height:14px; border-radius:50%; background:#fff; transition:left .15s;}
-.fbmore input:checked + .sw{background:var(--accent);} .fbmore input:checked + .sw::after{left:14px;}
-.fbmore input:focus-visible + .sw{outline:2px solid var(--accent-2); outline-offset:2px;}
+.fbheart{display:inline-flex; align-items:center; gap:5px; border:2px solid transparent; background:none; font:inherit; font-size:20px; line-height:1; color:#ef476f; cursor:pointer; padding:4px 8px; border-radius:999px!important; transition:transform .15s;}
+.fbheart .fbn{font-size:13px; font-weight:800; color:var(--fg);}
+.fbheart .fbtag{font-size:11px; font-weight:800; color:#fff; background:#ef476f; padding:2px 6px; border-radius:999px!important;}
+.fbheart.lv2{border-color:#ef476f; background:color-mix(in srgb, #ef476f 12%, transparent);}
+.fbheart.pop{transform:scale(1.18);}
 #teacherLib > .lcard{margin-top:12px; padding:12px; border:2px solid var(--line); background:var(--surface);}
 .vbars{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:8px;}
 .vbars li{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) 28px; align-items:center; gap:8px;}
@@ -816,13 +814,72 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 .reportdlg::backdrop{background:rgba(7,16,52,.45);} .reportdlg h3{margin:0 0 8px;} .rline{margin:0 0 6px; font-size:13px; color:var(--muted);} .rline.ja{color:var(--fg);}
 .rkinds{display:flex; flex-wrap:wrap; gap:10px; margin:8px 0; font-size:14px;} .reportdlg textarea{width:100%; box-sizing:border-box; padding:8px; border:2px solid var(--line); border-radius:10px; background:var(--surface); color:var(--fg); font:inherit;}
 .realplate{border:2px dashed var(--line); border-radius:10px; padding:6px 10px;} .realplate summary{cursor:pointer; font-weight:700; font-size:13px;}
+/* ---- Teacher home: search, subject chips, colour-coded folder tree ---- */
+.g-all{--gc:#3d4466;} .g-jp{--gc:#d6336c;} .g-mus{--gc:#7048e8;} .g-sci{--gc:#0c8599;} .g-fan{--gc:#e8590c;} .g-life{--gc:#2b8a3e;} .g-fly{--gc:#1f4fc0;}
+:root[data-theme="dark"] .g-all{--gc:#c9cede;} :root[data-theme="dark"] .g-jp{--gc:#f783ac;} :root[data-theme="dark"] .g-mus{--gc:#b197fc;} :root[data-theme="dark"] .g-sci{--gc:#66d9e8;}
+:root[data-theme="dark"] .g-fan{--gc:#ffa94d;} :root[data-theme="dark"] .g-life{--gc:#8ce99a;} :root[data-theme="dark"] .g-fly{--gc:#74c0fc;}
+.tree{gap:10px;}
+.tsearch{display:flex; align-items:center; gap:8px; padding:0 12px; border:2px solid var(--fg); background:var(--surface); border-radius:14px!important;}
+.tsearch .tsico svg{width:20px; height:20px; color:var(--muted);}
+.tsearch input{flex:1; min-width:0; border:none; outline:none; background:transparent; color:var(--fg); font:inherit; font-size:16px; padding:12px 0;}
+.tsearch:focus-within{border-color:var(--accent); box-shadow:0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);}
+.tfilters{display:flex; gap:6px; overflow-x:auto; padding:2px 0 4px; scrollbar-width:none;} .tfilters::-webkit-scrollbar{display:none;}
+.tchip{flex:0 0 auto; border:2px solid var(--gc); color:var(--gc); background:var(--surface); font:inherit; font-size:13px; font-weight:800; padding:6px 12px; border-radius:999px!important; cursor:pointer; white-space:nowrap;}
+.tchip.on{background:var(--gc); color:#fff;} :root[data-theme="dark"] .tchip.on{color:#111;}
+.tbar{display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;}
+.tsort{display:flex; align-items:center; gap:6px; font-size:13px; font-weight:700; color:var(--muted);}
+.tsort select{font:inherit; font-size:13px; color:var(--fg); background:var(--surface); border:2px solid var(--line); padding:6px 8px; border-radius:10px!important;}
+.tvotes{display:inline-flex; align-items:center; gap:6px; font:inherit; font-size:13px; font-weight:800; color:#ef476f; background:var(--surface); border:2px solid #ef476f; padding:6px 12px; border-radius:999px!important; cursor:pointer;}
+.tvotes svg{width:16px; height:16px;}
+.tcount{margin:2px 0; font-size:13px; font-weight:700; color:var(--muted);}
+.tgroup{border:2px solid var(--gc); border-left-width:8px; background:var(--surface); background:color-mix(in srgb, var(--gc) 9%, var(--surface)); border-radius:14px!important; overflow:hidden;}
+.tgroup > summary, .tsec > summary{list-style:none; display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none;}
+.tgroup > summary::-webkit-details-marker, .tsec > summary::-webkit-details-marker{display:none;}
+.tgroup > summary{padding:12px 14px; font-size:17px; font-weight:800; color:var(--gc);}
+.tgroup > summary::after, .tsec > summary::after{content:"\25B8"; margin-left:auto; transition:transform .15s; color:var(--gc);}
+.tgroup[open] > summary::after, .tsec[open] > summary::after{transform:rotate(90deg);}
+.tgico svg{width:24px; height:24px;}
+.tgname{flex:0 1 auto;}
+.tgn{font-size:12px; font-weight:800; color:#fff; background:var(--gc); padding:1px 8px; border-radius:999px!important;} :root[data-theme="dark"] .tgn{color:#111;}
+.tgbody{display:flex; flex-direction:column; gap:6px; padding:0 8px 10px;}
+.tsec{background:var(--surface); border:1.5px solid color-mix(in srgb, var(--gc) 35%, var(--line)); border-radius:10px!important;}
+.tsec > summary{padding:10px 12px; font-size:15px; font-weight:800; color:var(--fg);}
+.tsec > summary .tgn{background:color-mix(in srgb, var(--gc) 75%, var(--fg));}
+.tsblurb{margin:0 12px 6px; font-size:12.5px; line-height:1.45; color:var(--muted);}
+.tsopen{font:inherit; font-size:12px; font-weight:800; color:var(--gc); background:none; border:none; padding:0; cursor:pointer; text-decoration:underline;}
+.trow{display:flex; align-items:center; gap:2px; border-top:1px solid var(--line); padding:0 4px 0 0;}
+.tgo{flex:1; min-width:0; display:flex; align-items:center; gap:10px; text-align:left; background:none; border:none; font:inherit; color:var(--fg); padding:10px 8px 10px 12px; cursor:pointer;}
+.tgo:hover .ttxt b, .tgo:focus-visible .ttxt b{color:var(--gc); text-decoration:underline;}
+.tico svg{width:20px; height:20px; color:var(--gc);}
+.ttxt{display:flex; flex-direction:column; min-width:0;} .ttxt b{font-size:14px; overflow-wrap:anywhere;} .ttxt small{font-size:11.5px; color:var(--muted); line-height:1.35;}
+.tdone{margin-left:auto; font-weight:900; color:var(--good);}
+.fbheart.mini{font-size:17px; padding:4px 6px;} .fbheart.mini .fbn{font-size:12px;} .fbheart.mini .fbtag{display:none;}
+.tflat{display:flex; flex-direction:column; background:var(--surface); border:2px solid var(--line); border-radius:12px!important; overflow:hidden;}
+.tflat .trow{border-left:6px solid var(--gc);} .tflat .trow:first-child{border-top:none;}
+.libhead.seched{border-left:8px solid var(--gc); background:color-mix(in srgb, var(--gc) 9%, var(--surface)); padding:10px 12px; border-radius:12px!important;}
+.seched small{display:block; font-size:12px; font-weight:800; color:var(--gc); letter-spacing:.04em;} .seched p{margin:4px 0 0;}
+/* Home: grouped, colour-coded cards */
+.hubsec{margin:14px 2px 6px; font-size:13px; letter-spacing:.1em; text-transform:uppercase; font-weight:800; color:var(--gc);}
+.hubsec:first-child{margin-top:2px;}
+.hubcard.g-card{border:2px solid var(--gc); border-left-width:8px; background:var(--surface); background:color-mix(in srgb, var(--gc) 7%, var(--surface)); flex-direction:row; align-items:center; gap:12px;}
+.hubcard.g-card .hic svg{width:28px; height:28px; color:var(--gc);}
+.hubcard.g-card .hbody{display:flex; flex-direction:column; gap:3px; min-width:0;}
+.hubcard.g-card .hbody small{font-size:11.5px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--gc);}
+.hubsync{margin:0 2px 4px; font-size:12px; font-weight:700; color:var(--good);}
+.hubsearch{display:flex; gap:8px; margin-bottom:4px;} .hubsearch .tsearch{flex:1;}
+.hubsearch button{font:inherit; font-weight:800; padding:0 14px; border:2px solid var(--fg); background:var(--fg); color:var(--bg); border-radius:14px!important; cursor:pointer;}
 .secgroup{margin:16px 0 4px; font-size:13px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent-2);}
 .pedals{display:grid; grid-template-columns:repeat(auto-fill, minmax(140px, 1fr)); gap:8px;}
 .pedal{position:relative; display:flex; flex-direction:column; align-items:flex-start; gap:3px; text-align:left; padding:12px 10px 10px; border:3px solid #2b2d42; border-radius:14px; background:var(--pc); color:#2b2d42; font-family:inherit; cursor:pointer;}
 .pedal b{font-size:15px;} .pedal small{font-size:11px; line-height:1.3;}
-.pedal .led{position:absolute; right:10px; top:10px; width:12px; height:12px; border-radius:50%; background:#5a5a5a; border:2px solid #2b2d42;}
+.pedal .led{position:absolute; right:10px; top:10px; width:12px; height:12px; border-radius:50%!important; background:#5a5a5a; border:2px solid #2b2d42;}
 .pedal.on .led{background:#ff3b3b; box-shadow:0 0 10px #ff3b3b;}
 .pedal.on{transform:translateY(2px); box-shadow:inset 0 0 0 3px #fff;}
+.riffs{flex-wrap:wrap;} .riffs .btn{flex:1 1 auto;}
+.pstrip{margin-top:12px;} .pchips{display:flex; flex-wrap:wrap; gap:6px;}
+.pchip{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border:2px solid #2b2d42; border-radius:999px!important; background:var(--pc); color:#2b2d42; font:inherit; font-size:12px; font-weight:700; cursor:pointer;}
+.pchip .led{width:9px; height:9px; border-radius:50%!important; background:#5a5a5a; border:1.5px solid #2b2d42;}
+.pchip.on{box-shadow:inset 0 0 0 2px #fff;} .pchip.on .led{background:#ff3b3b; box-shadow:0 0 8px #ff3b3b;}
 .tbig{font-size:22px; font-weight:800; text-align:center; padding:18px 8px; border-radius:14px; border:3px solid #2b2d42; background:#fff3d6; color:#2b2d42;}
 .tbig.work{background:#a8e06c;} .tbig.rest{background:#8fd6ff;}
 .waltzbox{display:block;}
@@ -918,38 +975,39 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 
   <!-- HUB (top-level modes) -->
   <div id="view-hub">
+    <form class="hubsearch" id="hubSearch" role="search"><div class="tsearch"><span class="tsico" data-ico="search" aria-hidden="true"></span><input type="search" id="hubSearchIn" placeholder="Find a lesson: dragons, chords, 柴犬…" aria-label="Find a lesson" autocomplete="off"></div><button type="submit">Find</button></form>
+    <p class="hubsync" id="hubSync" hidden>&#9729; Your progress is saved to your account</p>
+    <h2 class="hubsec g-fly">Learn</h2>
     <div class="hubgrid">
-      <button class="hubcard" id="hubCardTeacher" type="button">
-        <span class="badge" style="align-self:flex-start;">Teacher</span>
-        <h3>Learn with Aoi</h3>
+      <button class="hubcard g-card g-fly" id="hubCardTeacher" type="button">
+        <span class="hic" data-ico="book"></span><span class="hbody"><small>Teacher</small><h3>Learn with Aoi</h3><p>Every lesson, in folders: Japanese, music, science, fantasy, life skills, flying.</p></span>
       </button>
-      <button class="hubcard" id="hubCardQuiz" type="button">
-        <span class="badge" style="align-self:flex-start;">Quiz</span>
-        <h3>Test Yourself</h3>
+      <button class="hubcard g-card g-mus" id="hubCardQuiz" type="button">
+        <span class="hic" data-ico="check"></span><span class="hbody"><small>Quiz</small><h3>Test Yourself</h3><p>All the questions, by topic. Practise or take a timed test.</p></span>
       </button>
-      <button class="hubcard" id="hubCardSinging" type="button">
-        <span class="badge" style="align-self:flex-start;">Singing</span>
-        <h3>Japanese Pronunciation</h3>
+    </div>
+    <h2 class="hubsec g-jp">Practise with Aoi</h2>
+    <div class="hubgrid">
+      <button class="hubcard g-card g-jp" id="hubCardJapan" type="button">
+        <span class="hic" data-ico="torii"></span><span class="hbody"><small>Japan Travel</small><h3>Speak Japanese on Your Trip</h3><p>Phrases for shops, trains and restaurants, voiced.</p></span>
       </button>
-      <button class="hubcard" id="hubCardCooking" type="button">
-        <span class="badge" style="align-self:flex-start;">Cooking</span>
-        <h3>Cook with Aoi</h3>
+      <button class="hubcard g-card g-jp" id="hubCardSinging" type="button">
+        <span class="hic" data-ico="note"></span><span class="hbody"><small>Singing</small><h3>Japanese Pronunciation</h3><p>Sing the vowels and sounds with Aoi.</p></span>
       </button>
-      <button class="hubcard" id="hubCardDaily" type="button">
-        <span class="badge" style="align-self:flex-start;">Daily Chat</span>
-        <h3>How's Your Day?</h3>
+      <button class="hubcard g-card g-life" id="hubCardCooking" type="button">
+        <span class="hic" data-ico="pot"></span><span class="hbody"><small>Cooking</small><h3>Cook with Aoi</h3><p>She says every step while you cook.</p></span>
       </button>
-      <button class="hubcard" id="hubCardDaytrip" type="button">
-        <span class="badge" style="align-self:flex-start;">Aoi's Day</span>
-        <h3 id="daytripHubTitle">Where Aoi Went Today</h3>
+      <button class="hubcard g-card g-life" id="hubCardSales" type="button">
+        <span class="hic" data-ico="chat"></span><span class="hbody"><small>Sales Practice</small><h3>Pitch It to Me</h3><p>Answer a real customer's objection.</p></span>
       </button>
-      <button class="hubcard" id="hubCardJapan" type="button">
-        <span class="badge" style="align-self:flex-start;">Japan Travel</span>
-        <h3>Speak Japanese on Your Trip</h3>
+    </div>
+    <h2 class="hubsec g-sci">Chat with Aoi</h2>
+    <div class="hubgrid">
+      <button class="hubcard g-card g-sci" id="hubCardDaily" type="button">
+        <span class="hic" data-ico="chat"></span><span class="hbody"><small>Daily Chat</small><h3>How's Your Day?</h3><p>Tell Aoi about your day.</p></span>
       </button>
-      <button class="hubcard" id="hubCardSales" type="button">
-        <span class="badge" style="align-self:flex-start;">Sales Practice</span>
-        <h3>Pitch It to Me</h3>
+      <button class="hubcard g-card g-sci" id="hubCardDaytrip" type="button">
+        <span class="hic" data-ico="globe"></span><span class="hbody"><small>Aoi's Day</small><h3 id="daytripHubTitle">Where Aoi Went Today</h3><p>A new place every day.</p></span>
       </button>
     </div>
   </div>
@@ -1422,6 +1480,7 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 <script src="phrasebook/phrasebook.js"></script>
 <script src="grammar/japanese.js"></script>
 <script src="narration/narr.js"></script>
+<script src="feedback/votes.js"></script>
 <script>
 /* One voice at a time. Aoi's lines, lesson narration, phrase clips and her Japanese all use
    separate audio players; whenever one starts, every other one stops, so she never talks over
@@ -3411,8 +3470,10 @@ function tutorPlayCurrent(){
     $tutorAudio.onended = function(){ step(i + 1); };
     var next = function(){ $tutorAudio.onerror = null; step(i + 1); };
     /* a clip that can't load comes from the bundled copy where there is one, else stays silent */
-    $tutorAudio.onerror = function(){ if (!jpFallback($tutorAudio, function(){ return lessonPlaying || LESSON.audioPaced; }, next)) next(); };
-    if (lessonPlaying || LESSON.audioPaced) $tutorAudio.play().catch(function(){});
+    /* A manual lesson (the cook-along) still speaks each step as it appears; it just waits for Next. */
+    var speak = function(){ return lessonPlaying || LESSON.audioPaced || LESSON.manual; };
+    $tutorAudio.onerror = function(){ if (!jpFallback($tutorAudio, speak, next)) next(); };
+    if (speak()) $tutorAudio.play().catch(function(){});
   }
   if (!queue.length){ $tutorAudio.removeAttribute("src"); return; }
   step(0);
@@ -3426,7 +3487,8 @@ function tutorRenderBeat(){
   var nj = narrFor(beat.text);
   tutorTranscript.push(beat.text + (nj && nj[1] ? "\u0001" + nj[1] : ""));
   tutorRenderTranscript();
-  if (window.AoiHost) window.AoiHost.say(beat.text, {pose: beat.pose || null, eyes: beat.eyes || null, voice: beat.voice});
+  /* Her short greeting clip only when the line has no narration of its own, so she never talks twice. */
+  if (window.AoiHost) window.AoiHost.say(beat.text, {pose: beat.pose || null, eyes: beat.eyes || null, voice: nj ? null : beat.voice});
   tutorPlayCurrent();
   updateLessonDots(TUTOR_LESSON.length, tutorIdx);
   scheduleTeacherAdvance(beat.text.length);
@@ -3467,6 +3529,7 @@ function startTeacherLesson(){
 
 /* ---------- icons + lesson visual builders ---------- */
 var ICON_PATHS = {
+  search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4.2-4.2"/>',
   doc:'<path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M10 13h6M10 17h6"/>',
   layers:'<path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/>',
   cloud:'<path d="M7 18h10a4 4 0 0 0 .6-7.96A6 6 0 0 0 6.1 9.2 4.5 4.5 0 0 0 7 18z"/>',
@@ -3572,7 +3635,8 @@ function cookBeats(r, J){
       r.ingredients.map(function(x){ return '<label><input type="checkbox"><span>' + esc_(x) + '</span></label>'; }).join("") + '</div></div>'
   }];
   r.steps.forEach(function(st, i){
-    var jv = J && J.steps[i] && cookJpOn() ? (pbMode.f === "c" ? J.steps[i].c : J.steps[i].p) : null;
+    /* Aoi says every step out loud, even with the Japanese card hidden. */
+    var jv = J && J.steps[i] ? (pbMode.f === "c" ? J.steps[i].c : J.steps[i].p) : null;
     beats.push({ text: st, pose: i % 2 ? "point_l" : "point_r", eyes: null, audio: jv ? "audio/jp/" + jv.a : null,
       visual: cookWithJp(trackVisual(r.title + " \u00b7 Step " + (i + 1) + " of " + r.steps.length, r.steps, i), cookJpCard(J, i)) });
   });
@@ -4261,8 +4325,8 @@ function voiceGuitar(ctx, f, t, d){
   var src = ctx.createBufferSource(), g = ctx.createGain(), lp = ctx.createBiquadFilter(), body = ctx.createBiquadFilter();
   src.buffer = buf; lp.type = "lowpass"; lp.frequency.value = 3600;
   body.type = "peaking"; body.frequency.value = 220; body.Q.value = 1.2; body.gain.value = 5;
-  src.connect(body); body.connect(lp); lp.connect(g); g.connect(MUS.dest || MUS.master);
-  g.gain.setValueAtTime(0.85, t); g.gain.setValueAtTime(0.85, t + Math.max(d, 0.4)); g.gain.exponentialRampToValueAtTime(0.0001, t + Math.max(d, 0.4) + 0.6);
+  src.connect(body); body.connect(lp); lp.connect(g); g.connect(guitarOut(ctx));
+  var gv = 0.85 * (MUS.vol == null ? 1 : MUS.vol); g.gain.setValueAtTime(gv, t); g.gain.setValueAtTime(gv, t + Math.max(d, 0.4)); g.gain.exponentialRampToValueAtTime(0.0001, t + Math.max(d, 0.4) + 0.6);
   src.start(t); src.stop(t + Math.max(d, 0.4) + 0.65); MUS.sources.push(src);
 }
 function voiceNa(ctx, f, t, d){
@@ -4856,7 +4920,7 @@ function renderStrum(){
     '<div class="ctag">Chord chart \u00b7 one box per bar, four beats each</div><div class="cchart">' +
     bars.map(function(x, b){ return '<span class="cbar" data-bar="' + b + '">' + x.join("") + '</span>'; }).join("") + '</div>' +
     '<div class="ctag">Chords in this song \u00b7 tap to hear</div><div class="chordrow">' + Object.keys(used).map(function(n){
-      return '<button type="button" class="chordbtn" data-chord="' + CHORD_SHAPE[n] + '">' + chordSvg({name: n, shape: CHORD_SHAPE[n]}) + '</button>'; }).join("") + '</div></div>';
+      return '<button type="button" class="chordbtn" data-chord="' + CHORD_SHAPE[n] + '">' + chordSvg({name: n, shape: CHORD_SHAPE[n]}) + '</button>'; }).join("") + '</div>' + pedalStrip() + '</div>';
 }
 function strumSetChord(j){
   var S = musState; S.cur = j;
@@ -4918,6 +4982,7 @@ musBody().addEventListener("click", function(e){
   if (t.closest("[data-splay]")){ strumPlay(); return; }
   if ((b = t.closest("[data-stempo]"))){ if (S.playing){ musStop(); S.playing = false; } S.bpm = Math.max(50, Math.min(150, S.bpm + +b.getAttribute("data-stempo"))); renderStrum(); return; }
   if (t.closest("[data-sauto]")){ S.auto = !S.auto; renderStrum(); return; }
+  if ((b = t.closest("[data-pedal]"))){ pedalToggle(b.getAttribute("data-pedal")); return; }
   if ((b = t.closest("[data-chord]"))){ strum(b.getAttribute("data-chord")); return; }
 });
 
@@ -4947,16 +5012,16 @@ function chordsLesson(){
   musStop();
   var L = {id:"gu_chords", title:"Your first chords", quiz:L_CHORDS_QUIZ};
   var beats = [{text:"Eight easy chords get you through hundreds of songs. Each diagram shows the strings, low E on the left, and where to press. Tap a diagram to strum it.", pose:"present_r", eyes:"eyes_happy",
-    visual: musCard("Guitar", '<div class="chordrow">' + CHORDS.map(function(c){ return '<button type="button" class="chordbtn" data-chord="' + c.shape + '">' + chordSvg(c) + '</button>'; }).join("") + '</div>')}];
+    visual: musCard("Guitar", '<div class="chordrow">' + CHORDS.map(function(c){ return '<button type="button" class="chordbtn" data-chord="' + c.shape + '">' + chordSvg(c) + '</button>'; }).join("") + '</div>' + pedalStrip())}];
   CHORDS.forEach(function(c, i){
     beats.push({text: c.text + " Its shape is " + c.shape.split("").join(" ") + ".", pose: i % 2 ? "point_l" : "point_r", eyes: null,
       sound: function(){ strum(c.shape); },
       visual: musCard("Your first chords · " + (i + 1) + " of " + CHORDS.length, '<button type="button" class="chordbtn big" data-chord="' + c.shape + '">' + chordSvg(c) + '</button>' +
-        '<p class="hint">× = don\'t play that string. ○ = play it open. Dots = press there.</p>')});
+        '<p class="hint">× = don\'t play that string. ○ = play it open. Dots = press there.</p>' + pedalStrip())});
   });
   beats.push({text:"Try switching between C, G, Am and Em: that's the chords of countless pop songs. Tap each to hear it.", pose:"present_r", eyes:"eyes_happy",
     visual: musCard("Practice", '<div class="chordrow">' + ["C", "G", "Am", "Em"].map(function(n){ var c = CHORDS.filter(function(x){ return x.name === n; })[0];
-      return '<button type="button" class="chordbtn" data-chord="' + c.shape + '">' + chordSvg(c) + '</button>'; }).join("") + '</div>')});
+      return '<button type="button" class="chordbtn" data-chord="' + c.shape + '">' + chordSvg(c) + '</button>'; }).join("") + '</div>' + pedalStrip())});
   playLesson({title: L.title, tag: "Guitar", beats: beats, manual: false, backTo: "teacher", nextLabel: "Finish",
     finish: function(vis){ lessonEnd(vis, {title: "Chords done", done: function(){ markDoneIn("music", L.id); }, again: chordsLesson,
       extra: [{label: "Chord library", fn: chordLibrary}]}); }});
@@ -5078,7 +5143,7 @@ function chordLibrary(){
     visual: musCard("Chord library", lessonHero("note", "Chord library", CHORD_LIB.reduce(function(n, g){ return n + g.names.length; }, 0) + " chords", CHORD_LIB.map(function(g){ return g.group; })))}];
   CHORD_LIB.forEach(function(g){
     beats.push({text: g.group + ". Tap each one to strum it.", pose:"point_r", eyes:null,
-      visual: musCard("Chord library · " + g.group, '<div class="chordrow">' + g.names.map(function(n){ return chordBtn(n); }).join("") + '</div>')});
+      visual: musCard("Chord library · " + g.group, '<div class="chordrow">' + g.names.map(function(n){ return chordBtn(n); }).join("") + '</div>' + pedalStrip())});
   });
   playLesson({title:"Chord library", tag:"Guitar", beats:beats, manual:true, backTo:"teacher", nextLabel:"Done"});
 }
@@ -5112,7 +5177,7 @@ function guitarLesson(L){
   var beats = [{text: L.blurb + " Tap any diagram to hear it.", pose:"present_r", eyes:"eyes_happy", visual: musCard(L.title, lessonHero("note", L.title, L.blurb, [L.beats.length + " steps", "voiced"]))}];
   L.beats.forEach(function(b, i){
     beats.push({text: b.text, pose: i % 2 ? "point_l" : "point_r", eyes:null, sound: function(){ strum(CHORD_SHAPE[b.chord]); },
-      visual: musCard(L.title + " · " + (i + 1) + " of " + L.beats.length, chordBtn(b.chord, true))});
+      visual: musCard(L.title + " · " + (i + 1) + " of " + L.beats.length, chordBtn(b.chord, true) + pedalStrip())});
   });
   playLesson({title:L.title, tag:"Guitar", beats:beats, manual:false, backTo:"teacher", nextLabel:"Finish",
     finish:function(vis){ lessonEnd(vis, {title: L.title + " done", done: function(){ markDoneIn("music", L.id); }, again: function(){ guitarLesson(L); }}); }});
@@ -5675,7 +5740,7 @@ var SCIENCE = [
    {text:"Simple interest pays only on what you put in. Compound interest also pays on the interest you've already earned, so growth earns growth.", visual: function(){ return '<table class="scitab"><tr><th></th><th>Simple 5%</th><th>Compound 5%</th></tr><tr><th>Start</th><td>¥100,000</td><td>¥100,000</td></tr><tr><th>10 years</th><td>¥150,000</td><td>¥162,889</td></tr><tr><th>30 years</th><td>¥250,000</td><td>¥432,194</td></tr></table>'; }},
    {text:"The rule of 72: divide 72 by the yearly growth rate to find roughly how many years it takes to double. At 6%, about 12 years.", visual: function(){ return '<div class="mtable"><span>3% <b>24 yrs</b></span><span>6% <b>12 yrs</b></span><span>8% <b>9 yrs</b></span><span>12% <b>6 yrs</b></span></div>'; }},
    {text:"Small amounts add up. Try it: change the monthly amount, the growth rate and the years.", visual: function(){ return growthBox(); }},
-   {text:"Investments go up and down, and returns are never guaranteed. Fees and inflation matter too. This is a lesson in the maths, not financial advice."}],
+   {text:"Investments go up and down, and returns are never guaranteed. Fees and inflation matter too. This is a lesson in the maths, not financial advice.", visual: function(){ return wobbleSvg(); }}],
   quiz:[["Compound interest pays interest on…", ["what you put in and the interest already earned", "only what you put in", "nothing", "only the first year"], 0, "Growth earns growth."],
         ["By the rule of 72, money growing at 8% a year doubles in about…", ["9 years", "72 years", "8 years", "20 years"], 0, "72 ÷ 8 = 9."],
         ["Starting earlier usually means…", ["more time for growth to compound", "less growth", "no difference", "higher fees"], 0, "Time is the big ingredient."],
@@ -5683,9 +5748,9 @@ var SCIENCE = [
  {id:"sc_15min", title:"15 minutes a day", icon:"bulb", jpTopic:null, blurb:"Why a little every day beats a lot once in a while.",
   beats:[
    {text:"Fifteen minutes a day is over 91 hours in a year: more than two working weeks of study, with no single long day.", visual: function(){ return minutesBox(); }},
-   {text:"Spacing works: memory fades quickly after we learn something, but each review slows the fading. Short daily sessions give you those reviews. Psychologists call it the spacing effect."},
+   {text:"Spacing works: memory fades quickly after we learn something, but each review slows the fading. Short daily sessions give you those reviews. Psychologists call it the spacing effect.", visual: function(){ return spacingSvg(); }},
    {text:"Small gains compound too: getting 1% better each day multiplies to about 37 times over a year, because 1.01 to the power 365 is 37.8. It's a nice piece of maths, not a promise!", visual: function(){ return '<div class="mtable"><span>1.01<sup>30</sup> <b>1.3×</b></span><span>1.01<sup>100</sup> <b>2.7×</b></span><span>1.01<sup>365</sup> <b>37.8×</b></span></div>'; }},
-   {text:"Make it easy: same time each day, a tiny goal, and stop while it's still fun. That's why Aoi's lessons are short!"}],
+   {text:"Make it easy: same time each day, a tiny goal, and stop while it's still fun. That's why Aoi's lessons are short!", visual: function(){ return crRow([{e:"⏰", name:"Same time", facts:["a daily habit"], c:"#8fd6ff"},{e:"🎯", name:"Tiny goal", facts:["one short lesson"], c:"#a8e06c"},{e:"😊", name:"Stop while fun", facts:["come back tomorrow"], c:"#ffd166"}]); }}],
   quiz:[["15 minutes a day for a year is about…", ["91 hours", "15 hours", "365 hours", "9 hours"], 0, "15 × 365 = 5,475 minutes."],
         ["The spacing effect says…", ["reviewing over time beats cramming", "cramming beats spacing", "sleep doesn't matter", "only long sessions work"], 0, "Spread it out."],
         ["1.01 to the power 365 is about…", ["37.8", "3.65", "1.01", "365"], 0, "Compounding again."]]}
@@ -5862,11 +5927,15 @@ document.getElementById("teacherVisual").addEventListener("click", function(e){
   if (!b) return;
   if (b.hasAttribute("data-tstart")) timerRun(b);
   else if (b.hasAttribute("data-waltz")) waltzPlay();
-  else if (b.hasAttribute("data-pedal")){ b.classList.toggle("on"); b.setAttribute("aria-pressed", b.classList.contains("on")); pedalStrum(b.getAttribute("data-pstyle")); }
+  else if (b.hasAttribute("data-pedal")){ pedalToggle(b.getAttribute("data-pedal")); if (b.classList.contains("pedal")) pedalStrum("chord"); }
   else pedalStrum(b.getAttribute("data-pstrum"));
 });
 
-/* A pedalboard you can hear: switch pedals on and strum through them. */
+/* A pedalboard you can hear. The pedals you switch on stay on (on this device) and every guitar
+   sound in the app goes through them: the pedal lesson's riffs, chord diagrams, the chord library
+   and strum-along. There is one shared effects chain, rebuilt only when the pedals change; the old
+   one is disconnected first. (Building a new chain on every tap left old delay loops running, which
+   on phones piled up until the sound cut out with every pedal on.) */
 var PEDALS = [
  {id:"comp", name:"Compressor", col:"#7ee0d3", what:"Evens out loud and soft notes; clean funk and country sparkle."},
  {id:"od", name:"Overdrive", col:"#a8e06c", what:"Warm, light grit, like a valve amp turned up."},
@@ -5876,39 +5945,101 @@ var PEDALS = [
  {id:"delay", name:"Delay", col:"#ffd166", what:"Echoes that repeat after you play."},
  {id:"reverb", name:"Reverb", col:"#ffb3a7", what:"The sound of a room or hall around you."}
 ];
+var PEDAL_KEY = "aoi_pedals_v1";
+var PEDAL_ON = (function(){ try{ return JSON.parse(localStorage.getItem(PEDAL_KEY) || "{}") || {}; }catch(e){ return {}; } })();
+function pedalSave(){ try{ localStorage.setItem(PEDAL_KEY, JSON.stringify(PEDAL_ON)); }catch(e){} }
+/* Riffs: original phrases in each style (not from any song). Notes are [note, start beat, length in beats]. */
+var RIFFS = [
+ {id:"jpop", name:"J-pop riff", bpm:150, notes:[["A4",0,.5],["C5",.5,.5],["F5",1,.5],["E5",1.5,1],["C5",2.5,.5],["D5",3,1],
+   ["D5",4,.5],["B4",4.5,.5],["G5",5,.5],["F5",5.5,.5],["E5",6,.5],["D5",6.5,1.5],
+   ["E5",8,.5],["G5",8.5,.5],["B5",9,.5],["A5",9.5,1],["G5",10.5,.5],["E5",11,1],
+   ["C5",12,.5],["E5",12.5,.5],["A5",13,1],["G5",14,.5],["E5",14.5,.5],["A5",15,1]]},
+ {id:"rock", name:"Rock riff", bpm:120, notes:[["E3",0,.5],["G3",.5,.5],["A3",1,1],["E3",2,.5],["G3",2.5,.5],["A#3",3,.25],["A3",3.25,.75],
+   ["E3",4,.5],["G3",4.5,.5],["A3",5,1],["G3",6,.5],["E3",6.5,1.5]]},
+ {id:"jrock", name:"J-rock power chords", bpm:168, chords:[["E5",0,.5],["E5",.5,.5],["E5",1,.5],["G5",1.5,.5],["G5",2,.5],["A5",2.5,1],["E5",3.5,.5],
+   ["C5",4,.5],["C5",4.5,.5],["D5",5,.5],["D5",5.5,.5],["E5",6,2]]},
+ {id:"arp", name:"Clean arpeggio", bpm:96, notes:[["C3",0,.5],["G3",.5,.5],["C4",1,.5],["E4",1.5,.5],["G4",2,.5],["E4",2.5,.5],["C4",3,.5],["G3",3.5,.5],
+   ["A2",4,.5],["E3",4.5,.5],["A3",5,.5],["C4",5.5,.5],["E4",6,.5],["C4",6.5,.5],["A3",7,.5],["E3",7.5,.5]]},
+ {id:"oudou", name:"王道進行 chords", bpm:120, strums:["Fmaj7","G","Em","Am"]},
+ {id:"komuro", name:"小室進行 chords", bpm:120, strums:["Am","F","G","C"]}
+];
+function pedalChips(){
+  return '<div class="pchips" role="group" aria-label="Guitar pedals">' + PEDALS.map(function(p){
+    return '<button type="button" class="pchip' + (PEDAL_ON[p.id] ? ' on' : '') + '" data-pedal="' + p.id + '" aria-pressed="' + !!PEDAL_ON[p.id] + '" style="--pc:' + p.col + '"><i class="led"></i>' + p.name + '</button>';
+  }).join("") + '</div>';
+}
+/* A small row of pedals for the chord lessons and strum-along. */
+function pedalStrip(){ return '<div class="pstrip"><div class="ctag">Pedals · tap to switch on, then strum</div>' + pedalChips() + '</div>'; }
 function pedalboardHtml(){
   return '<div class="pedals">' + PEDALS.map(function(p){
-    return '<button type="button" class="pedal" data-pedal="' + p.id + '" aria-pressed="false" style="--pc:' + p.col + '"><i class="led"></i><b>' + p.name + '</b><small>' + esc_(p.what) + '</small></button>';
-  }).join("") + '</div><div class="mctl"><button class="btn primary" type="button" data-pstrum="chord">&#9835; Strum a chord</button><button class="btn" type="button" data-pstrum="riff">Play a riff</button></div>' +
-  '<p class="sci-note">Signal chain: guitar → compressor → drive → modulation → delay → reverb → amp. Tap pedals on and off.</p>';
+    return '<button type="button" class="pedal' + (PEDAL_ON[p.id] ? ' on' : '') + '" data-pedal="' + p.id + '" aria-pressed="' + !!PEDAL_ON[p.id] + '" style="--pc:' + p.col + '"><i class="led"></i><b>' + p.name + '</b><small>' + esc_(p.what) + '</small></button>';
+  }).join("") + '</div><div class="ctag">Play through them</div><div class="mctl riffs"><button class="btn primary" type="button" data-pstrum="chord">&#9835; Strum a chord</button>' +
+  RIFFS.map(function(r){ return '<button class="btn" type="button" data-pstrum="' + r.id + '">' + esc_(r.name) + '</button>'; }).join("") +
+  '<button class="btn" type="button" data-pstrum="off">All pedals off</button></div>' +
+  '<p class="sci-note">Signal chain: guitar → compressor → drive → modulation → delay → reverb → amp. Pedals you switch on stay on in the chord lessons too.</p>';
 }
-function shaper(ctx, k){ var n = 1024, c = new Float32Array(n); for (var i = 0; i < n; i++){ var x = i * 2 / n - 1; c[i] = Math.tanh(k * x) / Math.tanh(k); } var w = ctx.createWaveShaper(); w.curve = c; w.oversample = "4x"; return w; }
-function impulse(ctx, secs){ var len = ctx.sampleRate * secs, b = ctx.createBuffer(2, len, ctx.sampleRate); for (var ch = 0; ch < 2; ch++){ var d = b.getChannelData(ch); for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); } return b; }
-function pedalChain(ctx, on){
-  var input = ctx.createGain(), node = input, t = ctx.currentTime, keep = [];
-  var link = function(n){ node.connect(n); node = n; };
+function shaper(ctx, k){ var n = 1024, c = new Float32Array(n); for (var i = 0; i < n; i++){ var x = i * 2 / n - 1; c[i] = Math.tanh(k * x) / Math.tanh(k); } var w = ctx.createWaveShaper(); w.curve = c; w.oversample = "2x"; return w; }
+var IMPULSE_CACHE = null;
+function impulse(ctx, secs){
+  if (IMPULSE_CACHE && IMPULSE_CACHE.ctx === ctx) return IMPULSE_CACHE.buf;
+  var len = Math.floor(ctx.sampleRate * secs), b = ctx.createBuffer(2, len, ctx.sampleRate);
+  for (var ch = 0; ch < 2; ch++){ var d = b.getChannelData(ch); for (var i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, 2.6); }
+  IMPULSE_CACHE = {ctx: ctx, buf: b};
+  return b;
+}
+var PEDAL_CHAIN = null; /* {sig, input, nodes, lfos} */
+function pedalSig(){ return PEDALS.filter(function(p){ return PEDAL_ON[p.id]; }).map(function(p){ return p.id; }).join(","); }
+function pedalTeardown(){
+  if (!PEDAL_CHAIN) return;
+  PEDAL_CHAIN.lfos.forEach(function(o){ try{ o.stop(); }catch(e){} });
+  PEDAL_CHAIN.nodes.forEach(function(n){ try{ n.disconnect(); }catch(e){} });
+  PEDAL_CHAIN = null;
+}
+/* Where guitar notes go: the master bus, or the pedal chain when any pedal is on. */
+function guitarOut(ctx){
+  var sig = pedalSig();
+  if (!sig){ pedalTeardown(); return MUS.master; }
+  if (PEDAL_CHAIN && PEDAL_CHAIN.sig === sig && PEDAL_CHAIN.ctx === ctx) return PEDAL_CHAIN.input;
+  pedalTeardown();
+  var on = PEDAL_ON, input = ctx.createGain(), node = input, nodes = [input], lfos = [];
+  var mk = function(n){ nodes.push(n); return n; };
+  var link = function(n){ node.connect(n); node = mk(n); };
   if (on.comp){ var c = ctx.createDynamicsCompressor(); c.threshold.value = -32; c.ratio.value = 6; link(c); }
-  if (on.od){ var g1 = ctx.createGain(); g1.gain.value = 3; link(g1); link(shaper(ctx, 2.5)); var lp1 = ctx.createBiquadFilter(); lp1.frequency.value = 3800; link(lp1); var o1 = ctx.createGain(); o1.gain.value = 0.55; link(o1); }
-  if (on.dist){ var g2 = ctx.createGain(); g2.gain.value = 10; link(g2); link(shaper(ctx, 12)); var lp2 = ctx.createBiquadFilter(); lp2.frequency.value = 3200; link(lp2); var o2 = ctx.createGain(); o2.gain.value = 0.3; link(o2); }
-  if (on.chorus){ var mix = ctx.createGain(), dl = ctx.createDelay(0.05), lfo = ctx.createOscillator(), dep = ctx.createGain();
-    dl.delayTime.value = 0.018; lfo.frequency.value = 1.3; dep.gain.value = 0.004; lfo.connect(dep); dep.connect(dl.delayTime); lfo.start(t); lfo.stop(t + 4); keep.push(lfo);
-    node.connect(mix); node.connect(dl); var wg = ctx.createGain(); wg.gain.value = 0.7; dl.connect(wg); wg.connect(mix); node = mix; }
-  if (on.trem){ var tg = ctx.createGain(), tl = ctx.createOscillator(), td = ctx.createGain(); tg.gain.value = 0.55; tl.frequency.value = 6; td.gain.value = 0.45; tl.connect(td); td.connect(tg.gain); tl.start(t); tl.stop(t + 4); keep.push(tl); link(tg); }
-  if (on.delay){ var out = ctx.createGain(), d = ctx.createDelay(1), fb = ctx.createGain(), wet = ctx.createGain();
-    d.delayTime.value = 0.34; fb.gain.value = 0.42; wet.gain.value = 0.45; node.connect(out); node.connect(d); d.connect(fb); fb.connect(d); d.connect(wet); wet.connect(out); node = out; }
-  if (on.reverb){ var rout = ctx.createGain(), cv = ctx.createConvolver(), rw = ctx.createGain(); cv.buffer = impulse(ctx, 2.2); rw.gain.value = 0.45; node.connect(rout); node.connect(cv); cv.connect(rw); rw.connect(rout); node = rout; }
-  node.connect(MUS.master);
-  keep.forEach(function(k){ MUS.sources.push(k); });
+  if (on.od){ var g1 = ctx.createGain(); g1.gain.value = 3; link(g1); link(shaper(ctx, 2.5)); var lp1 = ctx.createBiquadFilter(); lp1.frequency.value = 3800; link(lp1); var o1 = ctx.createGain(); o1.gain.value = 0.5; link(o1); }
+  if (on.dist){ var g2 = ctx.createGain(); g2.gain.value = on.od ? 4 : 10; link(g2); link(shaper(ctx, 10)); var lp2 = ctx.createBiquadFilter(); lp2.frequency.value = 3200; link(lp2); var o2 = ctx.createGain(); o2.gain.value = 0.3; link(o2); }
+  if (on.chorus){ var mix = mk(ctx.createGain()), dl = mk(ctx.createDelay(0.05)), lfo = ctx.createOscillator(), dep = mk(ctx.createGain()), wg = mk(ctx.createGain());
+    dl.delayTime.value = 0.018; lfo.frequency.value = 1.3; dep.gain.value = 0.004; lfo.connect(dep); dep.connect(dl.delayTime); lfo.start(); lfos.push(lfo); nodes.push(lfo);
+    mix.gain.value = 0.7; wg.gain.value = 0.7; node.connect(mix); node.connect(dl); dl.connect(wg); wg.connect(mix); node = mix; }
+  if (on.trem){ var tg = ctx.createGain(), tl = ctx.createOscillator(), td = mk(ctx.createGain()); tg.gain.value = 0.55; tl.frequency.value = 6; td.gain.value = 0.45; tl.connect(td); td.connect(tg.gain); tl.start(); lfos.push(tl); nodes.push(tl); link(tg); }
+  if (on.delay){ var out = mk(ctx.createGain()), d = mk(ctx.createDelay(1)), fb = mk(ctx.createGain()), wet = mk(ctx.createGain());
+    d.delayTime.value = 0.34; fb.gain.value = 0.38; wet.gain.value = 0.4; node.connect(out); node.connect(d); d.connect(fb); fb.connect(d); d.connect(wet); wet.connect(out); node = out; }
+  if (on.reverb){ var rout = mk(ctx.createGain()), cv = mk(ctx.createConvolver()), rw = mk(ctx.createGain()); cv.buffer = impulse(ctx, 1.8); rw.gain.value = 0.4; node.connect(rout); node.connect(cv); cv.connect(rw); rw.connect(rout); node = rout; }
+  var level = mk(ctx.createGain()); level.gain.value = 0.75; node.connect(level); level.connect(MUS.master);
+  PEDAL_CHAIN = {sig: sig, ctx: ctx, input: input, nodes: nodes, lfos: lfos};
   return input;
+}
+function pedalToggle(id){
+  PEDAL_ON[id] = !PEDAL_ON[id]; if (!PEDAL_ON[id]) delete PEDAL_ON[id];
+  pedalSave();
+  Array.prototype.forEach.call(document.querySelectorAll('[data-pedal="' + id + '"]'), function(b){ b.classList.toggle("on", !!PEDAL_ON[id]); b.setAttribute("aria-pressed", !!PEDAL_ON[id]); });
 }
 function pedalStrum(kind){
   var ctx = musCtx(); if (!ctx) return;
-  var on = {};
-  Array.prototype.forEach.call(document.querySelectorAll("#teacherVisual .pedal.on"), function(p){ on[p.getAttribute("data-pedal")] = true; });
-  MUS.dest = pedalChain(ctx, on);
-  if (kind === "riff") ["E3", "G3", "A3", "E3", "G3", "A#3", "A3"].forEach(function(n, i){ musNote("guitar", noteMidi(n), 0.02 + [0, .3, .6, 1.2, 1.5, 1.8, 2.0][i], 0.35); });
-  else chordMidis(CHORD_SHAPE[on.dist || on.od ? "E5" : "G"]).forEach(function(m, j){ musNote("guitar", m, 0.02 + j * 0.02, 1.6); });
-  MUS.dest = null;
+  if (kind === "off"){ PEDAL_ON = {}; pedalSave(); Array.prototype.forEach.call(document.querySelectorAll("[data-pedal]"), function(b){ b.classList.remove("on"); b.setAttribute("aria-pressed", "false"); }); kind = "chord"; }
+  musStop();
+  var r = RIFFS.filter(function(x){ return x.id === kind; })[0];
+  if (!r){ chordMidis(CHORD_SHAPE[PEDAL_ON.dist || PEDAL_ON.od ? "E5" : "G"]).forEach(function(m, j){ musNote("guitar", m, 0.02 + j * 0.02, 1.6); }); return; }
+  var spb = 60 / r.bpm;
+  if (r.notes) r.notes.forEach(function(n){ musNote("guitar", noteMidi(n[0]), 0.05 + n[1] * spb, n[2] * spb * 0.95); });
+  if (r.chords) r.chords.forEach(function(c){ chordMidis(CHORD_SHAPE[c[0]]).forEach(function(m, j){ musNote("guitar", m, 0.05 + c[1] * spb + j * 0.006, c[2] * spb * 0.8); }); });
+  if (r.strums) r.strums.forEach(function(name, bar){
+    /* down, down-up, up-down-up: a pop strum in each bar */
+    [0, 1, 1.5, 2.5, 3, 3.5].forEach(function(bt, k){
+      var up = k === 2 || k === 3 || k === 5, ms = chordMidis(CHORD_SHAPE[name]);
+      if (up) ms = ms.slice().reverse().slice(0, 4);
+      ms.forEach(function(m, j){ musNote("guitar", m, 0.05 + (bar * 4 + bt) * spb + j * 0.012, spb * 0.9, up ? 0.7 : 1); });
+    });
+  });
 }
 
 var LIFE = [
@@ -5933,7 +6064,7 @@ var LIFE = [
    {text:"On the long line, write the amount in words, with cents as a fraction over 100, then draw a line to fill the space. The words are the legal amount if they don't match.", visual: function(){ return checkSvg("words"); }},
    {text:"The memo line is optional: a note to yourself, like an invoice number. Then sign it the way your bank knows.", visual: function(){ return checkSvg("sign"); }},
    {text:"The numbers at the bottom are the bank's routing number, your account number, and the cheque number. Never sign a blank cheque, always use a pen, and write VOID across mistakes.", visual: function(){ return checkSvg("micr"); }},
-   {text:"In Japan, personal cheques are rare; people use bank transfers, called 振込 (furikomi), and cheques, 小切手 (kogitte), are mostly for businesses."}],
+   {text:"In Japan, personal cheques are rare; people use bank transfers, called 振込 (furikomi), and cheques, 小切手 (kogitte), are mostly for businesses.", visual: function(){ return flowSvg(["Your bank", "振込 transfer", "Their bank"], ZELDA) + crRow([{e:"🏦", name:"振込", ro:"furikomi", facts:["bank transfer","how most people pay"], c:"#a8e06c"},{e:"🧾", name:"小切手", ro:"kogitte", facts:["cheque","mostly businesses"], c:"#ffd166"}]); }}],
   quiz:[["Where do you write the amount in numbers?", ["In the box by the dollar sign", "On the memo line", "At the bottom", "Next to the date"], 0, "Start right next to the $."],
         ["If the numbers and the words don't match, the bank usually goes by…", ["the words", "the numbers", "the memo", "the date"], 0, "So write the words carefully."],
         ["Why draw a line after the amount in words?", ["So nobody can add to it", "To look neat", "It's the signature", "To void the cheque"], 0, "Fill the empty space."],
@@ -5942,24 +6073,194 @@ var LIFE = [
  {id:"lf_move", title:"Exercise basics", icon:"gauge", blurb:"How much to move, a safe warm-up, and a 6-round timer to do it with Aoi.",
   beats:[
    {text:"The World Health Organization suggests adults get 150 to 300 minutes of moderate activity a week, like brisk walking, plus muscle-strengthening on at least 2 days. Children: about an hour a day.", visual: function(){ return flowSvg(["Warm up", "Move", "Strength", "Cool down"], ZELDA); }},
-   {text:"Warm up for 5 to 10 minutes first: march, swing your arms, and roll your shoulders, so your muscles are ready."},
-   {text:"Good form beats speed: in a squat, knees follow your toes and your back stays long; in a push-up, keep a straight line from head to heels. Wall or knee push-ups are a great start."},
-   {text:"Stop if you feel chest pain, dizziness or sharp pain, and talk to a doctor before starting if you have a health condition."},
+   {text:"Warm up for 5 to 10 minutes first: march, swing your arms, and roll your shoulders, so your muscles are ready.", visual: function(){ return crRow([{e:"🚶", name:"March", facts:["on the spot"], c:"#8fd6ff"},{e:"💪", name:"Arm swings", facts:["loosen up"], c:"#a8e06c"},{e:"🔄", name:"Shoulder rolls", facts:["forward and back"], c:"#ffd166"}]); }},
+   {text:"Good form beats speed: in a squat, knees follow your toes and your back stays long; in a push-up, keep a straight line from head to heels. Wall or knee push-ups are a great start.", visual: function(){ return crRow([{e:"🏋️", name:"Squat", facts:["knees follow toes","back stays long"], c:"#8fd6ff"},{e:"🙌", name:"Push-up", facts:["straight line","head to heels"], c:"#a8e06c"},{e:"🧱", name:"Easier start", facts:["wall or knee","push-ups"], c:"#ffd166"}]); }},
+   {text:"Stop if you feel chest pain, dizziness or sharp pain, and talk to a doctor before starting if you have a health condition.", visual: function(){ return crRow([{e:"💔", name:"Chest pain", facts:["stop now"], c:"#ffb3a7"},{e:"💫", name:"Dizziness", facts:["stop and sit"], c:"#ffd166"},{e:"⚡", name:"Sharp pain", facts:["stop that move"], c:"#d6c1ff"},{e:"🩺", name:"Health condition?", facts:["ask a doctor first"], c:"#8fd6ff"}]); }},
    {text:"Ready? Six moves, 30 seconds each, 15 seconds rest. I'll count you through!", visual: function(){ return timerBox(); }}],
   quiz:[["WHO suggests adults get how much moderate activity a week?", ["150 to 300 minutes", "10 minutes", "1,000 minutes", "None"], 0, "Plus strength on 2 days."],
         ["Before exercise you should…", ["warm up for 5 to 10 minutes", "stretch hard while cold", "eat a big meal", "skip it"], 0, "Get the muscles ready."],
         ["In a squat, your knees should…", ["follow the direction of your toes", "cave inwards", "lock straight", "go behind your heels"], 0, "Knees over toes."],
         ["If you feel chest pain while exercising…", ["stop and get medical advice", "push through", "go faster", "hold your breath"], 0, "Safety first."]]}
 ];
+/* ---- Simple diagrams for the music-production, savings, study, cheque and exercise steps ---- */
+var INK = "#2b2d42";
+function svgWrap(h, label, body){ return '<svg class="sci cute" viewBox="0 0 340 ' + h + '" role="img" aria-label="' + esc_(label) + '">' + body + '</svg>'; }
+function svgT(x, y, t, o){ o = o || {}; return '<text x="' + x + '" y="' + y + '" text-anchor="' + (o.a || "middle") + '" font-size="' + (o.s || 11) + '" font-weight="' + (o.w || 800) + '" fill="' + (o.c || INK) + '">' + esc_(t) + '</text>'; }
+function svgBox(x, y, w, h, fill, r){ return '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + (r == null ? 10 : r) + '" fill="' + fill + '" stroke="' + INK + '" stroke-width="2"/>'; }
+/* FL Studio's audio settings: driver and buffer size. */
+function audioSetSvg(){
+  var b = svgBox(6, 6, 328, 150, "#f4f1ff") + svgT(20, 28, "Options › Audio settings", {a: "start", s: 12});
+  b += svgT(20, 58, "Device", {a: "start"}) + svgBox(90, 42, 230, 26, "#8fd6ff", 8) + svgT(205, 59, "ASIO: your audio interface ▾");
+  b += svgT(20, 98, "Buffer", {a: "start"});
+  var sizes = [64, 128, 256, 512, 1024];
+  sizes.forEach(function(n, i){ var x = 100 + i * 52, good = n === 128 || n === 256;
+    b += svgBox(x - 22, 84, 44, 24, good ? "#a8e06c" : "#fff", 8) + svgT(x, 100, String(n), {s: 10.5}); });
+  b += svgT(152, 126, "↑ recording", {s: 10, c: "#2b7a0b"}) + svgT(256, 126, "↑ mixing", {s: 10, w: 700});
+  b += svgT(170, 146, "smaller buffer = less delay", {s: 10, w: 700});
+  return svgWrap(162, "Audio settings: choose the ASIO driver and a 128 or 256 sample buffer", b);
+}
+/* Mixer inserts, one picking the interface input. */
+function mixerInSvg(){
+  var b = '', names = ["Insert 1", "Insert 2", "Insert 3", "Insert 4"];
+  names.forEach(function(n, i){ var x = 14 + i * 80, on = i === 0;
+    b += svgBox(x, 34, 68, 120, on ? "#ffd166" : "#fff") + svgT(x + 34, 52, n, {s: 10});
+    b += '<line x1="' + (x + 34) + '" y1="66" x2="' + (x + 34) + '" y2="140" stroke="' + INK + '" stroke-width="3"/>' + svgBox(x + 22, on ? 96 : 110, 24, 12, "#8fd6ff", 4);
+  });
+  b += svgBox(14, 4, 160, 24, "#a8e06c", 8) + svgT(94, 21, "▾ Input: In 1 (mic)", {s: 11});
+  b += '<path d="M48 28 L48 34" stroke="' + INK + '" stroke-width="2"/>';
+  b += svgT(250, 20, "pick an empty insert,", {s: 10, w: 600}) + svgT(250, 31, "then its input", {s: 10, w: 600});
+  return svgWrap(160, "Mixer insert 1 with its input set to input 1, the mic", b);
+}
+/* A level meter with the target zone. */
+function meterSvg(){
+  var b = '', top = 14, h = 150, dbY = function(db){ return top + (-db / 60) * h; };
+  b += '<rect x="60" y="' + top + '" width="34" height="' + h + '" fill="#fff" stroke="' + INK + '" stroke-width="2"/>';
+  b += '<rect x="60" y="' + dbY(-3) + '" width="34" height="' + (dbY(-60) - dbY(-3)) + '" fill="#a8e06c"/>';
+  b += '<rect x="60" y="' + dbY(-6) + '" width="34" height="' + (dbY(-3) - dbY(-6)) + '" fill="#ffd166"/>';
+  b += '<rect x="60" y="' + top + '" width="34" height="' + (dbY(-3) - top) + '" fill="#ff6b6b"/>';
+  b += '<rect x="56" y="' + dbY(-6) + '" width="42" height="' + (dbY(-12) - dbY(-6)) + '" fill="none" stroke="' + INK + '" stroke-width="3" stroke-dasharray="5 3"/>';
+  [0, -6, -12, -24, -48].forEach(function(db){ b += svgT(48, dbY(db) + 4, db + " dB", {a: "end", s: 9.5, w: 700}); });
+  b += svgT(112, dbY(-1.5) + 4, "red: too hot, clips at 0 dB", {a: "start", s: 11, c: "#c0392b"});
+  b += svgT(112, dbY(-9) + 4, "aim for your loudest peaks here", {a: "start", s: 11});
+  b += svgT(112, dbY(-9) + 18, "(−12 to −6 dB)", {a: "start", s: 10, w: 600});
+  b += svgT(112, dbY(-36), "quiet parts sit lower", {a: "start", s: 10, w: 600});
+  return svgWrap(176, "Level meter: peaks between minus 12 and minus 6 dB, never in the red", b);
+}
+/* Record, count-in, play: an audio clip landing in the playlist. */
+function transportSvg(){
+  var b = '';
+  b += svgBox(8, 8, 52, 40, "#ff6b6b") + '<circle cx="34" cy="28" r="9" fill="#fff" stroke="' + INK + '" stroke-width="2"/>' + svgT(34, 62, "record", {s: 10});
+  b += svgBox(70, 8, 52, 40, "#a8e06c") + '<path d="M90 18 L106 28 L90 38 Z" fill="' + INK + '"/>' + svgT(96, 62, "play", {s: 10});
+  b += svgBox(132, 8, 52, 40, "#ffd166") + '<path d="M150 40 L158 14 L166 40 Z M158 30 L168 20" fill="none" stroke="' + INK + '" stroke-width="2.5"/>' + svgT(158, 62, "metronome", {s: 10});
+  b += svgBox(194, 8, 138, 40, "#d6c1ff") + svgT(263, 33, "count-in: 1 2 3 4", {s: 12});
+  b += svgBox(8, 76, 324, 64, "#fff") + svgT(20, 94, "Playlist", {a: "start", s: 10});
+  var wave = 'M70 110'; for (var i = 0; i < 62; i++){ var x = 70 + i * 4, a = 6 + Math.abs(Math.sin(i * 0.7) * 14 + Math.sin(i * 0.23) * 6); wave += ' L' + x + ' ' + (110 - a) + ' L' + (x + 2) + ' ' + (110 + a); }
+  b += svgBox(64, 86, 258, 48, "#8fd6ff", 6) + '<path d="' + wave + '" fill="none" stroke="' + INK + '" stroke-width="1.2"/>';
+  b += svgT(193, 156, "your take, as an audio clip", {s: 10, w: 700});
+  return svgWrap(162, "Press record, count in, play: your take lands in the playlist as an audio clip", b);
+}
+/* Channel faders and pan, with headroom on the master. */
+function fadersSvg(){
+  var b = '', ch = [["Drums", 46, 0], ["Bass", 58, 0], ["Guitar", 74, -0.6], ["Vocal", 40, 0], ["Keys", 80, 0.6]];
+  ch.forEach(function(c, i){ var x = 10 + i * 56;
+    b += svgBox(x, 6, 48, 150, ZELDA[i % ZELDA.length]) + svgT(x + 24, 22, c[0], {s: 10});
+    b += '<circle cx="' + (x + 24) + '" cy="42" r="10" fill="#fff" stroke="' + INK + '" stroke-width="2"/><line x1="' + (x + 24) + '" y1="42" x2="' + (x + 24 + Math.sin(c[2]) * 9) + '" y2="' + (42 - Math.cos(c[2]) * 9) + '" stroke="' + INK + '" stroke-width="2.5"/>';
+    b += '<line x1="' + (x + 24) + '" y1="62" x2="' + (x + 24) + '" y2="146" stroke="' + INK + '" stroke-width="3"/>' + svgBox(x + 12, 62 + c[1], 24, 12, "#fff", 3);
+  });
+  b += svgBox(292, 6, 42, 150, "#fff") + svgT(313, 22, "Master", {s: 9.5});
+  b += '<line x1="313" y1="62" x2="313" y2="146" stroke="' + INK + '" stroke-width="3"/>' + svgBox(301, 94, 24, 12, "#ffd166", 3);
+  b += '<path d="M296 64 L296 92" stroke="#2b7a0b" stroke-width="3"/>' + svgT(313, 170, "headroom", {s: 9.5, c: "#2b7a0b"});
+  b += svgT(150, 170, "knobs = pan left / right · sliders = volume", {s: 9.5, w: 700});
+  return svgWrap(176, "Faders set a rough balance, pan knobs place each sound left or right, the master keeps headroom", b);
+}
+/* EQ: a low cut and a small dip. */
+function eqSvg(){
+  var X = function(f){ return 30 + (Math.log(f / 20) / Math.log(1000)) * 296; }, Y0 = 80, b = '';
+  b += svgBox(8, 8, 324, 136, "#fff");
+  [20, 100, 1000, 10000].forEach(function(f){ b += '<line x1="' + X(f) + '" y1="16" x2="' + X(f) + '" y2="130" stroke="#d8d8e8" stroke-width="1"/>' + svgT(X(f), 140, f >= 1000 ? f / 1000 + "k" : String(f), {s: 9.5, w: 700}); });
+  b += '<line x1="30" y1="' + Y0 + '" x2="326" y2="' + Y0 + '" stroke="#d8d8e8" stroke-width="1"/>';
+  var pts = [];
+  for (var i = 0; i <= 120; i++){ var f = 20 * Math.pow(1000, i / 120), y = Y0;
+    if (f < 90) y += 46 * Math.pow(1 - Math.log(f / 20) / Math.log(4.5), 1.4);
+    y += 14 * Math.exp(-Math.pow(Math.log(f / 320) / 0.35, 2));
+    pts.push(X(f).toFixed(1) + "," + y.toFixed(1)); }
+  b += '<rect x="30" y="16" width="' + (X(90) - 30) + '" height="114" fill="#ffb3a7" opacity=".45"/>';
+  b += '<polyline points="' + pts.join(" ") + '" fill="none" stroke="#3a86ff" stroke-width="3.5" stroke-linejoin="round"/>';
+  b += svgT(X(42), 34, "cut rumble", {s: 10}) + svgT(X(42), 46, "below ~80–100 Hz", {s: 9, w: 600});
+  b += svgT(X(320), 112, "cut clashes", {s: 10}) + svgT(X(3000), 70, "cut before you boost", {s: 10, w: 700});
+  b += svgT(178, 156, "frequency (Hz): low on the left, high on the right", {s: 9.5, w: 600});
+  return svgWrap(162, "EQ curve: a low cut below about 80 to 100 hertz and a small dip where sounds clash", b);
+}
+/* Compression: peaky before, steady after. */
+function compSvg(){
+  var b = '', wave = function(x0, y0, even){ var d = 'M' + x0 + ' ' + y0; for (var i = 0; i < 70; i++){ var env = even ? 14 + Math.sin(i * 0.31) * 3 : 6 + Math.abs(Math.sin(i * 0.17)) * 26 * (i % 23 < 5 ? 1.2 : 0.6); env = Math.min(env, 30); d += ' L' + (x0 + i * 4.2) + ' ' + (y0 - env) + ' L' + (x0 + i * 4.2 + 2.1) + ' ' + (y0 + env); } return d; };
+  b += svgT(14, 18, "Before: loud and soft jump around", {a: "start", s: 10.5});
+  b += '<path d="' + wave(14, 52, false) + '" fill="none" stroke="#ff6b6b" stroke-width="1.4"/>';
+  b += '<line x1="10" y1="34" x2="320" y2="34" stroke="' + INK + '" stroke-width="1.5" stroke-dasharray="5 4"/>' + svgT(326, 28, "threshold", {a: "end", s: 9, w: 700});
+  b += svgT(14, 104, "After: steadier, it sits in the mix", {a: "start", s: 10.5});
+  b += '<path d="' + wave(14, 136, true) + '" fill="none" stroke="#3a86ff" stroke-width="1.4"/>';
+  return svgWrap(168, "Compression: a jumpy waveform before, a steadier one after", b);
+}
+/* Send tracks for reverb and delay. */
+function sendsSvg(){
+  var b = '<defs><marker id="sa" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="' + INK + '"/></marker></defs>';
+  ["Drums", "Bass", "Guitar", "Vocal"].forEach(function(n, i){ var y = 8 + i * 42;
+    b += svgBox(8, y, 76, 30, ZELDA[i]) + svgT(46, y + 20, n, {s: 10.5});
+    b += '<line x1="84" y1="' + (y + 12) + '" x2="146" y2="40" stroke="' + INK + '" stroke-width="1.3" stroke-dasharray="4 3"/>';
+    b += '<line x1="84" y1="' + (y + 18) + '" x2="146" y2="118" stroke="' + INK + '" stroke-width="1.3" stroke-dasharray="4 3"/>';
+  });
+  b += svgBox(148, 22, 92, 36, "#d6c1ff") + svgT(194, 44, "Reverb send", {s: 10.5});
+  b += svgBox(148, 100, 92, 36, "#ffd166") + svgT(194, 122, "Delay send", {s: 10.5});
+  b += '<line x1="240" y1="40" x2="262" y2="70" stroke="' + INK + '" stroke-width="2" marker-end="url(#sa)"/><line x1="240" y1="118" x2="262" y2="94" stroke="' + INK + '" stroke-width="2" marker-end="url(#sa)"/>';
+  b += svgBox(264, 64, 68, 34, "#a8e06c") + svgT(298, 86, "Master", {s: 11});
+  b += svgT(170, 174, "a little of each track → sends", {s: 10, w: 700});
+  return svgWrap(182, "Each instrument sends a little signal to shared reverb and delay tracks, which feed the master", b);
+}
+/* The limiter's ceiling. */
+function limiterSvg(){
+  var b = '', ceil = 40, mid = 96;
+  b += svgBox(8, 8, 324, 140, "#fff");
+  var d = 'M20 ' + mid;
+  for (var i = 0; i < 74; i++){ var x = 20 + i * 4.1, a = 18 + Math.abs(Math.sin(i * 0.4) * 30 + Math.sin(i * 0.13) * 18); var top = Math.max(mid - a, ceil), bot = Math.min(mid + a, mid + (mid - ceil)); d += ' L' + x + ' ' + top + ' L' + (x + 2) + ' ' + bot; }
+  b += '<path d="' + d + '" fill="none" stroke="#3a86ff" stroke-width="1.3"/>';
+  b += '<line x1="14" y1="' + ceil + '" x2="326" y2="' + ceil + '" stroke="#c0392b" stroke-width="2.5"/><line x1="14" y1="' + (2 * mid - ceil) + '" x2="326" y2="' + (2 * mid - ceil) + '" stroke="#c0392b" stroke-width="2.5"/>';
+  b += svgT(320, ceil - 6, "ceiling: about −1 dB", {a: "end", s: 11, c: "#c0392b"});
+  b += svgT(170, 166, "peaks stop at the ceiling instead of distorting", {s: 10, w: 700});
+  return svgWrap(172, "A limiter holds every peak under a ceiling of about minus 1 dB", b);
+}
+/* Loudness normalisation: loud masters get turned down. */
+function loudSvg(){
+  var b = '', base = 150, Y = function(l){ return base - (l + 30) * 5; };
+  [[-8, "Super-loud", "#ff9f1c"], [-14, "Balanced", "#a8e06c"]].forEach(function(r, i){ var x = 40 + i * 120;
+    b += svgBox(x, Y(r[0]), 56, base - Y(r[0]), r[2], 6) + svgT(x + 28, Y(r[0]) - 6, r[0] + " LUFS", {s: 10.5}) + svgT(x + 28, base + 16, r[1], {s: 10.5});
+  });
+  b += '<line x1="20" y1="' + Y(-14) + '" x2="236" y2="' + Y(-14) + '" stroke="#1d5fd1" stroke-width="2.5" stroke-dasharray="6 4"/>';
+  b += '<path d="M106 ' + (Y(-8) + 2) + ' L106 ' + (Y(-14) - 2) + '" stroke="' + INK + '" stroke-width="2.5"/><path d="M101 ' + (Y(-14) - 8) + ' L106 ' + (Y(-14) - 1) + ' L111 ' + (Y(-14) - 8) + '" fill="none" stroke="' + INK + '" stroke-width="2.5"/>';
+  b += svgT(286, Y(-14) - 18, "streaming", {s: 10.5, c: "#1d5fd1"}) + svgT(286, Y(-14) - 5, "level", {s: 10.5, c: "#1d5fd1"}) + svgT(286, Y(-14) + 14, "≈ −14 LUFS", {s: 10.5, c: "#1d5fd1"});
+  b += svgT(282, base + 16, "loud: turned down", {s: 9, w: 700});
+  return svgWrap(176, "Streaming turns a super-loud master down to about minus 14 LUFS, so it ends up no louder", b);
+}
+/* Export: a WAV master, MP3s made from it. */
+function exportSvg(){
+  var file = function(x, y, c, t1, t2){ return '<path d="M' + x + ' ' + y + ' h50 l16 16 v58 h-66 z" fill="' + c + '" stroke="' + INK + '" stroke-width="2" stroke-linejoin="round"/>' + svgT(x + 33, y + 42, t1, {s: 12}) + svgT(x + 33, y + 58, t2, {s: 9.5, w: 700}); };
+  var b = '<defs><marker id="xa" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0L8 4L0 8z" fill="' + INK + '"/></marker></defs>';
+  b += file(14, 46, "#a8e06c", "WAV", "24-bit");
+  b += '<line x1="84" y1="76" x2="128" y2="44" stroke="' + INK + '" stroke-width="2" marker-end="url(#xa)"/><line x1="84" y1="84" x2="128" y2="118" stroke="' + INK + '" stroke-width="2" marker-end="url(#xa)"/>';
+  b += file(134, 6, "#8fd6ff", "MP3", "to share") + file(134, 92, "#ffd166", "Upload", "to stream");
+  b += svgT(272, 70, "🎧 📱 🔊", {s: 16}) + svgT(272, 92, "check on", {s: 10, w: 700}) + svgT(272, 105, "many speakers", {s: 10, w: 700});
+  return svgWrap(172, "Export a 24-bit WAV master, then make MP3s and uploads from it", b);
+}
+/* Savings go up and down. */
+function wobbleSvg(){
+  var b = svgBox(8, 8, 324, 130, "#fff"), d = 'M20 120', y = 120;
+  for (var i = 1; i <= 60; i++){ y = 120 - i * 1.5 + Math.sin(i * 0.9) * 9 + (i > 22 && i < 30 ? 14 : 0); d += ' L' + (20 + i * 5) + ' ' + y.toFixed(1); }
+  b += '<path d="' + d + '" fill="none" stroke="#3a86ff" stroke-width="3" stroke-linejoin="round"/>';
+  b += svgT(150, 118, "a dip: returns are never guaranteed", {s: 10, c: "#c0392b"});
+  b += svgT(60, 30, "over time it may grow,", {a: "start", s: 10, w: 700}) + svgT(60, 42, "but it can fall too", {a: "start", s: 10, w: 700});
+  return svgWrap(144, "An investment line that rises over time with ups and downs, including a dip", b);
+}
+/* The forgetting curve and spaced reviews. */
+function spacingSvg(){
+  var b = svgBox(8, 8, 324, 144, "#fff"), d = 'M24 24', reviews = [0, 60, 140, 250], x0 = 24, keep = 1;
+  reviews.forEach(function(r, k){ var end = k + 1 < reviews.length ? reviews[k + 1] : 300, rate = 0.03 / (k + 1);
+    d += (k ? ' L' + (x0 + r) + ' 24' : '');
+    for (var t = r; t <= end; t += 4){ var v = Math.exp(-rate * (t - r)); d += ' L' + (x0 + t) + ' ' + (24 + (1 - v) * 104).toFixed(1); }
+    if (k) b += '<circle cx="' + (x0 + r) + '" cy="24" r="5" fill="#a8e06c" stroke="' + INK + '" stroke-width="2"/>' + svgT(x0 + r, 18, "review", {s: 9});
+  });
+  b += '<path d="' + d + '" fill="none" stroke="#3a86ff" stroke-width="3" stroke-linejoin="round"/>';
+  b += svgT(24, 146, "learn", {a: "start", s: 10}) + svgT(320, 146, "time →", {a: "end", s: 10}) + svgT(18, 80, "memory", {a: "middle", s: 9.5, w: 700});
+  b += svgT(200, 112, "each review: it fades more slowly", {s: 10, w: 700});
+  return svgWrap(158, "Memory fades after learning, and each review brings it back and slows the fading", b);
+}
 var PRODUCTION = [
  {id:"pr_record", title:"Recording in FL Studio", icon:"headset", blurb:"Recording a mic or a guitar into FL Studio, step by step.",
   beats:[
    {text:"You need an audio interface: it has a mic input with a preamp, an instrument input for guitar or bass, and headphone and speaker outputs.", visual: function(){ return flowSvg(["Mic / guitar", "Interface", "FL mixer", "Master", "Your ears"], ZELDA); }},
-   {text:"In Options, Audio settings, choose your interface's ASIO driver on Windows, or its device on a Mac. While recording, a small buffer, like 128 or 256 samples, keeps the delay low."},
-   {text:"Open the Mixer and pick an empty insert track. In the insert's input menu, choose your interface's input: input 1 for a mic, for example."},
-   {text:"Arm the insert for recording with its record button, and set your level so the loudest bits peak around minus 12 to minus 6 dB. Never let it hit red."},
-   {text:"Press the record button, choose recording audio into the Playlist as an audio clip, turn on the metronome and a count-in, then press play and perform."},
-   {text:"Tips: record without heavy effects (you can add them later), use a pop filter for vocals, and plug guitar into the instrument input, adding an amp-sim plugin afterwards."}],
+   {text:"In Options, Audio settings, choose your interface's ASIO driver on Windows, or its device on a Mac. While recording, a small buffer, like 128 or 256 samples, keeps the delay low.", visual: function(){ return audioSetSvg(); }},
+   {text:"Open the Mixer and pick an empty insert track. In the insert's input menu, choose your interface's input: input 1 for a mic, for example.", visual: function(){ return mixerInSvg(); }},
+   {text:"Arm the insert for recording with its record button, and set your level so the loudest bits peak around minus 12 to minus 6 dB. Never let it hit red.", visual: function(){ return meterSvg(); }},
+   {text:"Press the record button, choose recording audio into the Playlist as an audio clip, turn on the metronome and a count-in, then press play and perform.", visual: function(){ return transportSvg(); }},
+   {text:"Tips: record without heavy effects (you can add them later), use a pop filter for vocals, and plug guitar into the instrument input, adding an amp-sim plugin afterwards.", visual: function(){ return crRow([{e:"🎙️", name:"Dry first", facts:["record clean","add effects later"], c:"#8fd6ff"},{e:"🫧", name:"Pop filter", facts:["for vocals","stops 'p' pops"], c:"#ffd166"},{e:"🎸", name:"Guitar in", facts:["instrument input","amp-sim after"], c:"#a8e06c"}]); }}],
   quiz:[["What connects a mic to your computer for good recordings?", ["An audio interface", "A USB stick", "A webcam", "A guitar pedal"], 0, "Preamps, inputs and outputs."],
         ["Where do you choose which input a track records from?", ["The mixer insert's input menu", "The piano roll", "The browser", "The tempo box"], 0, "Then arm it."],
         ["A good recording level peaks around…", ["-12 to -6 dB, never clipping", "0 dB, in the red", "-60 dB", "as loud as possible"], 0, "Headroom keeps it clean."],
@@ -5967,11 +6268,11 @@ var PRODUCTION = [
  {id:"pr_mix", title:"Mixing in FL Studio", icon:"dial", blurb:"Balancing your tracks so everything can be heard.",
   beats:[
    {text:"Send every instrument to its own mixer insert, so each one gets its own volume, panning and effects.", visual: function(){ return flowSvg(["Drums", "Bass", "Guitar", "Vocal", "Master"], ZELDA); }},
-   {text:"Start with levels and panning: get a rough balance with the faders before any plugins. Leave headroom on the master."},
-   {text:"EQ: with Fruity Parametric EQ 2, cut low rumble below about 80 to 100 Hz on things that aren't bass or kick, and cut clashing frequencies before boosting."},
-   {text:"Compression evens out loud and soft moments, so a vocal sits steadily in the mix. Use gentle settings at first."},
-   {text:"Put reverb and delay on send tracks, and send a little of each instrument to them. That glues everything into one space."},
-   {text:"Check your mix quietly, on headphones and on a phone speaker, compare it with a song you like, and take breaks: ears get tired."}],
+   {text:"Start with levels and panning: get a rough balance with the faders before any plugins. Leave headroom on the master.", visual: function(){ return fadersSvg(); }},
+   {text:"EQ: with Fruity Parametric EQ 2, cut low rumble below about 80 to 100 Hz on things that aren't bass or kick, and cut clashing frequencies before boosting.", visual: function(){ return eqSvg(); }},
+   {text:"Compression evens out loud and soft moments, so a vocal sits steadily in the mix. Use gentle settings at first.", visual: function(){ return compSvg(); }},
+   {text:"Put reverb and delay on send tracks, and send a little of each instrument to them. That glues everything into one space.", visual: function(){ return sendsSvg(); }},
+   {text:"Check your mix quietly, on headphones and on a phone speaker, compare it with a song you like, and take breaks: ears get tired.", visual: function(){ return crRow([{e:"🎧", name:"Headphones", facts:["hear details"], c:"#8fd6ff"},{e:"📱", name:"Phone speaker", facts:["most people listen here"], c:"#ffd166"},{e:"🎵", name:"A song you like", facts:["compare the balance"], c:"#d6c1ff"},{e:"☕", name:"Take breaks", facts:["ears get tired"], c:"#ffb3a7"}]); }}],
   quiz:[["Why give each instrument its own mixer insert?", ["Separate volume, pan and effects", "It's required to save", "To make it louder", "To record faster"], 0, "Control per instrument."],
         ["A common EQ move on non-bass tracks is…", ["cutting the lows below about 80-100 Hz", "boosting everything", "cutting all highs", "removing the mids entirely"], 0, "Clears room for bass and kick."],
         ["Reverb is often placed on…", ["a send track", "every insert separately", "the piano roll", "nothing"], 0, "Shared space, less CPU."],
@@ -5979,9 +6280,9 @@ var PRODUCTION = [
  {id:"pr_master", title:"Mastering basics", icon:"gauge", blurb:"The final polish before you share your song.",
   beats:[
    {text:"Mastering is the last step: gentle EQ and compression on the whole mix, then a limiter at the very end of the master chain.", visual: function(){ return flowSvg(["Mix", "EQ", "Glue comp", "Limiter", "Export"], ZELDA); }},
-   {text:"The limiter, like Fruity Limiter, stops peaks going over a ceiling. Set the ceiling around minus 1 dB so the file doesn't distort after streaming conversion."},
-   {text:"Streaming services turn loud songs down to about the same loudness, often around minus 14 LUFS, so squashing your song super loud doesn't win. A loudness meter helps."},
-   {text:"Export a WAV at 24-bit for the master; make MP3s from that. Listen on several speakers before you release."}],
+   {text:"The limiter, like Fruity Limiter, stops peaks going over a ceiling. Set the ceiling around minus 1 dB so the file doesn't distort after streaming conversion.", visual: function(){ return limiterSvg(); }},
+   {text:"Streaming services turn loud songs down to about the same loudness, often around minus 14 LUFS, so squashing your song super loud doesn't win. A loudness meter helps.", visual: function(){ return loudSvg(); }},
+   {text:"Export a WAV at 24-bit for the master; make MP3s from that. Listen on several speakers before you release.", visual: function(){ return exportSvg(); }}],
   quiz:[["What goes last on the master chain?", ["A limiter", "A reverb", "A synth", "A metronome"], 0, "It catches the peaks."],
         ["A safe limiter ceiling is around…", ["-1 dB", "+6 dB", "-40 dB", "0 dB exactly with no margin"], 0, "Room for conversion."],
         ["Streaming services often normalise to about…", ["-14 LUFS", "0 LUFS", "-40 LUFS", "+10 LUFS"], 0, "Loudness wars don't pay."],
@@ -5992,6 +6293,7 @@ var PRODUCTION = [
    {text:"Drive pedals add grit: overdrive is warm and light, distortion is heavy, fuzz is wild and woolly. Turn on Distortion and play the riff.", visual: function(){ return pedalboardHtml(); }},
    {text:"Modulation pedals move the sound: chorus shimmers, tremolo pulses the volume, and phasers and flangers swoosh.", visual: function(){ return pedalboardHtml(); }},
    {text:"Time pedals add space: delay repeats what you play, reverb puts you in a room or hall.", visual: function(){ return pedalboardHtml(); }},
+   {text:"Now play the riffs: a bright J-pop riff, a rock riff, chugging J-rock power chords, a clean arpeggio, and the 王道進行 and 小室進行 chord progressions. Switch pedals on and off to hear how each one changes them.", visual: function(){ return pedalboardHtml(); }},
    {text:"A common order: tuner, wah, compressor, drive, modulation, delay, then reverb. Rules can be broken, but that's a great start.", visual: function(){ return flowSvg(["Tuner", "Comp", "Drive", "Chorus", "Delay", "Reverb"], ZELDA); }}],
   quiz:[["Which pedal makes echoes?", ["Delay", "Compressor", "Tuner", "Wah"], 0, "Reverb makes a room sound."],
         ["Overdrive vs distortion:", ["overdrive is lighter, distortion heavier", "they're opposites", "distortion is cleaner", "overdrive is a reverb"], 0, "Both add grit."],
@@ -6215,7 +6517,7 @@ var FANTASY = [
     visual:function(){ return crRow([{e:"🪄", name:"Magical girl", jp:"魔法少女", c:"#f9c6ff"}, {e:"🤖", name:"Mecha", jp:"メカ・ロボット", c:"#adb5bd"}]); }},
    {text:"Slice of life, nichijō-kei 日常系, follows everyday school or work life. Iyashikei, 癒し系, healing anime, is calm and cosy, made to help you relax.",
     visual:function(){ return crRow([{e:"🍱", name:"Slice of life", jp:"日常系", c:"#ffd166"}, {e:"🍵🍃", name:"Iyashikei", jp:"癒し系", c:"#80b918"}]); }},
-   {text:"There's much more: sports, idols, romantic comedy, horror and sci-fi. Tap the heart on lessons you like, and switch on More please to ask for more of them!",
+   {text:"There's much more: sports, idols, romantic comedy, horror and sci-fi. Tap the heart on lessons you like, and tap it again to ask for more like them!",
     visual:function(){ return r5Words([["スポーツ", "supōtsu", "sports"], ["アイドル", "aidoru", "idol"], ["ラブコメ", "rabukome", "romantic comedy"], ["ホラー", "horā", "horror"], ["SF", "esu efu", "sci-fi"]]); }}],
   quiz:[["少年 (shōnen) anime was first made for…", ["boys", "girls", "adult women", "grandparents"], 0, "Labels come from manga magazine audiences."],
         ["A story where someone is reborn in a fantasy world is…", ["isekai", "mecha", "josei", "iyashikei"], 0, "異世界, another world."],
@@ -6505,18 +6807,76 @@ var TEACHER_SECTIONS = [
   {id:"sales", title:"Sales", icon:"chat", blurb:"Meet a customer with a real reason to say no, learn how to answer it, then practise.",
    modules:function(){ return SALES_SCENARIOS.map(function(sc){ return {title:sc.title, icon:"chat", meta:sc.tips.length + " tips + practice", start:function(){ startSalesCoach(sc, "teacher"); }}; }); }}
 ];
+/* Subjects, each with its own colour (g-*), holding the sections in order. */
 var SECTION_GROUPS = [
-  ["Japanese", ["japan", "jpgrammar", "jpwords", "jpread", "jpsongs"]],
-  ["Fantasy & Anime", ["fantasy"]],
-  ["Music", ["music", "piano", "guitar", "jpop", "drums", "bass", "production"]],
-  ["Science, Nature & Tech", ["science", "animals", "tech"]],
-  ["Life, Home & Work", ["life", "kitchen", "sales", "claude"]],
-  ["Flying & Study", ["ppl", "gk"]]
+  ["Japanese", ["japan", "jpgrammar", "jpwords", "jpread", "jpsongs"], "jp", "torii"],
+  ["Music", ["music", "piano", "guitar", "jpop", "drums", "bass", "production"], "mus", "note"],
+  ["Science, Nature & Tech", ["science", "animals", "tech"], "sci", "globe"],
+  ["Fantasy & Anime", ["fantasy"], "fan", "star"],
+  ["Life, Home & Work", ["life", "kitchen", "sales", "claude"], "life", "heart"],
+  ["Flying & Study", ["ppl", "gk"], "fly", "plane"]
 ];
+function secGroup(secId){ var g = null; SECTION_GROUPS.forEach(function(x){ if (x[1].indexOf(secId) >= 0) g = x; }); return g || ["More", [], "life", "book"]; }
 function openTeacherLib(secId){
   teacherSec = secId;
   renderTeacherLib();
   showView("teacher", {backTo: secId ? "teacherHome" : "hub"});
+}
+/* The Teacher home: search, subject filters and sorting over a folder tree of every lesson.
+   Subject folders > section folders > lessons; a lesson opens straight from the tree. What is
+   typed, picked and opened is remembered for this visit, and which folders are open on this device. */
+var TREE = {q: "", f: "all", sort: "tree"};
+var TREE_OPEN_KEY = "aoi_tree_open_v1";
+function treeOpen(){ try{ return JSON.parse(localStorage.getItem(TREE_OPEN_KEY) || "{}") || {}; }catch(e){ return {}; } }
+function treeOpenSet(id, on){ var o = treeOpen(); if (on) o[id] = 1; else delete o[id]; try{ localStorage.setItem(TREE_OPEN_KEY, JSON.stringify(o)); }catch(e){} }
+/* Every lesson, with where it lives: {m, sec, g, key, i}. */
+function treeIndex(){
+  var out = [];
+  SECTION_GROUPS.forEach(function(g){ g[1].forEach(function(id){
+    var sec = TEACHER_SECTIONS.filter(function(x){ return x.id === id; })[0]; if (!sec) return;
+    sec.modules().forEach(function(m, i){ out.push({m: m, sec: sec, g: g, key: fbKey(sec.id, m.title), i: i}); });
+  }); });
+  return out;
+}
+function treeDone(m){ try{ var pr = m.progress ? m.progress() : null; return !!(pr && pr.done); }catch(e){ return false; } }
+function treeRow(x, crumb){
+  var done = treeDone(x.m), lv = fbLevel(x.key), n = fbCounts().likes[x.key] || 0;
+  return '<div class="trow g-' + x.g[2] + '"><button type="button" class="tgo" data-tsec="' + esc_(x.sec.id) + '" data-ti="' + x.i + '">' +
+    '<span class="tico">' + ico(x.m.icon || x.sec.icon) + '</span><span class="ttxt"><b>' + esc_(x.m.title) + '</b>' +
+    '<small>' + (crumb ? esc_(x.g[0] + " › " + x.sec.title) + ' · ' : '') + esc_(x.m.meta || "") + '</small></span>' +
+    (done ? '<span class="tdone" title="Done">✓</span>' : '') + '</button>' +
+    '<button type="button" class="fbheart mini lv' + lv + (lv ? ' on' : '') + '" data-fblike="' + esc_(x.key) + '" aria-label="' + esc_(fbHeartLabel(x.key)) + '">' + fbHeartInner(x.key) + '</button></div>';
+}
+function renderTreeBody(){
+  var box = document.getElementById("tTree"); if (!box) return;
+  fbCountCache = null;
+  var q = TREE.q.trim().toLowerCase(), all = treeIndex(), html = "";
+  var shown = all.filter(function(x){ return TREE.f === "all" || x.g[2] === TREE.f; });
+  if (q) shown = shown.filter(function(x){ return (x.m.title + " " + (x.m.meta || "") + " " + x.sec.title + " " + x.g[0] + " " + (x.sec.blurb || "")).toLowerCase().indexOf(q) >= 0; });
+  if (q || TREE.sort !== "tree"){
+    if (TREE.sort === "az") shown.sort(function(a, b){ return a.m.title.localeCompare(b.m.title); });
+    else if (TREE.sort === "loved"){ var c = fbCounts().likes; shown.sort(function(a, b){ return (c[b.key] || 0) - (c[a.key] || 0) || (fbLevel(b.key) - fbLevel(a.key)); }); }
+    else if (TREE.sort === "todo") shown = shown.filter(function(x){ return !treeDone(x.m); });
+    html = '<p class="tcount">' + shown.length + (shown.length === 1 ? " lesson" : " lessons") + (q ? ' for “' + esc_(TREE.q.trim()) + '”' : '') + '</p>' +
+      (shown.length ? '<div class="tflat">' + shown.slice(0, 200).map(function(x){ return treeRow(x, true); }).join("") + '</div>' : '<p class="sci-note">Nothing found. Try another word, or pick All.</p>');
+  } else {
+    var open = treeOpen();
+    SECTION_GROUPS.forEach(function(g){
+      if (TREE.f !== "all" && TREE.f !== g[2]) return;
+      var items = shown.filter(function(x){ return x.g === g; }); if (!items.length) return;
+      var gOpen = TREE.f !== "all" || open["g:" + g[2]];
+      html += '<details class="tgroup g-' + g[2] + '" data-tid="g:' + g[2] + '"' + (gOpen ? ' open' : '') + '><summary><span class="tgico">' + ico(g[3]) + '</span><span class="tgname">' + esc_(g[0]) + '</span><span class="tgn">' + items.length + '</span></summary><div class="tgbody">';
+      g[1].forEach(function(id){
+        var rows = items.filter(function(x){ return x.sec.id === id; }); if (!rows.length) return;
+        var sec = rows[0].sec, sid = "s:" + id;
+        html += '<details class="tsec" data-tid="' + sid + '"' + (open[sid] || g[1].length === 1 ? ' open' : '') + '><summary><span class="tsname">' + esc_(sec.title) + '</span><span class="tgn">' + rows.length + '</span></summary>' +
+          '<p class="tsblurb">' + esc_(sec.blurb) + ' <button type="button" class="tsopen" data-topen="' + esc_(id) + '">Open as cards ›</button></p>' +
+          rows.map(function(x){ return treeRow(x, false); }).join("") + '</details>';
+      });
+      html += '</div></details>';
+    });
+  }
+  box.innerHTML = html;
 }
 function renderTeacherLib(){
   var lib = document.getElementById("teacherLib");
@@ -6527,31 +6887,25 @@ function renderTeacherLib(){
   if (!sec){
     teacherSec = null;
     setHeader("Learn with Aoi", "Teacher");
-    lib.innerHTML = '<div class="libhead"><p>Pick a section. Aoi teaches every module in small steps; the questions wait in the Quiz section.</p></div>';
-    var vb = document.createElement("button"); vb.type = "button"; vb.className = "hubcard seccard votecard";
-    vb.innerHTML = '<span class="lic">' + ico("heart") + '</span><span class="stxt"><h3>Loves &amp; requests</h3><p>What everyone loves, what they want next, and problems to fix.</p></span>';
-    vb.addEventListener("click", openVotes);
-    lib.appendChild(vb);
-    var list = document.createElement("div"); list.className = "seclist";
-    var byId = {}; TEACHER_SECTIONS.forEach(function(x){ byId[x.id] = x; });
-    var ordered = [];
-    SECTION_GROUPS.forEach(function(g){ var h = document.createElement("h2"); h.className = "secgroup"; h.textContent = g[0]; ordered.push(h);
-      g[1].forEach(function(id){ if (byId[id]){ ordered.push(byId[id]); delete byId[id]; } }); });
-    Object.keys(byId).forEach(function(id){ ordered.push(byId[id]); });
-    ordered.forEach(function(x){
-      if (x.nodeType){ list.appendChild(x); return; }
-      var b = document.createElement("button"); b.type = "button"; b.className = "hubcard seccard";
-      var n = x.modules().length;
-      b.innerHTML = '<span class="lic">' + ico(x.icon) + '</span><span class="stxt"><h3>' + esc_(x.title) + '</h3><p>' + esc_(x.blurb) + '</p>' +
-        '<span class="badge" style="align-self:flex-start;">' + n + (n === 1 ? " module" : " modules") + '</span></span>';
-      b.addEventListener("click", function(){ openTeacherLib(x.id); });
-      list.appendChild(b);
-    });
-    lib.appendChild(list);
+    var total = treeIndex().length;
+    lib.innerHTML = '<div class="seclist tree">' +
+      '<div class="tsearch"><span class="tsico" aria-hidden="true">' + ico("search") + '</span><input type="search" id="tSearch" placeholder="Search ' + total + ' lessons: dragons, chords, 柴犬…" aria-label="Search lessons" value="' + esc_(TREE.q) + '" autocomplete="off"></div>' +
+      '<div class="tfilters" role="group" aria-label="Subjects">' + [["all", "All", "book"]].concat(SECTION_GROUPS.map(function(g){ return [g[2], g[0], g[3]]; })).map(function(f){
+        return '<button type="button" class="tchip g-' + (f[0] === "all" ? "all" : f[0]) + (TREE.f === f[0] ? ' on' : '') + '" data-tf="' + f[0] + '" aria-pressed="' + (TREE.f === f[0]) + '">' + esc_(f[1]) + '</button>'; }).join("") + '</div>' +
+      '<div class="tbar"><label class="tsort">Sort <select id="tSort" aria-label="Sort lessons">' +
+        [["tree", "By subject (folders)"], ["az", "A to Z"], ["loved", "Most loved"], ["todo", "Not done yet"]].map(function(o){ return '<option value="' + o[0] + '"' + (TREE.sort === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join("") + '</select></label>' +
+        '<button type="button" class="tvotes" id="tVotes">' + ico("heart") + ' Loves &amp; requests</button></div>' +
+      '<div id="tTree"></div></div>';
+    renderTreeBody();
+    var inp = document.getElementById("tSearch");
+    inp.addEventListener("input", function(){ TREE.q = inp.value; renderTreeBody(); });
+    document.getElementById("tSort").addEventListener("change", function(e){ TREE.sort = e.target.value; renderTreeBody(); });
+    document.getElementById("tVotes").addEventListener("click", openVotes);
     return;
   }
+  var gg = secGroup(sec.id);
   setHeader(sec.title, "Teacher");
-  lib.innerHTML = '<div class="libhead"><p>' + esc_(sec.blurb) + '</p></div>';
+  lib.innerHTML = '<div class="libhead seched g-' + gg[2] + '"><small>' + esc_(gg[0]) + ' \u203a ' + esc_(sec.title) + '</small><p>' + esc_(sec.blurb) + '</p></div>';
   var grid = document.createElement("div"); grid.className = "grid catgrid";
   sec.modules().forEach(function(m){
     var wrap = document.createElement("div"); wrap.className = "modwrap";
@@ -6567,13 +6921,13 @@ function renderTeacherLib(){
   });
   lib.appendChild(grid);
 }
-/* ---------- Loves, "More please", problem reports, and the Loves & requests page ----------
-   Every module card has a heart and a "More please" switch, and the lesson header has a flag for
-   reporting a problem with the line on screen (a wrong translation, a fact, the audio). They are
-   kept on this device. Where the page runs as a shared claude.ai page they are also saved to its
-   shared store, one document per person (votes/<their id>), so the Loves & requests page can
-   chart what everyone loves and wants next. Elsewhere (the APK) the page shows this device's
-   votes and offers to send them on with the phone's share sheet. */
+/* ---------- Loves, "more like this", problem reports, and the Loves & requests page ----------
+   Every module card has a heart with a count. Tap it once to love the lesson, again (two hearts)
+   to ask for more lessons like it, a third time to clear it. The lesson header has a flag for
+   reporting a problem with the line on screen (a wrong translation, a fact, the audio). Votes are
+   kept on this device; where the page runs as a shared claude.ai page they are also saved to its
+   shared store, one document per person (votes/<their id>), and everyone's counts show live.
+   The app also carries a snapshot of those counts (feedback/votes.js), refreshed with each update. */
 var FB_KEY = "aoi_feedback_v1";
 var fb = (function(){
   try{ var o = JSON.parse(localStorage.getItem(FB_KEY) || "{}");
@@ -6586,7 +6940,8 @@ function fbSave(){ try{ localStorage.setItem(FB_KEY, JSON.stringify(fb)); }catch
 var fbTimer = null, fbWriting = false, fbAgain = false;
 function fbPush(){ if (!fbShared.db || !fbShared.uid) return; clearTimeout(fbTimer); fbTimer = setTimeout(fbWrite, 800); }
 function fbBody(){
-  return {likes: Object.keys(fb.likes), more: Object.keys(fb.more), reports: fb.reports.slice(-40), wishes: fb.wishes.slice(-20), at: Date.now()};
+  var liked = {}; Object.keys(fb.likes).concat(Object.keys(fb.more)).forEach(function(k){ liked[k] = 1; });
+  return {likes: Object.keys(liked), more: Object.keys(fb.more), reports: fb.reports.slice(-40), wishes: fb.wishes.slice(-20), at: Date.now()};
 }
 function fbWrite(){
   if (fbWriting){ fbAgain = true; return; }
@@ -6619,7 +6974,7 @@ function fbMerge(v){
         db.collection("votes").onSnapshot(function(s){
           fbShared.docs = s.docs.map(function(d){ return {id: d.id, v: d.data() || {}}; });
           fbShared.live = true;
-          if (votesOpen()) renderVotes();
+          if (votesOpen()) renderVotes(); else fbPaintAll();
         }, function(){ fbShared.live = false; });
       });
     });
@@ -6645,7 +7000,14 @@ function fbTally(){
   });
   reports.sort(function(a, b){ return (b.at || 0) - (a.at || 0); });
   wishes.sort(function(a, b){ return (b.at || 0) - (a.at || 0); });
-  return {likes: likes, more: more, reports: reports, wishes: wishes, people: people.length};
+  var n = people.length;
+  /* Without the live store (the app), add the counts saved with this update. */
+  if (!fbShared.live && window.AOI_VOTES){
+    var V = window.AOI_VOTES; n += V.people || 0;
+    Object.keys(V.likes || {}).forEach(function(k){ likes[k] = (likes[k] || 0) + V.likes[k]; });
+    Object.keys(V.more || {}).forEach(function(k){ more[k] = (more[k] || 0) + V.more[k]; });
+  }
+  return {likes: likes, more: more, reports: reports, wishes: wishes, people: n};
 }
 function votesOpen(){ return teacherSec === "__votes" && !views.teacher.hidden; }
 function openVotes(){ openTeacherLib("__votes"); }
@@ -6664,53 +7026,150 @@ function renderVotes(){
   var lib = document.getElementById("teacherLib");
   var mods = fbModules(), t = fbTally();
   setHeader("Loves & requests", "Teacher");
-  var where = fbShared.db ? (fbShared.live ? "Everyone using this page: " + t.people + (t.people === 1 ? " person" : " people") + " so far." : "Connecting to everyone's votes…")
-    : "These are this device's votes. Use Share to send them to the app's makers.";
-  lib.innerHTML = '<div class="libhead"><p>Tap ♥ on lessons you love and switch on <b>More please</b> for topics you want more of. In a lesson, the ⚑ button reports a problem with the line on screen, like a wrong translation.</p><p class="sci-note">' + esc_(where) + '</p></div>' +
+  var where = fbShared.live ? "Everyone's votes, live: " + t.people + (t.people === 1 ? " person" : " people") + " so far."
+    : fbShared.db ? "Connecting to everyone's votes…"
+    : "Everyone's votes as of this app update" + (window.AOI_VOTES && AOI_VOTES.at ? " (" + AOI_VOTES.at + ")" : "") + ", plus yours.";
+  lib.innerHTML = '<div class="libhead"><p>Tap ♥ once on a lesson you love. Tap again (♥♥) to ask for more lessons like it. In a lesson, the ⚑ button reports a problem with the line on screen, like a wrong translation.</p><p class="sci-note">' + esc_(where) + '</p></div>' +
     '<div class="lcard"><div class="ctag">Most loved</div>' + voteBars(t.likes, mods, "No hearts yet. Tap ♥ on a module you enjoyed.") + '</div>' +
-    '<div class="lcard"><div class="ctag">Most wanted next: "More please"</div>' + voteBars(t.more, mods, "No requests yet. Switch on More please on a module card.") + '</div>' +
+    '<div class="lcard"><div class="ctag">Most wanted next: ♥♥ more like this</div>' + voteBars(t.more, mods, "No requests yet. Tap a heart twice (♥♥) for more like it.") + '</div>' +
     '<div class="lcard"><div class="ctag">What should Aoi teach next?</div><form id="wishForm" class="wishform"><input id="wishText" maxlength="160" placeholder="e.g. Japanese festivals, chemistry, Godot" aria-label="A topic you would like"><button class="btn primary" type="submit">Ask</button></form>' +
       (t.wishes.length ? '<ul class="vlist">' + t.wishes.slice(0, 20).map(function(w){ return '<li>' + esc_(w.t) + '</li>'; }).join("") + '</ul>' : '<p class="sci-note">No requests yet.</p>') + '</div>' +
     '<div class="lcard"><div class="ctag">Reported problems</div>' + (t.reports.length ? '<ul class="vlist">' + t.reports.slice(0, 30).map(function(r){
         return '<li><b>' + esc_(r.kind || "Problem") + '</b> · ' + esc_(r.m || "") + (r.line ? '<br><small>“' + esc_(r.line.slice(0, 140)) + '”</small>' : '') + (r.note ? '<br>' + esc_(r.note) : '') + '</li>'; }).join("") + '</ul>'
-      : '<p class="sci-note">Nothing reported. Use the ⚑ button inside a lesson.</p>') + '</div>' +
-    (!fbShared.db ? '<div class="lbtns"><button class="btn" id="votesShare" type="button">Share my votes</button></div>' : '');
+      : '<p class="sci-note">Nothing reported. Use the ⚑ button inside a lesson.</p>') + '</div>';
   document.getElementById("wishForm").addEventListener("submit", function(e){
     e.preventDefault();
     var v = document.getElementById("wishText").value.trim(); if (!v) return;
     fb.wishes.push({t: v.slice(0, 160), at: Date.now()}); fbSave(); renderVotes();
   });
-  var sh = document.getElementById("votesShare");
-  if (sh) sh.addEventListener("click", fbShareText);
 }
-function fbShareText(){
-  var mods = fbModules(), name = function(k){ return mods[k] ? mods[k].title + " (" + mods[k].sec + ")" : k; };
-  var txt = "Aoi Teacher feedback\n\nLoved: " + (Object.keys(fb.likes).map(name).join("; ") || "none") +
-    "\nMore please: " + (Object.keys(fb.more).map(name).join("; ") || "none") +
-    "\nWishes: " + (fb.wishes.map(function(w){ return w.t; }).join("; ") || "none") +
-    "\nProblems:\n" + (fb.reports.map(function(r){ return "- " + (r.kind || "") + " in " + (r.m || "") + ": \"" + (r.line || "") + "\" " + (r.note || ""); }).join("\n") || "none");
-  if (navigator.share) navigator.share({title: "Aoi Teacher feedback", text: txt}).catch(function(){});
-  else { try{ navigator.clipboard.writeText(txt); }catch(e){} alert("Copied your feedback. Paste it into a message to the app's makers."); }
+/* The heart under each module card: 0 = not yet, 1 = loved, 2 = loved and "more like this". */
+function fbLevel(key){ return fb.more[key] ? 2 : fb.likes[key] ? 1 : 0; }
+var fbCountCache = null;
+function fbCounts(){ if (!fbCountCache) fbCountCache = fbTally(); return fbCountCache; }
+function fbHeartInner(key){
+  var lv = fbLevel(key), n = fbCounts().likes[key] || 0;
+  return '<span class="fbh" aria-hidden="true">' + (lv === 2 ? '♥♥' : lv ? '♥' : '♡') + '</span>' + (n ? '<span class="fbn">' + n + '</span>' : '') +
+    (lv === 2 ? '<span class="fbtag">more!</span>' : '');
 }
-/* The heart and switch under each module card. */
+function fbHeartLabel(key){
+  var lv = fbLevel(key), n = fbCounts().likes[key] || 0;
+  return (n ? n + (n === 1 ? " person loves" : " people love") + " this lesson. " : "") +
+    (lv === 2 ? "You love it and asked for more like it. Tap to clear." : lv ? "You love it. Tap again to ask for more like it." : "Tap to love this lesson.");
+}
 function fbRow(key){
-  var liked = !!fb.likes[key], more = !!fb.more[key];
-  return '<div class="fbrow"><button type="button" class="fbheart' + (liked ? ' on' : '') + '" data-fblike="' + esc_(key) + '" aria-pressed="' + liked + '" aria-label="Love this module">' + (liked ? '♥' : '♡') + '</button>' +
-    '<label class="fbmore"><input type="checkbox" data-fbmore="' + esc_(key) + '"' + (more ? ' checked' : '') + '><span class="sw" aria-hidden="true"></span>More please</label></div>';
+  var lv = fbLevel(key);
+  return '<div class="fbrow"><button type="button" class="fbheart lv' + lv + (lv ? ' on' : '') + '" data-fblike="' + esc_(key) + '" aria-label="' + esc_(fbHeartLabel(key)) + '">' + fbHeartInner(key) + '</button></div>';
 }
+function fbPaint(b){
+  var k = b.getAttribute("data-fblike"), lv = fbLevel(k);
+  b.className = "fbheart" + (b.classList.contains("mini") ? " mini" : "") + " lv" + lv + (lv ? " on" : ""); b.innerHTML = fbHeartInner(k); b.setAttribute("aria-label", fbHeartLabel(k));
+}
+function fbPaintAll(){ fbCountCache = null; Array.prototype.forEach.call(document.querySelectorAll("[data-fblike]"), fbPaint); }
 document.getElementById("teacherLib").addEventListener("click", function(e){
   var b = e.target.closest && e.target.closest("[data-fblike]"); if (!b) return;
-  var k = b.getAttribute("data-fblike");
-  if (fb.likes[k]) delete fb.likes[k]; else fb.likes[k] = 1;
-  fbSave();
-  var on = !!fb.likes[k]; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on); b.textContent = on ? "♥" : "♡";
+  var k = b.getAttribute("data-fblike"), lv = fbLevel(k);
+  if (lv === 0) fb.likes[k] = 1;
+  else if (lv === 1) fb.more[k] = 1;
+  else { delete fb.likes[k]; delete fb.more[k]; }
+  fbSave(); fbCountCache = null; fbPaint(b);
+  b.classList.add("pop"); setTimeout(function(){ b.classList.remove("pop"); }, 300);
 });
-document.getElementById("teacherLib").addEventListener("change", function(e){
-  var c = e.target; if (!c || !c.hasAttribute || !c.hasAttribute("data-fbmore")) return;
-  var k = c.getAttribute("data-fbmore");
-  if (c.checked) fb.more[k] = 1; else delete fb.more[k];
-  fbSave();
+/* ---------- Progress saved to your account (the shared web version) ----------
+   On the claude.ai page, each viewer is signed in, so their progress (quiz answers, lessons done,
+   hearts, pedals, saved songs, settings) is also kept in their own private document
+   (data/users/<id>/progress, which nobody else can read) and comes back on any device they sign in
+   on. It merges with what is already on this device rather than replacing it. Chat histories and any
+   API key stay on the device only. In the Android app there is no account, so progress stays on
+   the phone. */
+var SYNC_RE = /(_answers_v1(_learn_v1|_misses_v1)?|^aoi_(goals|journal|jp_read|mysongs|mytunes|aoisongs|trips|feedback|cook_jp|pb_mode|pedals|music_pref|study_mode)_v1|^studyhub_(jp_drills|theme)_v1)$/;
+var SYNC_AT_KEY = "aoi_sync_at_v1";
+var sync = {ref: null, last: "", on: false, loadedAt: Date.now()};
+function syncSnap(){
+  var o = {};
+  try{ for (var i = 0; i < localStorage.length; i++){ var k = localStorage.key(i); if (SYNC_RE.test(k)){ var v = localStorage.getItem(k); if (v != null && v.length < 150000) o[k] = v; } } }catch(e){}
+  return o;
+}
+/* Objects merge key by key (numbers keep the larger, so "lessons done" never goes backwards);
+   lists join without repeats; anything else keeps this device's value. */
+function syncMergeVal(local, remote){
+  if (local == null) return remote;
+  var a, b; try{ a = JSON.parse(local); b = JSON.parse(remote); }catch(e){ return local; }
+  if (Array.isArray(a) && Array.isArray(b)){ var seen = {}, out = []; b.concat(a).forEach(function(x){ var k = JSON.stringify(x); if (!seen[k]){ seen[k] = 1; out.push(x); } }); return JSON.stringify(out); }
+  if (a && b && typeof a === "object" && typeof b === "object"){
+    var m = {}; Object.keys(b).forEach(function(k){ m[k] = b[k]; });
+    Object.keys(a).forEach(function(k){
+      if (typeof a[k] === "number" && typeof m[k] === "number") m[k] = Math.max(a[k], m[k]);
+      else if (a[k] && m[k] && typeof a[k] === "object" && typeof m[k] === "object" && !Array.isArray(a[k])) m[k] = Object.assign({}, m[k], a[k]);
+      else m[k] = a[k];
+    });
+    return JSON.stringify(m);
+  }
+  return local;
+}
+function syncTick(){
+  if (!sync.on) return;
+  var k = syncSnap(), j = JSON.stringify(k);
+  if (j === sync.last) return;
+  sync.last = j;
+  var at = Date.now(); try{ localStorage.setItem(SYNC_AT_KEY, String(at)); }catch(e){}
+  sync.ref.set({keys: k, at: at}).catch(function(){});
+}
+(function syncConnect(tries){
+  if (!window.claude || typeof window.claude.use !== "function"){ if (tries < 20) setTimeout(function(){ syncConnect(tries + 1); }, 500); return; }
+  Promise.all([window.claude.use("db"), window.claude.use("user")]).then(function(r){
+    var db = r[0], user = r[1];
+    if (!db || !user || typeof user.id !== "function") return;
+    return user.id().then(function(uid){
+      if (!uid) return;
+      sync.ref = db.collection("data/users/" + uid).doc("progress");
+      return sync.ref.get().then(function(snap){
+        var changed = false, d = snap.exists ? snap.data() : null;
+        if (d && d.keys){
+          Object.keys(d.keys).forEach(function(k){
+            if (!SYNC_RE.test(k) || typeof d.keys[k] !== "string") return;
+            var cur = localStorage.getItem(k), merged = syncMergeVal(cur, d.keys[k]);
+            if (merged !== cur){ try{ localStorage.setItem(k, merged); changed = true; }catch(e){} }
+          });
+        }
+        sync.on = true;
+        var badge = document.getElementById("hubSync"); if (badge) badge.hidden = false;
+        syncTick();
+        setInterval(syncTick, 15000);
+        document.addEventListener("visibilitychange", function(){ if (document.hidden) syncTick(); });
+        /* Progress from another device: reload once, right away, if nothing has been opened yet. */
+        var fresh = Date.now() - sync.loadedAt < 15000 && (!views.hub.hidden || !views.teacher.hidden);
+        var once = false; try{ once = sessionStorage.getItem("aoi_sync_reloaded") === "1"; }catch(e){}
+        if (changed && fresh && !once){ try{ sessionStorage.setItem("aoi_sync_reloaded", "1"); }catch(e){} location.reload(); }
+      });
+    });
+  }).catch(function(){});
+})(0);
+
+/* Home: icons on the cards, and the lesson finder that opens Teacher's search. */
+Array.prototype.forEach.call(document.querySelectorAll("#view-hub [data-ico]"), function(el){ el.innerHTML = ico(el.getAttribute("data-ico")); });
+document.getElementById("hubSearch").addEventListener("submit", function(e){
+  e.preventDefault();
+  var v = document.getElementById("hubSearchIn").value.trim();
+  TREE.q = v; TREE.f = "all"; if (v) TREE.sort = TREE.sort === "tree" ? "tree" : TREE.sort;
+  openTeacherLib(null);
+  var inp = document.getElementById("tSearch"); if (inp){ inp.focus(); try{ inp.setSelectionRange(v.length, v.length); }catch(err){} }
 });
+/* The lesson tree: open a lesson, open a section as cards, pick a subject, remember folders. */
+document.getElementById("teacherLib").addEventListener("click", function(e){
+  var t = e.target; if (!t.closest) return;
+  var g = t.closest(".tgo");
+  if (g){ var sec = TEACHER_SECTIONS.filter(function(x){ return x.id === g.getAttribute("data-tsec"); })[0];
+    var m = sec && sec.modules()[+g.getAttribute("data-ti")]; if (m) m.start(); return; }
+  var o = t.closest("[data-topen]"); if (o){ openTeacherLib(o.getAttribute("data-topen")); return; }
+  var f = t.closest("[data-tf]");
+  if (f){ TREE.f = f.getAttribute("data-tf");
+    Array.prototype.forEach.call(document.querySelectorAll("[data-tf]"), function(c){ var on = c === f; c.classList.toggle("on", on); c.setAttribute("aria-pressed", on); });
+    renderTreeBody(); }
+});
+document.getElementById("teacherLib").addEventListener("toggle", function(e){
+  var d = e.target; if (d && d.getAttribute && d.getAttribute("data-tid") && TREE.f === "all") treeOpenSet(d.getAttribute("data-tid"), d.open);
+}, true);
 /* ⚑ in a lesson: report the line on screen. */
 document.getElementById("lessonReportBtn").addEventListener("click", function(e){
   e.stopPropagation();

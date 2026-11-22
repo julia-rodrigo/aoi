@@ -785,6 +785,9 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 .crfacts{display:flex; flex-wrap:wrap; justify-content:center; gap:4px; margin-top:4px;} .crfacts span{font-size:11px; font-weight:700; padding:2px 7px; border-radius:99px; background:var(--surface); border:1px solid var(--line);}
 .r5words{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:8px;} .r5words span{display:flex; flex-direction:column; padding:8px 10px; border:1px solid var(--line); border-radius:10px; background:var(--surface-2);}
 .r5words b{font-size:17px;} .r5words small{font-size:11px; color:var(--muted);} .r5words i{font-style:normal; font-size:13px;}
+[data-wclip]{cursor:pointer; text-decoration:underline dotted; text-decoration-thickness:2px; text-underline-offset:4px; text-decoration-color:var(--accent);}
+[data-wclip]::after{content:" \1F50A"; font-size:.7em; opacity:.55;}
+[data-wclip].speaking{color:var(--accent);} [data-wclip].speaking::after{opacity:1; animation:aoiblink .6s steps(1) infinite;}
 .r5photo img{max-height:240px; border-radius:12px; border:2px solid #2b2d42;}
 .gates{display:flex; flex-direction:column; gap:10px; align-items:center;} .bitrow,.gout{display:flex; flex-wrap:wrap; gap:8px; justify-content:center;}
 .bit{min-width:64px; padding:10px 12px; border:2px solid #2b2d42; border-radius:12px; background:var(--surface); font-weight:800; font-size:15px; display:inline-flex; flex-direction:column; align-items:center; color:var(--fg); cursor:pointer;}
@@ -3877,13 +3880,18 @@ function jpFallback(audio, shouldPlay, onFail){
   });
   return true;
 }
-function jpPlay(clip, el){
+/* Japanese words on lesson cards that Aoi has recorded (narration/words.tsv): tap to hear. */
+function wsay(jp){
+  var c = window.AOI_WORDS && AOI_WORDS[String(jp).trim()];
+  return c ? ' data-wclip="' + c + '" title="Tap to hear"' : '';
+}
+function jpPlay(clip, el, dir){
   jpStopAudio();
   try{ $tutorAudio.pause(); pbAudio.pause(); }catch(e){}
   if (el){ el.classList.add("speaking"); jpSpeakingEl = el; }
   jpAudio.onended = function(){ if (jpSpeakingEl === el) jpStopAudio(); };
   jpAudio.onerror = function(){ if (!jpFallback(jpAudio, function(){ return jpSpeakingEl === el; }) && jpSpeakingEl === el) jpStopAudio(); };
-  jpAudio.src = "audio/jp/" + clip;
+  jpAudio.src = (dir || "audio/jp/") + clip;
   jpAudio.play().catch(function(e){ if (e && e.name === "NotAllowedError" && jpSpeakingEl === el) jpStopAudio(); });
 }
 document.addEventListener("click", function(e){
@@ -3904,6 +3912,8 @@ document.addEventListener("click", function(e){
     if (!c || !c.matches(".jcell, .jword")) return; /* in a sentence, a tap on a word only peeks */
   }
   if (c){ jpPlay(c.getAttribute("data-clip"), c); return; }
+  var wc = t.closest("[data-wclip]");
+  if (wc){ jpPlay(wc.getAttribute("data-wclip"), wc, "audio/narr/"); return; }
   var sy = t.closest("[data-say]");
   if (sy) deviceSay(sy.getAttribute("data-say"));
 });
@@ -5483,7 +5493,7 @@ function planetRow(hi){
 }
 function planetCard(i){
   var p = PLANETS[i];
-  return planetRow(i) + '<div class="scifacts"><b lang="ja">' + p.jp + '</b><span>' + p.en + '</span></div>' +
+  return planetRow(i) + '<div class="scifacts"><b lang="ja"' + wsay(p.jp) + '>' + p.jp + '</b><span>' + p.en + '</span></div>' +
     '<figure class="sciimg"><img src="images/planets/' + p.img + '.jpg" alt="' + p.en + ', photographed by a NASA spacecraft" loading="lazy"><figcaption>Photo: ' + esc_(p.credit) + '. Public domain.' +
     (p.en === "Venus" ? ' Venus is wrapped in cloud, so this is its surface mapped by radar.' : '') + '</figcaption></figure>' +
     '<table class="scitab"><tr><th>Width</th><td>' + p.km.toLocaleString("en") + ' km</td></tr><tr><th>From the Sun</th><td>' + p.au + ' AU</td></tr>' +
@@ -5639,7 +5649,7 @@ var SCIENCE = [
         ["How long is a year on Earth?", ["about 365 days", "24 hours", "88 days", "687 days"], 0, "365.25 days."],
         ["Which planet is farthest from the Sun?", ["Neptune", "Uranus", "Pluto", "Saturn"], 0, "Pluto has been a dwarf planet since 2006."]]},
  {id:"sc_stars", title:"Stars & constellations", icon:"globe", jpTopic:"jw_stars", blurb:"Find Orion, the North Star and the Tanabata stars, from their real positions.",
-  beats: SKY_CHARTS.map(function(ch){ return {text: ch.text, visual: function(){ return '<div class="scifacts"><b lang="ja">' + ch.jp + '</b><span>' + ch.title + '</span></div>' + skyChart(ch); }}; })
+  beats: SKY_CHARTS.map(function(ch){ return {text: ch.text, visual: function(){ return '<div class="scifacts"><b lang="ja"' + wsay(ch.jp) + '>' + ch.jp + '</b><span>' + ch.title + '</span></div>' + skyChart(ch); }}; })
    .concat([{text:"Now look around a real night sky in 3D: every bright star here is placed from its real position. Drag to look up, down and around, and tap a star to name it.", visual: function(){ return threeBox("Drag to look around the sky; tap a star to name it. Star positions are real (J2000)."); },
      onShow: threeMount("sky", {stars: STARS, look: "betelgeuse", lines: SKY_CHARTS.reduce(function(a, ch){ return a.concat(ch.lines); }, []).concat([["vega","altair"],["altair","deneb"],["deneb","vega"],["betelgeuse","sirius"],["sirius","procyon"],["procyon","betelgeuse"]])})},
     {text:"Constellations are patterns people imagine; the stars in them can be very different distances away. Light from Betelgeuse takes hundreds of years to reach us.", visual: function(){ return skyChart(SKY_CHARTS[0]); }}]),
@@ -6020,7 +6030,7 @@ function infoModules(list, key, tag){
 var R5_IMG = {"kitsune":["fantasy/kitsune.jpg","Kitsunebi (fox fires), Toriyama Sekien, 1776.","Public domain, via Wikimedia Commons."],"tanuki":["fantasy/tanuki.jpg","Tanuki, Toriyama Sekien, 1776.","Public domain, via Wikimedia Commons."],"kappa":["fantasy/kappa.jpg","Kappa, Toriyama Sekien, 1776.","Public domain, via Wikimedia Commons."],"tengu":["fantasy/tengu.jpg","Tengu, Toriyama Sekien, 1776.","Public domain, via Wikimedia Commons."],"oni":["fantasy/oni.jpg","Oni, Toriyama Sekien, 1779.","Public domain, via Wikimedia Commons."],"nekomata":["fantasy/nekomata.jpg","Nekomata, Toriyama Sekien, 1776.","Public domain, via Wikimedia Commons."],"rokurokubi":["fantasy/rokurokubi.jpg","Rokurokubi, Toriyama Sekien, about 1781.","Public domain, via Wikimedia Commons."],"phoenix":["fantasy/phoenix.jpg","A phoenix, from the Aberdeen Bestiary, about 1200.","Public domain, via Wikimedia Commons."],"mint":["herbs/mint.jpg","Peppermint, Köhler's Medizinal-Pflanzen, 1887.","Public domain, via Wikimedia Commons."],"foxglove":["herbs/foxglove.jpg","Foxglove, Köhler's Medizinal-Pflanzen, 1887.","Public domain, via Wikimedia Commons."],"tama":["pets/tama.jpg","Station master Tama at Kishi Station, 2007.","CC BY-SA 3.0, Sanpei at Japanese Wikipedia, via Wikimedia Commons."]}; /* key -> [file, caption, credit] */
 function crCard(o){
   return '<div class="crcard" style="--cc:' + (o.c || "#8ecae6") + '"><div class="crpic">' + (o.svg || '<span class="cremo" aria-hidden="true">' + o.e + '</span>') + '</div>' +
-    '<div class="crtxt"><b>' + esc_(o.name) + '</b>' + (o.jp ? '<span class="crjp" lang="ja">' + esc_(o.jp) + '</span>' : '') + (o.ro ? '<small>' + esc_(o.ro) + '</small>' : '') +
+    '<div class="crtxt"><b>' + esc_(o.name) + '</b>' + (o.jp ? '<span class="crjp" lang="ja"' + wsay(o.jp) + '>' + esc_(o.jp) + '</span>' : '') + (o.ro ? '<small>' + esc_(o.ro) + '</small>' : '') +
     (o.facts ? '<div class="crfacts">' + o.facts.map(function(f){ return '<span>' + esc_(f) + '</span>'; }).join("") + '</div>' : '') + '</div></div>';
 }
 function crRow(list){ return '<div class="crrow' + (list.length === 1 ? ' one' : '') + '">' + list.map(crCard).join("") + '</div>'; }
@@ -6034,7 +6044,7 @@ function r5Photo(key){
   return '<figure class="sciimg r5photo"><img src="images/' + p[0] + '" alt="' + esc_(p[1]) + '" loading="lazy"><figcaption>' + esc_(p[1]) + ' ' + esc_(p[2]) + '</figcaption></figure>';
 }
 function r5Words(list){
-  return '<div class="r5words">' + list.map(function(w){ return '<span><b lang="ja">' + esc_(w[0]) + '</b><small>' + esc_(w[1]) + '</small><i>' + esc_(w[2]) + '</i></span>'; }).join("") + '</div>';
+  return '<div class="r5words">' + list.map(function(w){ return '<span><b lang="ja"' + wsay(w[0]) + '>' + esc_(w[0]) + '</b><small>' + esc_(w[1]) + '</small><i>' + esc_(w[2]) + '</i></span>'; }).join("") + '</div>';
 }
 /* Small drawings for creatures that have no emoji. */
 var R5_SVG = {
@@ -6151,7 +6161,7 @@ var FANTASY = [
     visual:function(){ return crRow([{svg:R5_SVG.slime, name:"Slime", jp:"スライム", c:"#4cc9f0"}, {e:"🧝", name:"Elf", jp:"エルフ", c:"#80b918"}, {svg:R5_SVG.goblin, name:"Goblin", jp:"ゴブリン", c:"#90be6d"}, {e:"🧚", name:"Fairy", jp:"妖精", c:"#f9c6ff"}]); }},
    {text:"The slime. In Western tabletop games slimes were dangerous oozes, but Japanese RPGs in the 1980s turned the slime into a cute, smiling beginner enemy. Now slimes are a symbol of isekai.",
     visual:function(){ return crRow([{svg:R5_SVG.slime, name:"Slime", jp:"スライム", ro:"suraimu", c:"#4cc9f0", facts:["gooey", "first enemy", "secretly cute"]}]); }},
-   {text:"Elves come from Norse and Germanic folklore. Modern fantasy, starting with Tolkien's The Lord of the Rings, made them tall, graceful, long-lived archers with pointed ears.",
+   {text:"Elves come from Norse and Germanic folklore. Tolkien's The Lord of the Rings made them tall, graceful and long-lived, and later fantasy art and games gave them their famous pointed ears.",
     visual:function(){ return crRow([{e:"🧝", name:"Elf", jp:"エルフ", ro:"erufu", c:"#80b918", facts:["pointed ears", "long life", "archery"]}]); }},
    {text:"Dwarves are also from Norse myth, where they forged the gods' treasures, like Thor's hammer, Mjölnir. In fantasy they're short, bearded miners and smiths.",
     visual:function(){ return crRow([{e:"🧔⛏️", name:"Dwarf", jp:"ドワーフ", ro:"dowāfu", c:"#bc8a5f", facts:["miner", "smith", "made Mjölnir"]}]); }},
@@ -6217,7 +6227,7 @@ var FANTASY = [
   beats:[
    {text:"Japan's calendar is full of days for creatures, real and imaginary. Here are the fun ones.",
     visual:function(){ return crRow([{e:"👹", name:"Setsubun", jp:"節分", c:"#9b5de5"}, {e:"🎏", name:"Children's Day", jp:"こどもの日", c:"#4cc9f0"}, {e:"🐱", name:"Cat Day", jp:"猫の日", c:"#ffd166"}, {e:"🐶", name:"Dog Day", jp:"犬の日", c:"#f78c6b"}]); }},
-   {text:"Setsubun, around February 3rd, marks the start of spring in the old calendar. Someone wears an oni mask, and everyone throws roasted soybeans and shouts 鬼は外、福は内!",
+   {text:"Setsubun, around February 3rd, is the day before spring begins in the old calendar. Someone wears an oni mask, and everyone throws roasted soybeans and shouts 鬼は外、福は内!",
     visual:function(){ return crRow([{e:"👹🫘", name:"Setsubun", jp:"節分", ro:"setsubun", c:"#9b5de5", facts:["about 3 February", "bean throwing"]}]); }},
    {text:"February 22nd is Cat Day, 猫の日, because 2/22 can be read ニャンニャンニャン, nyan nyan nyan! And November 1st is Dog Day, 犬の日, because 11/1 is ワンワンワン, wan wan wan.",
     visual:function(){ return crRow([{e:"🐱", name:"Cat Day", jp:"猫の日", c:"#ffd166", facts:["2/22", "nyan nyan nyan"]}, {e:"🐶", name:"Dog Day", jp:"犬の日", c:"#f78c6b", facts:["11/1", "wan wan wan"]}]); }},
@@ -6345,13 +6355,13 @@ var TECH = [
     visual:function(){ return r5Words([["A-series", "Apple", "iPhone"], ["Snapdragon", "Qualcomm", "many Androids"], ["Tensor", "Google", "Pixel"], ["Dimensity", "MediaTek", "many Androids"]]); }},
    {text:"Transistors are tiny on and off switches, and a flagship phone chip has well over 10 billion of them. Names like 3 nanometre are labels for a manufacturing generation, not an exact measurement.",
     visual:function(){ return crRow([{e:"🔌", name:"Transistor", jp:"トランジスタ", ro:"toranjisuta", c:"#ffd166", facts:["on/off switch", "10+ billion per chip"]}]); }},
-   {text:"Heat is the enemy. Phones have no fans, so when the chip gets too hot it slows itself down to stay safe. That's called thermal throttling.",
+   {text:"Heat is the enemy. Most phones have no fan, so when the chip gets too hot it slows itself down to stay safe. That's called thermal throttling.",
     visual:function(){ return crRow([{e:"🔥📱", name:"Thermal throttling", jp:"熱で速度が下がる", c:"#ef476f", facts:["no fan", "slows down to cool"]}]); }}],
   quiz:[["SoC stands for…", ["system on a chip", "speed of computing", "screen on case", "software of code"], 0, "A whole computer on one chip."],
         ["big.LITTLE means…", ["big fast cores plus small efficient cores", "two screens", "a big battery", "little apps"], 0, "Power when needed, battery saving otherwise."],
         ["The ISP handles…", ["camera images", "phone calls", "charging", "Wi-Fi"], 0, "Image signal processor."],
         ["Most phone chips use the … instruction set.", ["Arm", "x86", "MIDI", "HTML"], 0, "Snapdragon, A-series, Tensor, Dimensity."],
-        ["Thermal throttling is when a chip…", ["slows down because it's too hot", "speeds up in the cold", "turns off Wi-Fi", "charges faster"], 0, "Phones have no fans."]]},
+        ["Thermal throttling is when a chip…", ["slows down because it's too hot", "speeds up in the cold", "turns off Wi-Fi", "charges faster"], 0, "Most phones have no fan to cool them."]]},
 
  {id:"tc_tools", title:"How developers build software (and chips)", icon:"code", blurb:"Code, editors, compilers, Git, debuggers, SDKs, AI helpers like Claude Code, and how chips are designed.",
   beats:[
@@ -6389,7 +6399,7 @@ var TECH = [
     visual:function(){ return gatesBox("half"); }},
    {text:"A full adder also takes a carry in, so adders can be chained. Four full adders make a 4-bit adder that adds numbers up to 15 plus 15. Tap the bits!",
     visual:function(){ return gatesBox("add4"); }},
-   {text:"This is the heart of a CPU's ALU, the arithmetic logic unit. Real chips repeat blocks like this billions of times.",
+   {text:"This is the heart of a CPU's ALU, the arithmetic logic unit. Real chips are built from billions of transistors, wired into gates and blocks like these.",
     visual:function(){ return crRow([{svg:R5_SVG.chip, name:"ALU", jp:"演算装置", ro:"enzan sōchi", c:"#4cc9f0", facts:["adds", "compares", "logic"]}]); }},
    {text:"Want to make a real one? Beginners can design chips in Verilog, test them on an FPGA board, and even join open projects like Tiny Tapeout, which puts many small designs from different people onto one real chip.",
     visual:function(){ return flowSvg(["Gates", "Adder", "Verilog", "FPGA", "Real chip"], ["#ffd166", "#06d6a0", "#4cc9f0", "#9b5de5", "#ef476f"]); }}],

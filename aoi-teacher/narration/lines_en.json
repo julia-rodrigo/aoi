@@ -1524,10 +1524,10 @@
 "text": "The slime. In Western tabletop games slimes were dangerous oozes, but Japanese RPGs in the 1980s turned the slime into a cute, smiling beginner enemy. Now slimes are a symbol of isekai."
 },
 {
-"key": "60156c00",
+"key": "d80243e6",
 "sec": "fantasy",
 "mod": "Isekai creatures",
-"text": "Elves come from Norse and Germanic folklore. Modern fantasy, starting with Tolkien's The Lord of the Rings, made them tall, graceful, long-lived archers with pointed ears."
+"text": "Elves come from Norse and Germanic folklore. Tolkien's The Lord of the Rings made them tall, graceful and long-lived, and later fantasy art and games gave them their famous pointed ears."
 },
 {
 "key": "76e54ad3",
@@ -1668,10 +1668,10 @@
 "text": "Japan's calendar is full of days for creatures, real and imaginary. Here are the fun ones."
 },
 {
-"key": "c8140a65",
+"key": "efd929ab",
 "sec": "fantasy",
 "mod": "Creature festivals & special days",
-"text": "Setsubun, around February 3rd, marks the start of spring in the old calendar. Someone wears an oni mask, and everyone throws roasted soybeans and shouts 鬼は外、福は内!"
+"text": "Setsubun, around February 3rd, is the day before spring begins in the old calendar. Someone wears an oni mask, and everyone throws roasted soybeans and shouts 鬼は外、福は内!"
 },
 {
 "key": "cbc69931",
@@ -1950,10 +1950,10 @@
 "text": "Transistors are tiny on and off switches, and a flagship phone chip has well over 10 billion of them. Names like 3 nanometre are labels for a manufacturing generation, not an exact measurement."
 },
 {
-"key": "831cd6e6",
+"key": "57acfb28",
 "sec": "tech",
 "mod": "How phone chips work",
-"text": "Heat is the enemy. Phones have no fans, so when the chip gets too hot it slows itself down to stay safe. That's called thermal throttling."
+"text": "Heat is the enemy. Most phones have no fan, so when the chip gets too hot it slows itself down to stay safe. That's called thermal throttling."
 },
 {
 "key": "8c68b4db",
@@ -2046,10 +2046,10 @@
 "text": "A full adder also takes a carry in, so adders can be chained. Four full adders make a 4-bit adder that adds numbers up to 15 plus 15. Tap the bits!"
 },
 {
-"key": "67f85473",
+"key": "0eb80de9",
 "sec": "tech",
 "mod": "Build a simple chip",
-"text": "This is the heart of a CPU's ALU, the arithmetic logic unit. Real chips repeat blocks like this billions of times."
+"text": "This is the heart of a CPU's ALU, the arithmetic logic unit. Real chips are built from billions of transistors, wired into gates and blocks like these."
 },
 {
 "key": "bc0dcfd3",

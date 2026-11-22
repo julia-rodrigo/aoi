@@ -1,0 +1,1727 @@
+{
+ "animals / Cats in Japanese": {
+  "kind": "lesson",
+  "hash": "2664b6a2d91c3ffb",
+  "checked": "2026-11-22"
+ },
+ "animals / Dinosaurs": {
+  "kind": "lesson",
+  "hash": "500964342fafee0d",
+  "checked": "2026-11-22"
+ },
+ "animals / Dogs in Japanese": {
+  "kind": "lesson",
+  "hash": "b354e85b203dcfd1",
+  "checked": "2026-11-22"
+ },
+ "bass / Bass basics": {
+  "kind": "lesson",
+  "hash": "d19d1851fb346330",
+  "checked": "2026-11-22"
+ },
+ "claude / Claude Code on Your Phone": {
+  "kind": "lesson",
+  "hash": "5d39808edd238c88",
+  "checked": "2026-11-22"
+ },
+ "drums / Drum kit basics": {
+  "kind": "lesson",
+  "hash": "ef872f33c7550918",
+  "checked": "2026-11-22"
+ },
+ "fantasy / Creature festivals & special days": {
+  "kind": "lesson",
+  "hash": "bb8b345152e868f3",
+  "checked": "2026-11-22"
+ },
+ "fantasy / Dragons, East and West": {
+  "kind": "lesson",
+  "hash": "8133fe414ef6ffa3",
+  "checked": "2026-11-22"
+ },
+ "fantasy / Isekai creatures": {
+  "kind": "lesson",
+  "hash": "d76d263a3a6977b5",
+  "checked": "2026-11-22"
+ },
+ "fantasy / Types of anime": {
+  "kind": "lesson",
+  "hash": "0221ee9b714c2e6a",
+  "checked": "2026-11-22"
+ },
+ "fantasy / Witches & wizards": {
+  "kind": "lesson",
+  "hash": "a3259dbcd7518293",
+  "checked": "2026-11-22"
+ },
+ "fantasy / Yokai of Japan": {
+  "kind": "lesson",
+  "hash": "2051932d9bfca18b",
+  "checked": "2026-11-22"
+ },
+ "gk / Anatomical Directions & Planes (part 1)": {
+  "kind": "lesson",
+  "hash": "7f8ef9df38d6d9ec",
+  "checked": "2026-11-22"
+ },
+ "gk / Anatomical Directions & Planes (part 2)": {
+  "kind": "lesson",
+  "hash": "e1dedefe76fa605e",
+  "checked": "2026-11-22"
+ },
+ "gk / Anatomical Directions & Planes (part 3)": {
+  "kind": "lesson",
+  "hash": "acd0157ca48d4449",
+  "checked": "2026-11-22"
+ },
+ "gk / Anatomical Directions & Planes (part 4)": {
+  "kind": "lesson",
+  "hash": "de1d3564840d2bc3",
+  "checked": "2026-11-22"
+ },
+ "gk / Anatomical Directions & Planes (part 5)": {
+  "kind": "lesson",
+  "hash": "b92ae76da0a4f4dd",
+  "checked": "2026-11-22"
+ },
+ "gk / Bones & Skeletal System (part 1)": {
+  "kind": "lesson",
+  "hash": "f9cc44320dcc6266",
+  "checked": "2026-11-22"
+ },
+ "gk / Bones & Skeletal System (part 2)": {
+  "kind": "lesson",
+  "hash": "318ada8cebde6068",
+  "checked": "2026-11-22"
+ },
+ "gk / Bones & Skeletal System (part 3)": {
+  "kind": "lesson",
+  "hash": "941925204b97201e",
+  "checked": "2026-11-22"
+ },
+ "gk / Bones & Skeletal System (part 4)": {
+  "kind": "lesson",
+  "hash": "7d0223f7383a030b",
+  "checked": "2026-11-22"
+ },
+ "gk / Bones & Skeletal System (part 5)": {
+  "kind": "lesson",
+  "hash": "b4b7e7b32eea05b7",
+  "checked": "2026-11-22"
+ },
+ "gk / Continents & Oceans (part 1)": {
+  "kind": "lesson",
+  "hash": "73f5f34a0d5a1fe4",
+  "checked": "2026-11-22"
+ },
+ "gk / Continents & Oceans (part 2)": {
+  "kind": "lesson",
+  "hash": "69f984cecafe17a2",
+  "checked": "2026-11-22"
+ },
+ "gk / Continents & Oceans (part 3)": {
+  "kind": "lesson",
+  "hash": "18819d95d0fab963",
+  "checked": "2026-11-22"
+ },
+ "gk / Continents & Oceans (part 4)": {
+  "kind": "lesson",
+  "hash": "2ef8230c18236e18",
+  "checked": "2026-11-22"
+ },
+ "gk / Continents & Oceans (part 5)": {
+  "kind": "lesson",
+  "hash": "8fa6b3d766a5350f",
+  "checked": "2026-11-22"
+ },
+ "gk / Countries & Their Locations (part 1)": {
+  "kind": "lesson",
+  "hash": "7af6afb612887c57",
+  "checked": "2026-11-22"
+ },
+ "gk / Countries & Their Locations (part 2)": {
+  "kind": "lesson",
+  "hash": "0bf27caceb78f51d",
+  "checked": "2026-11-22"
+ },
+ "gk / Countries & Their Locations (part 3)": {
+  "kind": "lesson",
+  "hash": "b68a597e742b61f5",
+  "checked": "2026-11-22"
+ },
+ "gk / Countries & Their Locations (part 4)": {
+  "kind": "lesson",
+  "hash": "b130b39ec3d6d62f",
+  "checked": "2026-11-22"
+ },
+ "gk / Countries & Their Locations (part 5)": {
+  "kind": "lesson",
+  "hash": "5cb56a076d5c9bea",
+  "checked": "2026-11-22"
+ },
+ "gk / How Cells, Tissues & Organs Work (part 1)": {
+  "kind": "lesson",
+  "hash": "e2b1e73814d28977",
+  "checked": "2026-11-22"
+ },
+ "gk / How Cells, Tissues & Organs Work (part 2)": {
+  "kind": "lesson",
+  "hash": "bee575e81279b7b2",
+  "checked": "2026-11-22"
+ },
+ "gk / How Cells, Tissues & Organs Work (part 3)": {
+  "kind": "lesson",
+  "hash": "c4b1287dce63e31a",
+  "checked": "2026-11-22"
+ },
+ "gk / Human Senses & Perception (part 1)": {
+  "kind": "lesson",
+  "hash": "80fd4d5d4a42f8c1",
+  "checked": "2026-11-22"
+ },
+ "gk / Human Senses & Perception (part 2)": {
+  "kind": "lesson",
+  "hash": "011ad7b3f9cd32cc",
+  "checked": "2026-11-22"
+ },
+ "gk / Human Senses & Perception (part 3)": {
+  "kind": "lesson",
+  "hash": "820ed733ad28a44e",
+  "checked": "2026-11-22"
+ },
+ "gk / Latitude, Longitude & Coordinates (part 1)": {
+  "kind": "lesson",
+  "hash": "a5964e70f1400cac",
+  "checked": "2026-11-22"
+ },
+ "gk / Latitude, Longitude & Coordinates (part 2)": {
+  "kind": "lesson",
+  "hash": "e42c752234665303",
+  "checked": "2026-11-22"
+ },
+ "gk / Latitude, Longitude & Coordinates (part 3)": {
+  "kind": "lesson",
+  "hash": "2b8649a922bc7b89",
+  "checked": "2026-11-22"
+ },
+ "gk / Latitude, Longitude & Coordinates (part 4)": {
+  "kind": "lesson",
+  "hash": "aa5aa6869c73a427",
+  "checked": "2026-11-22"
+ },
+ "gk / Latitude, Longitude & Coordinates (part 5)": {
+  "kind": "lesson",
+  "hash": "e8bf7d444d64ec0f",
+  "checked": "2026-11-22"
+ },
+ "gk / Major Organ Systems (part 1)": {
+  "kind": "lesson",
+  "hash": "569b4bafc862f1c4",
+  "checked": "2026-11-22"
+ },
+ "gk / Major Organ Systems (part 2)": {
+  "kind": "lesson",
+  "hash": "17d4980790649319",
+  "checked": "2026-11-22"
+ },
+ "gk / Major Organ Systems (part 3)": {
+  "kind": "lesson",
+  "hash": "dc06e6e97e8157ab",
+  "checked": "2026-11-22"
+ },
+ "gk / Major Organ Systems (part 4)": {
+  "kind": "lesson",
+  "hash": "9d92221ec4b24f2e",
+  "checked": "2026-11-22"
+ },
+ "gk / Major Organ Systems (part 5)": {
+  "kind": "lesson",
+  "hash": "0a4ff2cfc66d2e17",
+  "checked": "2026-11-22"
+ },
+ "gk / Muscles & Muscular System (part 1)": {
+  "kind": "lesson",
+  "hash": "04525389bf4eaff5",
+  "checked": "2026-11-22"
+ },
+ "gk / Muscles & Muscular System (part 2)": {
+  "kind": "lesson",
+  "hash": "42a3e18710d449b5",
+  "checked": "2026-11-22"
+ },
+ "gk / Muscles & Muscular System (part 3)": {
+  "kind": "lesson",
+  "hash": "b40c0d5aa8bd076f",
+  "checked": "2026-11-22"
+ },
+ "gk / Muscles & Muscular System (part 4)": {
+  "kind": "lesson",
+  "hash": "aed03eb833fb9fe7",
+  "checked": "2026-11-22"
+ },
+ "gk / Muscles & Muscular System (part 5)": {
+  "kind": "lesson",
+  "hash": "5139a5e3a4a194f1",
+  "checked": "2026-11-22"
+ },
+ "gk / The Brain & Nervous System (part 1)": {
+  "kind": "lesson",
+  "hash": "ac828bba7be6ca79",
+  "checked": "2026-11-22"
+ },
+ "gk / The Brain & Nervous System (part 2)": {
+  "kind": "lesson",
+  "hash": "3e4de7511ab95e18",
+  "checked": "2026-11-22"
+ },
+ "gk / The Brain & Nervous System (part 3)": {
+  "kind": "lesson",
+  "hash": "b18aa06db012500f",
+  "checked": "2026-11-22"
+ },
+ "gk / The Brain & Nervous System (part 4)": {
+  "kind": "lesson",
+  "hash": "4c3fe9d3e1b3540b",
+  "checked": "2026-11-22"
+ },
+ "gk / The Brain & Nervous System (part 5)": {
+  "kind": "lesson",
+  "hash": "82fb55cbca5de3ca",
+  "checked": "2026-11-22"
+ },
+ "gk / The Digestive System (part 1)": {
+  "kind": "lesson",
+  "hash": "7d4201d9862ead6a",
+  "checked": "2026-11-22"
+ },
+ "gk / The Digestive System (part 2)": {
+  "kind": "lesson",
+  "hash": "93f88d970ef85b65",
+  "checked": "2026-11-22"
+ },
+ "gk / The Digestive System (part 3)": {
+  "kind": "lesson",
+  "hash": "02710076c8aee2fd",
+  "checked": "2026-11-22"
+ },
+ "gk / The Endocrine System & Hormones (part 1)": {
+  "kind": "lesson",
+  "hash": "f53fd0f5a32aaf6f",
+  "checked": "2026-11-22"
+ },
+ "gk / The Endocrine System & Hormones (part 2)": {
+  "kind": "lesson",
+  "hash": "2901d88bac5e83fd",
+  "checked": "2026-11-22"
+ },
+ "gk / The Endocrine System & Hormones (part 3)": {
+  "kind": "lesson",
+  "hash": "1c5e75880f5e6f91",
+  "checked": "2026-11-22"
+ },
+ "gk / The Heart & Cardiovascular System (part 1)": {
+  "kind": "lesson",
+  "hash": "bdbcea6fa4fc77cb",
+  "checked": "2026-11-22"
+ },
+ "gk / The Heart & Cardiovascular System (part 2)": {
+  "kind": "lesson",
+  "hash": "392977d4e762a3cc",
+  "checked": "2026-11-22"
+ },
+ "gk / The Heart & Cardiovascular System (part 3)": {
+  "kind": "lesson",
+  "hash": "e5f36dd54f584324",
+  "checked": "2026-11-22"
+ },
+ "gk / The Immune & Lymphatic Systems (part 1)": {
+  "kind": "lesson",
+  "hash": "2348e98ae9fa23ab",
+  "checked": "2026-11-22"
+ },
+ "gk / The Immune & Lymphatic Systems (part 2)": {
+  "kind": "lesson",
+  "hash": "eff6139e33a9e945",
+  "checked": "2026-11-22"
+ },
+ "gk / The Immune & Lymphatic Systems (part 3)": {
+  "kind": "lesson",
+  "hash": "8c7a2a8550b3438d",
+  "checked": "2026-11-22"
+ },
+ "gk / The Kidneys & Urinary System (part 1)": {
+  "kind": "lesson",
+  "hash": "fdbd72483faeed28",
+  "checked": "2026-11-22"
+ },
+ "gk / The Kidneys & Urinary System (part 2)": {
+  "kind": "lesson",
+  "hash": "f6fe681f1be6ecb6",
+  "checked": "2026-11-22"
+ },
+ "gk / The Kidneys & Urinary System (part 3)": {
+  "kind": "lesson",
+  "hash": "aedb1ffe40cedecd",
+  "checked": "2026-11-22"
+ },
+ "gk / The Lungs & Respiratory System (part 1)": {
+  "kind": "lesson",
+  "hash": "fd4ee3468715ce9c",
+  "checked": "2026-11-22"
+ },
+ "gk / The Lungs & Respiratory System (part 2)": {
+  "kind": "lesson",
+  "hash": "3885360ddc358ba5",
+  "checked": "2026-11-22"
+ },
+ "gk / The Lungs & Respiratory System (part 3)": {
+  "kind": "lesson",
+  "hash": "c2b1cbbae9aac032",
+  "checked": "2026-11-22"
+ },
+ "gk / The Reproductive System (part 1)": {
+  "kind": "lesson",
+  "hash": "700a67e630a5c795",
+  "checked": "2026-11-22"
+ },
+ "gk / The Reproductive System (part 2)": {
+  "kind": "lesson",
+  "hash": "59a6d753aea15a2c",
+  "checked": "2026-11-22"
+ },
+ "gk / The Reproductive System (part 3)": {
+  "kind": "lesson",
+  "hash": "ea24c84d880a0d3a",
+  "checked": "2026-11-22"
+ },
+ "gk / The Skin, Hair & Nails (part 1)": {
+  "kind": "lesson",
+  "hash": "c46d986a0670a658",
+  "checked": "2026-11-22"
+ },
+ "gk / The Skin, Hair & Nails (part 2)": {
+  "kind": "lesson",
+  "hash": "01ac40188482e2ee",
+  "checked": "2026-11-22"
+ },
+ "gk / The Skin, Hair & Nails (part 3)": {
+  "kind": "lesson",
+  "hash": "9901192dcfa7c805",
+  "checked": "2026-11-22"
+ },
+ "guitar / Barre chords": {
+  "kind": "lesson",
+  "hash": "78a48c1dffece1d3",
+  "checked": "2026-11-22"
+ },
+ "guitar / Chord library": {
+  "kind": "lesson",
+  "hash": "00f1dcda86ae6ce5",
+  "checked": "2026-11-22"
+ },
+ "guitar / J-rock power chords": {
+  "kind": "lesson",
+  "hash": "be9bb4207df40d88",
+  "checked": "2026-11-22"
+ },
+ "guitar / Your first chords": {
+  "kind": "lesson",
+  "hash": "93dd0e13c837c647",
+  "checked": "2026-11-22"
+ },
+ "japan / Accents & dialects": {
+  "kind": "lesson",
+  "hash": "4fb2ea9addf01be1",
+  "checked": "2026-11-22"
+ },
+ "jpgrammar / Adjectives & 'to be'": {
+  "kind": "lesson",
+  "hash": "2b2ef479d5df7831",
+  "checked": "2026-11-22"
+ },
+ "jpgrammar / Asking & inviting": {
+  "kind": "lesson",
+  "hash": "fc7daf00676f6f70",
+  "checked": "2026-11-22"
+ },
+ "jpgrammar / Asking questions": {
+  "kind": "lesson",
+  "hash": "034511a16c83be4a",
+  "checked": "2026-11-22"
+ },
+ "jpgrammar / How a sentence works": {
+  "kind": "lesson",
+  "hash": "6deb6e1796ecabd9",
+  "checked": "2026-11-22"
+ },
+ "jpgrammar / Particles": {
+  "kind": "lesson",
+  "hash": "633b3abca2513527",
+  "checked": "2026-11-22"
+ },
+ "jpgrammar / Verb & adjective charts": {
+  "kind": "lesson",
+  "hash": "5b4c43a38c7c6e6d",
+  "checked": "2026-11-22"
+ },
+ "jpgrammar / Verbs & tenses": {
+  "kind": "lesson",
+  "hash": "55befabf7d9e295b",
+  "checked": "2026-11-22"
+ },
+ "jpread / Kaguya-hime": {
+  "kind": "lesson",
+  "hash": "a975e7890316933b",
+  "checked": "2026-11-22"
+ },
+ "jpread / Little Red Riding Hood": {
+  "kind": "lesson",
+  "hash": "b888cb485f87bc24",
+  "checked": "2026-11-22"
+ },
+ "jpread / Momotarō": {
+  "kind": "lesson",
+  "hash": "aa2204303b4d3e6d",
+  "checked": "2026-11-22"
+ },
+ "jpsongs / Akatonbo": {
+  "kind": "lesson",
+  "hash": "148ed4802a9657c2",
+  "checked": "2026-11-22"
+ },
+ "jpsongs / Furusato": {
+  "kind": "lesson",
+  "hash": "ce6326afd85a1d9e",
+  "checked": "2026-11-22"
+ },
+ "jpsongs / Haiku": {
+  "kind": "lesson",
+  "hash": "b501b2987b6428bf",
+  "checked": "2026-11-22"
+ },
+ "jpsongs / Haru ga Kita": {
+  "kind": "lesson",
+  "hash": "81fdd7ee0645e01b",
+  "checked": "2026-11-22"
+ },
+ "jpsongs / Hato": {
+  "kind": "lesson",
+  "hash": "423738ce0a79420b",
+  "checked": "2026-11-22"
+ },
+ "jpsongs / Kagome Kagome": {
+  "kind": "lesson",
+  "hash": "fa19e1be1ece2ca7",
+  "checked": "2026-11-22"
+ },
+ "jpsongs / Musunde Hiraite": {
+  "kind": "lesson",
+  "hash": "88ee91cb655f84b7",
+  "checked": "2026-11-22"
+ },
+ "jpsongs / Nanatsu no Ko": {
+  "kind": "lesson",
+  "hash": "b071c00428977ab9",
+  "checked": "2026-11-22"
+ },
+ "jpsongs / Sakura Sakura": {
+  "kind": "lesson",
+  "hash": "84242e8b6cd6cb68",
+  "checked": "2026-11-22"
+ },
+ "jpsongs / Usagi to Kame": {
+  "kind": "lesson",
+  "hash": "a20080daee9552ae",
+  "checked": "2026-11-22"
+ },
+ "jpwords / Animals": {
+  "kind": "lesson",
+  "hash": "be8f3663dff5098d",
+  "checked": "2026-11-22"
+ },
+ "jpwords / Asking the way": {
+  "kind": "lesson",
+  "hash": "ba5cc51f7992e0f6",
+  "checked": "2026-11-22"
+ },
+ "jpwords / Birds": {
+  "kind": "lesson",
+  "hash": "b23f2fb8352a5542",
+  "checked": "2026-11-22"
+ },
+ "jpwords / Clothes & dresses": {
+  "kind": "lesson",
+  "hash": "d59e550d5a64ba72",
+  "checked": "2026-11-22"
+ },
+ "jpwords / English slang, in Japanese": {
+  "kind": "lesson",
+  "hash": "93bda37f390af943",
+  "checked": "2026-11-22"
+ },
+ "jpwords / Insects": {
+  "kind": "lesson",
+  "hash": "c17e938271e58480",
+  "checked": "2026-11-22"
+ },
+ "jpwords / Japanese slang, in English": {
+  "kind": "lesson",
+  "hash": "51083ade0258f64b",
+  "checked": "2026-11-22"
+ },
+ "jpwords / Magic & witches": {
+  "kind": "lesson",
+  "hash": "6f678c16d5405e94",
+  "checked": "2026-11-22"
+ },
+ "jpwords / Ordering food": {
+  "kind": "lesson",
+  "hash": "83aeff68f4525927",
+  "checked": "2026-11-22"
+ },
+ "jpwords / Planets & the Sun": {
+  "kind": "lesson",
+  "hash": "e67e2c4e29bf3076",
+  "checked": "2026-11-22"
+ },
+ "jpwords / Plants & flowers": {
+  "kind": "lesson",
+  "hash": "c9b773a2073d13e5",
+  "checked": "2026-11-22"
+ },
+ "jpwords / Saying you're sick": {
+  "kind": "lesson",
+  "hash": "7ec74aa299f0c93b",
+  "checked": "2026-11-22"
+ },
+ "jpwords / Stars & Tanabata": {
+  "kind": "lesson",
+  "hash": "5d8c7b65796ffe0e",
+  "checked": "2026-11-22"
+ },
+ "jpwords / The body & organs": {
+  "kind": "lesson",
+  "hash": "469974fe048f0ec9",
+  "checked": "2026-11-22"
+ },
+ "jpwords / The face & teeth": {
+  "kind": "lesson",
+  "hash": "ef9501421fba6fea",
+  "checked": "2026-11-22"
+ },
+ "jpwords / The heart & blood": {
+  "kind": "lesson",
+  "hash": "3a9f7f58ec43b029",
+  "checked": "2026-11-22"
+ },
+ "kitchen / Basic Pancakes": {
+  "kind": "lesson",
+  "hash": "b19af525b5ea5e9c",
+  "checked": "2026-11-22"
+ },
+ "kitchen / Chicken & Vegetable Soup": {
+  "kind": "lesson",
+  "hash": "7b8f7541928ae8ef",
+  "checked": "2026-11-22"
+ },
+ "kitchen / Dorayaki (どら焼き)": {
+  "kind": "lesson",
+  "hash": "2c8b6f7b98bb48cd",
+  "checked": "2026-11-22"
+ },
+ "kitchen / Garlic Butter Pasta": {
+  "kind": "lesson",
+  "hash": "acdc3d3b6f7e1a69",
+  "checked": "2026-11-22"
+ },
+ "kitchen / Meatballs in Tomato Sauce": {
+  "kind": "lesson",
+  "hash": "13fa66f88d8e9055",
+  "checked": "2026-11-22"
+ },
+ "kitchen / Miso Soup (味噌汁)": {
+  "kind": "lesson",
+  "hash": "f3bafc24be5a2ad1",
+  "checked": "2026-11-22"
+ },
+ "kitchen / Quick Veggie Stir-Fry": {
+  "kind": "lesson",
+  "hash": "22f610e5e7abc532",
+  "checked": "2026-11-22"
+ },
+ "kitchen / Roasted Sheet-Pan Vegetables": {
+  "kind": "lesson",
+  "hash": "5232b24454eeb006",
+  "checked": "2026-11-22"
+ },
+ "kitchen / Shiratama Dango (白玉団子)": {
+  "kind": "lesson",
+  "hash": "e8b8a91c8feb72c1",
+  "checked": "2026-11-22"
+ },
+ "kitchen / Simple Fried Rice": {
+  "kind": "lesson",
+  "hash": "b2fa088d5528f017",
+  "checked": "2026-11-22"
+ },
+ "kitchen / Strawberry Parfait": {
+  "kind": "lesson",
+  "hash": "6c1a2fc2524a16a2",
+  "checked": "2026-11-22"
+ },
+ "kitchen / Tomato and Egg Stir-Fry": {
+  "kind": "lesson",
+  "hash": "68fe320bd0b474b9",
+  "checked": "2026-11-22"
+ },
+ "life / Exercise basics": {
+  "kind": "lesson",
+  "hash": "a3cd30bdeab96017",
+  "checked": "2026-11-22"
+ },
+ "life / Herbs & herbal teas, safely": {
+  "kind": "lesson",
+  "hash": "e731145c717cb28e",
+  "checked": "2026-11-22"
+ },
+ "life / How to waltz": {
+  "kind": "lesson",
+  "hash": "0e91eb99c2e2ecec",
+  "checked": "2026-11-22"
+ },
+ "life / Writing a cheque": {
+  "kind": "lesson",
+  "hash": "6aa6c39a29e197a4",
+  "checked": "2026-11-22"
+ },
+ "music / Bars, time & reading a tune": {
+  "kind": "lesson",
+  "hash": "546d653a4def06b3",
+  "checked": "2026-11-22"
+ },
+ "music / How long notes last": {
+  "kind": "lesson",
+  "hash": "7827318d66d994de",
+  "checked": "2026-11-22"
+ },
+ "music / Note names & ドレミ": {
+  "kind": "lesson",
+  "hash": "19a3ee256f8b2b14",
+  "checked": "2026-11-22"
+ },
+ "music / The staff & treble clef": {
+  "kind": "lesson",
+  "hash": "ef39256577249e1f",
+  "checked": "2026-11-22"
+ },
+ "ppl / Aerodynamics (part 1)": {
+  "kind": "lesson",
+  "hash": "c17c73fc5f06aa67",
+  "checked": "2026-11-22"
+ },
+ "ppl / Aerodynamics (part 2)": {
+  "kind": "lesson",
+  "hash": "dc743573fed1d337",
+  "checked": "2026-11-22"
+ },
+ "ppl / Aerodynamics (part 3)": {
+  "kind": "lesson",
+  "hash": "81771d8b8ed2b5ec",
+  "checked": "2026-11-22"
+ },
+ "ppl / Aerodynamics (part 4)": {
+  "kind": "lesson",
+  "hash": "57a146029cb624d3",
+  "checked": "2026-11-22"
+ },
+ "ppl / Aerodynamics (part 5)": {
+  "kind": "lesson",
+  "hash": "2c32dc5e857b981c",
+  "checked": "2026-11-22"
+ },
+ "ppl / Aerodynamics (part 6)": {
+  "kind": "lesson",
+  "hash": "3e5ecacb537109d4",
+  "checked": "2026-11-22"
+ },
+ "ppl / Aerodynamics (part 7)": {
+  "kind": "lesson",
+  "hash": "03d3940be7d6aa12",
+  "checked": "2026-11-22"
+ },
+ "ppl / Aircraft Systems (part 1)": {
+  "kind": "lesson",
+  "hash": "a7a87327abb3499c",
+  "checked": "2026-11-22"
+ },
+ "ppl / Aircraft Systems (part 2)": {
+  "kind": "lesson",
+  "hash": "fe8de8d0ca5cd87c",
+  "checked": "2026-11-22"
+ },
+ "ppl / Aircraft Systems (part 3)": {
+  "kind": "lesson",
+  "hash": "c4fd2a414ef3f79d",
+  "checked": "2026-11-22"
+ },
+ "ppl / Aircraft Systems (part 4)": {
+  "kind": "lesson",
+  "hash": "1c47b18f791655c0",
+  "checked": "2026-11-22"
+ },
+ "ppl / Aircraft Systems (part 5)": {
+  "kind": "lesson",
+  "hash": "6ce580224c738961",
+  "checked": "2026-11-22"
+ },
+ "ppl / Aircraft Systems (part 6)": {
+  "kind": "lesson",
+  "hash": "a657076332e99161",
+  "checked": "2026-11-22"
+ },
+ "ppl / Airport Operations (part 1)": {
+  "kind": "lesson",
+  "hash": "c47ae7cee2efaa35",
+  "checked": "2026-11-22"
+ },
+ "ppl / Airport Operations (part 2)": {
+  "kind": "lesson",
+  "hash": "20dd5c33540c7190",
+  "checked": "2026-11-22"
+ },
+ "ppl / Airport Operations (part 3)": {
+  "kind": "lesson",
+  "hash": "7cb392869ba191d8",
+  "checked": "2026-11-22"
+ },
+ "ppl / Airport Operations (part 4)": {
+  "kind": "lesson",
+  "hash": "fef60b8cee5d2015",
+  "checked": "2026-11-22"
+ },
+ "ppl / Airport Operations (part 5)": {
+  "kind": "lesson",
+  "hash": "3b171209e1fa0251",
+  "checked": "2026-11-22"
+ },
+ "ppl / Airport Operations (part 6)": {
+  "kind": "lesson",
+  "hash": "b4ec81e713482e0c",
+  "checked": "2026-11-22"
+ },
+ "ppl / Airspace (part 1)": {
+  "kind": "lesson",
+  "hash": "6ba141304d9b47d2",
+  "checked": "2026-11-22"
+ },
+ "ppl / Airspace (part 2)": {
+  "kind": "lesson",
+  "hash": "c2b0fa80504bf79e",
+  "checked": "2026-11-22"
+ },
+ "ppl / Airspace (part 3)": {
+  "kind": "lesson",
+  "hash": "23bad544594cfa2d",
+  "checked": "2026-11-22"
+ },
+ "ppl / Airspace (part 4)": {
+  "kind": "lesson",
+  "hash": "0a157e996d355f2f",
+  "checked": "2026-11-22"
+ },
+ "ppl / Airspace (part 5)": {
+  "kind": "lesson",
+  "hash": "b28e45fec1d60431",
+  "checked": "2026-11-22"
+ },
+ "ppl / Airspace (part 6)": {
+  "kind": "lesson",
+  "hash": "abfa7cf64e8a2d16",
+  "checked": "2026-11-22"
+ },
+ "ppl / Comm & ATC (part 1)": {
+  "kind": "lesson",
+  "hash": "c0c41d73cf3a144d",
+  "checked": "2026-11-22"
+ },
+ "ppl / Comm & ATC (part 2)": {
+  "kind": "lesson",
+  "hash": "4630c8c3b39c1864",
+  "checked": "2026-11-22"
+ },
+ "ppl / Comm & ATC (part 3)": {
+  "kind": "lesson",
+  "hash": "8f661a1b0020d935",
+  "checked": "2026-11-22"
+ },
+ "ppl / Comm & ATC (part 4)": {
+  "kind": "lesson",
+  "hash": "efcc75914cb0455f",
+  "checked": "2026-11-22"
+ },
+ "ppl / Comm & ATC (part 5)": {
+  "kind": "lesson",
+  "hash": "49e98ae853a72e9a",
+  "checked": "2026-11-22"
+ },
+ "ppl / Comm & ATC (part 6)": {
+  "kind": "lesson",
+  "hash": "80c30526c500dbfb",
+  "checked": "2026-11-22"
+ },
+ "ppl / Emergency Procedures (part 1)": {
+  "kind": "lesson",
+  "hash": "50845ee6ab00fa09",
+  "checked": "2026-11-22"
+ },
+ "ppl / Emergency Procedures (part 2)": {
+  "kind": "lesson",
+  "hash": "fadcb40862da3b91",
+  "checked": "2026-11-22"
+ },
+ "ppl / Emergency Procedures (part 3)": {
+  "kind": "lesson",
+  "hash": "e3982607b0d79c2a",
+  "checked": "2026-11-22"
+ },
+ "ppl / Emergency Procedures (part 4)": {
+  "kind": "lesson",
+  "hash": "130114609eb34e50",
+  "checked": "2026-11-22"
+ },
+ "ppl / Emergency Procedures (part 5)": {
+  "kind": "lesson",
+  "hash": "fc586dcb029daa3b",
+  "checked": "2026-11-22"
+ },
+ "ppl / Emergency Procedures (part 6)": {
+  "kind": "lesson",
+  "hash": "bda7686f47695a50",
+  "checked": "2026-11-22"
+ },
+ "ppl / Flight Instruments (part 1)": {
+  "kind": "lesson",
+  "hash": "6e3ebbc8786ccc88",
+  "checked": "2026-11-22"
+ },
+ "ppl / Flight Instruments (part 2)": {
+  "kind": "lesson",
+  "hash": "ef1d2f2a36e4ba58",
+  "checked": "2026-11-22"
+ },
+ "ppl / Flight Instruments (part 3)": {
+  "kind": "lesson",
+  "hash": "fdc7becf5b6fd008",
+  "checked": "2026-11-22"
+ },
+ "ppl / Flight Instruments (part 4)": {
+  "kind": "lesson",
+  "hash": "2330a7e53a564dae",
+  "checked": "2026-11-22"
+ },
+ "ppl / Flight Instruments (part 5)": {
+  "kind": "lesson",
+  "hash": "1eac2e350d82e5cd",
+  "checked": "2026-11-22"
+ },
+ "ppl / Flight Instruments (part 6)": {
+  "kind": "lesson",
+  "hash": "28b3701426f7f392",
+  "checked": "2026-11-22"
+ },
+ "ppl / Human Factors (part 1)": {
+  "kind": "lesson",
+  "hash": "f24ddee3eede3fde",
+  "checked": "2026-11-22"
+ },
+ "ppl / Human Factors (part 2)": {
+  "kind": "lesson",
+  "hash": "f37765eb7b90708b",
+  "checked": "2026-11-22"
+ },
+ "ppl / Human Factors (part 3)": {
+  "kind": "lesson",
+  "hash": "00c5a2821027bd89",
+  "checked": "2026-11-22"
+ },
+ "ppl / Human Factors (part 4)": {
+  "kind": "lesson",
+  "hash": "1c5bebc42d40fe6d",
+  "checked": "2026-11-22"
+ },
+ "ppl / Human Factors (part 5)": {
+  "kind": "lesson",
+  "hash": "0a2d36aed34de9e5",
+  "checked": "2026-11-22"
+ },
+ "ppl / Human Factors (part 6)": {
+  "kind": "lesson",
+  "hash": "24c173d8eb63b4c2",
+  "checked": "2026-11-22"
+ },
+ "ppl / Navigation (part 1)": {
+  "kind": "lesson",
+  "hash": "d234957369f5b29c",
+  "checked": "2026-11-22"
+ },
+ "ppl / Navigation (part 2)": {
+  "kind": "lesson",
+  "hash": "2ecf90a66f9a54bb",
+  "checked": "2026-11-22"
+ },
+ "ppl / Navigation (part 3)": {
+  "kind": "lesson",
+  "hash": "897ea22b3b08ee80",
+  "checked": "2026-11-22"
+ },
+ "ppl / Navigation (part 4)": {
+  "kind": "lesson",
+  "hash": "b007a12821acabfb",
+  "checked": "2026-11-22"
+ },
+ "ppl / Navigation (part 5)": {
+  "kind": "lesson",
+  "hash": "e22f03ae69dc78b3",
+  "checked": "2026-11-22"
+ },
+ "ppl / Navigation (part 6)": {
+  "kind": "lesson",
+  "hash": "01d2790bad4bc155",
+  "checked": "2026-11-22"
+ },
+ "ppl / Navigation (part 7)": {
+  "kind": "lesson",
+  "hash": "86070a67ae7a64aa",
+  "checked": "2026-11-22"
+ },
+ "ppl / Performance & W&B (part 1)": {
+  "kind": "lesson",
+  "hash": "615186e2e5dc199f",
+  "checked": "2026-11-22"
+ },
+ "ppl / Performance & W&B (part 2)": {
+  "kind": "lesson",
+  "hash": "4c69bb5335349a6d",
+  "checked": "2026-11-22"
+ },
+ "ppl / Performance & W&B (part 3)": {
+  "kind": "lesson",
+  "hash": "f3f44ca39737cf97",
+  "checked": "2026-11-22"
+ },
+ "ppl / Performance & W&B (part 4)": {
+  "kind": "lesson",
+  "hash": "1b4413aebd8b1908",
+  "checked": "2026-11-22"
+ },
+ "ppl / Performance & W&B (part 5)": {
+  "kind": "lesson",
+  "hash": "d278ca31e7c61712",
+  "checked": "2026-11-22"
+ },
+ "ppl / Performance & W&B (part 6)": {
+  "kind": "lesson",
+  "hash": "add76ccc6041091f",
+  "checked": "2026-11-22"
+ },
+ "ppl / Regulations (part 1)": {
+  "kind": "lesson",
+  "hash": "398fe4f7364942d0",
+  "checked": "2026-11-22"
+ },
+ "ppl / Regulations (part 2)": {
+  "kind": "lesson",
+  "hash": "5ec626a45780ede9",
+  "checked": "2026-11-22"
+ },
+ "ppl / Regulations (part 3)": {
+  "kind": "lesson",
+  "hash": "e7a228cf16deec77",
+  "checked": "2026-11-22"
+ },
+ "ppl / Regulations (part 4)": {
+  "kind": "lesson",
+  "hash": "1179df4f4fced8e4",
+  "checked": "2026-11-22"
+ },
+ "ppl / Regulations (part 5)": {
+  "kind": "lesson",
+  "hash": "d330a6fe6d20b3ae",
+  "checked": "2026-11-22"
+ },
+ "ppl / Regulations (part 6)": {
+  "kind": "lesson",
+  "hash": "2f4751a291b65b3c",
+  "checked": "2026-11-22"
+ },
+ "ppl / Regulations (part 7)": {
+  "kind": "lesson",
+  "hash": "5773d4da9b32fd5f",
+  "checked": "2026-11-22"
+ },
+ "ppl / Weather (part 1)": {
+  "kind": "lesson",
+  "hash": "5f507e8766c001c9",
+  "checked": "2026-11-22"
+ },
+ "ppl / Weather (part 2)": {
+  "kind": "lesson",
+  "hash": "ebd7f4b236f07730",
+  "checked": "2026-11-22"
+ },
+ "ppl / Weather (part 3)": {
+  "kind": "lesson",
+  "hash": "6f548ecc15e3dda0",
+  "checked": "2026-11-22"
+ },
+ "ppl / Weather (part 4)": {
+  "kind": "lesson",
+  "hash": "b3cd39466d73b233",
+  "checked": "2026-11-22"
+ },
+ "ppl / Weather (part 5)": {
+  "kind": "lesson",
+  "hash": "6f4cdff0b1fc3d12",
+  "checked": "2026-11-22"
+ },
+ "ppl / Weather (part 6)": {
+  "kind": "lesson",
+  "hash": "2dacbf1aed52da1c",
+  "checked": "2026-11-22"
+ },
+ "ppl / Weather (part 7)": {
+  "kind": "lesson",
+  "hash": "8d38d919d2666a5f",
+  "checked": "2026-11-22"
+ },
+ "production / Guitar pedals": {
+  "kind": "lesson",
+  "hash": "03d2e41f92cd51e8",
+  "checked": "2026-11-22"
+ },
+ "production / Mastering basics": {
+  "kind": "lesson",
+  "hash": "2377ef42b851a134",
+  "checked": "2026-11-22"
+ },
+ "production / Mixing in FL Studio": {
+  "kind": "lesson",
+  "hash": "c5a192858daa5b1a",
+  "checked": "2026-11-22"
+ },
+ "production / Recording in FL Studio": {
+  "kind": "lesson",
+  "hash": "50aa71f329794b5e",
+  "checked": "2026-11-22"
+ },
+ "quiz: ani / Cats in Japanese": {
+  "kind": "quiz",
+  "hash": "106299f27dc0b7f7",
+  "checked": "2026-11-22"
+ },
+ "quiz: ani / Dinosaurs": {
+  "kind": "quiz",
+  "hash": "ac849eadef469968",
+  "checked": "2026-11-22"
+ },
+ "quiz: ani / Dogs in Japanese": {
+  "kind": "quiz",
+  "hash": "94a698249e5e4d52",
+  "checked": "2026-11-22"
+ },
+ "quiz: fan / Creature festivals & special days": {
+  "kind": "quiz",
+  "hash": "298b53722cf9f562",
+  "checked": "2026-11-22"
+ },
+ "quiz: fan / Dragons, East and West": {
+  "kind": "quiz",
+  "hash": "84c0f2be967fafb5",
+  "checked": "2026-11-22"
+ },
+ "quiz: fan / Isekai creatures": {
+  "kind": "quiz",
+  "hash": "7629ab6bccf765eb",
+  "checked": "2026-11-22"
+ },
+ "quiz: fan / Types of anime": {
+  "kind": "quiz",
+  "hash": "77be5b30262ce2f6",
+  "checked": "2026-11-22"
+ },
+ "quiz: fan / Witches & wizards": {
+  "kind": "quiz",
+  "hash": "33d16c6b0623cf82",
+  "checked": "2026-11-22"
+ },
+ "quiz: fan / Yokai of Japan": {
+  "kind": "quiz",
+  "hash": "246c28f7076e0129",
+  "checked": "2026-11-22"
+ },
+ "quiz: gk / Anatomical Directions & Planes": {
+  "kind": "quiz",
+  "hash": "558abe0503697cc9",
+  "checked": "2026-11-22"
+ },
+ "quiz: gk / Bones & Skeletal System": {
+  "kind": "quiz",
+  "hash": "d9dd498935e21d47",
+  "checked": "2026-11-22"
+ },
+ "quiz: gk / Continents & Oceans": {
+  "kind": "quiz",
+  "hash": "f1010bb46cb61119",
+  "checked": "2026-11-22"
+ },
+ "quiz: gk / Countries & Their Locations": {
+  "kind": "quiz",
+  "hash": "bce981db20e42f9a",
+  "checked": "2026-11-22"
+ },
+ "quiz: gk / How Cells, Tissues & Organs Work": {
+  "kind": "quiz",
+  "hash": "5e1430cdaf9315b2",
+  "checked": "2026-11-22"
+ },
+ "quiz: gk / Human Senses & Perception": {
+  "kind": "quiz",
+  "hash": "1dd68cb851925103",
+  "checked": "2026-11-22"
+ },
+ "quiz: gk / Latitude, Longitude & Coordinates": {
+  "kind": "quiz",
+  "hash": "91a65cc5abbeef83",
+  "checked": "2026-11-22"
+ },
+ "quiz: gk / Major Organ Systems": {
+  "kind": "quiz",
+  "hash": "55c5e3fb057c9541",
+  "checked": "2026-11-22"
+ },
+ "quiz: gk / Muscles & Muscular System": {
+  "kind": "quiz",
+  "hash": "2b3aef9dfc9e6b98",
+  "checked": "2026-11-22"
+ },
+ "quiz: gk / The Brain & Nervous System": {
+  "kind": "quiz",
+  "hash": "8ce0a56a996f5be0",
+  "checked": "2026-11-22"
+ },
+ "quiz: gk / The Digestive System": {
+  "kind": "quiz",
+  "hash": "b943b912979ae6dc",
+  "checked": "2026-11-22"
+ },
+ "quiz: gk / The Endocrine System & Hormones": {
+  "kind": "quiz",
+  "hash": "c61331826a8a9f04",
+  "checked": "2026-11-22"
+ },
+ "quiz: gk / The Heart & Cardiovascular System": {
+  "kind": "quiz",
+  "hash": "aec4a3dd06139635",
+  "checked": "2026-11-22"
+ },
+ "quiz: gk / The Immune & Lymphatic Systems": {
+  "kind": "quiz",
+  "hash": "1519c17cfa779690",
+  "checked": "2026-11-22"
+ },
+ "quiz: gk / The Kidneys & Urinary System": {
+  "kind": "quiz",
+  "hash": "41a8e48bbe78b371",
+  "checked": "2026-11-22"
+ },
+ "quiz: gk / The Lungs & Respiratory System": {
+  "kind": "quiz",
+  "hash": "d5650a86b7bd3d7c",
+  "checked": "2026-11-22"
+ },
+ "quiz: gk / The Reproductive System": {
+  "kind": "quiz",
+  "hash": "5bee4b09be1f94e0",
+  "checked": "2026-11-22"
+ },
+ "quiz: gk / The Skin, Hair & Nails": {
+  "kind": "quiz",
+  "hash": "5a98976b8312ccbd",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Accents & dialects": {
+  "kind": "quiz",
+  "hash": "c7ecce0b57eda318",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Adjectives & 'to be'": {
+  "kind": "quiz",
+  "hash": "ecad6d26ef5ebdb9",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Akatonbo": {
+  "kind": "quiz",
+  "hash": "76c9fcdb5718937e",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Animals": {
+  "kind": "quiz",
+  "hash": "ff1393ec1c4335a9",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Asking & inviting": {
+  "kind": "quiz",
+  "hash": "dc05912ecab3a3cf",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Asking questions": {
+  "kind": "quiz",
+  "hash": "ed95719b3d95c757",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Asking the way": {
+  "kind": "quiz",
+  "hash": "c208515d59194ef8",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Birds": {
+  "kind": "quiz",
+  "hash": "3e507643cdfa0b4e",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Clothes & dresses": {
+  "kind": "quiz",
+  "hash": "b3478ea641658811",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / English slang, in Japanese": {
+  "kind": "quiz",
+  "hash": "a52eb891166b236b",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Furusato": {
+  "kind": "quiz",
+  "hash": "a616ccdbc59d0ebc",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Haiku": {
+  "kind": "quiz",
+  "hash": "0513c806aab697c2",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Haru ga Kita": {
+  "kind": "quiz",
+  "hash": "7b188c22e81d963b",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Hato": {
+  "kind": "quiz",
+  "hash": "103e730a6d1755a9",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / How a sentence works": {
+  "kind": "quiz",
+  "hash": "f7b45ccccdf235ee",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Insects": {
+  "kind": "quiz",
+  "hash": "9cf1a492cba9dde9",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Japanese slang, in English": {
+  "kind": "quiz",
+  "hash": "50636b247324f9ba",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Kagome Kagome": {
+  "kind": "quiz",
+  "hash": "9db0151e1a927645",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Kaguya-hime": {
+  "kind": "quiz",
+  "hash": "6938301c8d4c417b",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Little Red Riding Hood": {
+  "kind": "quiz",
+  "hash": "dd89d3f61040c0c5",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Magic & witches": {
+  "kind": "quiz",
+  "hash": "c7ca7895f514e9c1",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Momotarō": {
+  "kind": "quiz",
+  "hash": "7aefd03c80790286",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Musunde Hiraite": {
+  "kind": "quiz",
+  "hash": "4bf717a4cffaa6f0",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Nanatsu no Ko": {
+  "kind": "quiz",
+  "hash": "77896647cfc4a8de",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Ordering food": {
+  "kind": "quiz",
+  "hash": "af78e0ddd6110cb5",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Particles": {
+  "kind": "quiz",
+  "hash": "b561abf4ff5bb450",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Planets & the Sun": {
+  "kind": "quiz",
+  "hash": "19fe841388f3076c",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Plants & flowers": {
+  "kind": "quiz",
+  "hash": "252f14138568c9ae",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Sakura Sakura": {
+  "kind": "quiz",
+  "hash": "137784d52fccc6a0",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Saying you're sick": {
+  "kind": "quiz",
+  "hash": "06f9d7dd07db5557",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Stars & Tanabata": {
+  "kind": "quiz",
+  "hash": "a24b9b96dc2031d6",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / The body & organs": {
+  "kind": "quiz",
+  "hash": "d73ba884dc9d6417",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / The face & teeth": {
+  "kind": "quiz",
+  "hash": "dfa3a669fba3cf32",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / The heart & blood": {
+  "kind": "quiz",
+  "hash": "56717376a0661a25",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Usagi to Kame": {
+  "kind": "quiz",
+  "hash": "9e736f0f22438ee7",
+  "checked": "2026-11-22"
+ },
+ "quiz: jp / Verbs & tenses": {
+  "kind": "quiz",
+  "hash": "19c4eb6d145ab0cd",
+  "checked": "2026-11-22"
+ },
+ "quiz: life / Exercise basics": {
+  "kind": "quiz",
+  "hash": "257b569fa3f0511a",
+  "checked": "2026-11-22"
+ },
+ "quiz: life / Herbs & herbal teas, safely": {
+  "kind": "quiz",
+  "hash": "8b3ce51e20310ba6",
+  "checked": "2026-11-22"
+ },
+ "quiz: life / How to waltz": {
+  "kind": "quiz",
+  "hash": "79eaed7d99d648bc",
+  "checked": "2026-11-22"
+ },
+ "quiz: life / Writing a cheque": {
+  "kind": "quiz",
+  "hash": "67b8c3b5b679efcf",
+  "checked": "2026-11-22"
+ },
+ "quiz: music / Barre chords": {
+  "kind": "quiz",
+  "hash": "a9bdc9f37c220ba5",
+  "checked": "2026-11-22"
+ },
+ "quiz: music / Bars, time & reading a tune": {
+  "kind": "quiz",
+  "hash": "96ec66d6a82d9a5b",
+  "checked": "2026-11-22"
+ },
+ "quiz: music / Bass basics": {
+  "kind": "quiz",
+  "hash": "4927e166b5474827",
+  "checked": "2026-11-22"
+ },
+ "quiz: music / Drum kit basics": {
+  "kind": "quiz",
+  "hash": "79860976f3cf2675",
+  "checked": "2026-11-22"
+ },
+ "quiz: music / How long notes last": {
+  "kind": "quiz",
+  "hash": "0e9cde5af8086a44",
+  "checked": "2026-11-22"
+ },
+ "quiz: music / J-rock power chords": {
+  "kind": "quiz",
+  "hash": "8d775822f24883bb",
+  "checked": "2026-11-22"
+ },
+ "quiz: music / Note names & ドレミ": {
+  "kind": "quiz",
+  "hash": "caae05e999d73282",
+  "checked": "2026-11-22"
+ },
+ "quiz: music / The staff & treble clef": {
+  "kind": "quiz",
+  "hash": "8535ea6e4c76057b",
+  "checked": "2026-11-22"
+ },
+ "quiz: music / Your first chords": {
+  "kind": "quiz",
+  "hash": "f7274a2b9e9420c1",
+  "checked": "2026-11-22"
+ },
+ "quiz: ppl / Aerodynamics": {
+  "kind": "quiz",
+  "hash": "0f1a25f80999026c",
+  "checked": "2026-11-22"
+ },
+ "quiz: ppl / Aircraft Systems": {
+  "kind": "quiz",
+  "hash": "b19f0ad55a0a1a29",
+  "checked": "2026-11-22"
+ },
+ "quiz: ppl / Airport Operations": {
+  "kind": "quiz",
+  "hash": "2aa1b701ffd79793",
+  "checked": "2026-11-22"
+ },
+ "quiz: ppl / Airspace": {
+  "kind": "quiz",
+  "hash": "52d199d9ecfa98c3",
+  "checked": "2026-11-22"
+ },
+ "quiz: ppl / Comm & ATC": {
+  "kind": "quiz",
+  "hash": "9b1ae80498993c03",
+  "checked": "2026-11-22"
+ },
+ "quiz: ppl / Emergency Procedures": {
+  "kind": "quiz",
+  "hash": "249654a2d0f65582",
+  "checked": "2026-11-22"
+ },
+ "quiz: ppl / Flight Instruments": {
+  "kind": "quiz",
+  "hash": "c6699bf83872e8c2",
+  "checked": "2026-11-22"
+ },
+ "quiz: ppl / Human Factors": {
+  "kind": "quiz",
+  "hash": "66f0bc2b7a7b57b9",
+  "checked": "2026-11-22"
+ },
+ "quiz: ppl / Navigation": {
+  "kind": "quiz",
+  "hash": "e2d5f00a87604ded",
+  "checked": "2026-11-22"
+ },
+ "quiz: ppl / Performance & W&B": {
+  "kind": "quiz",
+  "hash": "882bb78bced818ec",
+  "checked": "2026-11-22"
+ },
+ "quiz: ppl / Regulations": {
+  "kind": "quiz",
+  "hash": "067f10612132d3df",
+  "checked": "2026-11-22"
+ },
+ "quiz: ppl / Weather": {
+  "kind": "quiz",
+  "hash": "8e82167ca23367af",
+  "checked": "2026-11-22"
+ },
+ "quiz: prod / Guitar pedals": {
+  "kind": "quiz",
+  "hash": "7ea62b9c842a3a44",
+  "checked": "2026-11-22"
+ },
+ "quiz: prod / Mastering basics": {
+  "kind": "quiz",
+  "hash": "9d11f97758489a09",
+  "checked": "2026-11-22"
+ },
+ "quiz: prod / Mixing in FL Studio": {
+  "kind": "quiz",
+  "hash": "14880be679679cb6",
+  "checked": "2026-11-22"
+ },
+ "quiz: prod / Recording in FL Studio": {
+  "kind": "quiz",
+  "hash": "704746e7c06385c9",
+  "checked": "2026-11-22"
+ },
+ "quiz: sci / 15 minutes a day": {
+  "kind": "quiz",
+  "hash": "bc1d37d4b8a44fce",
+  "checked": "2026-11-22"
+ },
+ "quiz: sci / Compound growth": {
+  "kind": "quiz",
+  "hash": "eb1a4ef0b4d2d9cb",
+  "checked": "2026-11-22"
+ },
+ "quiz: sci / Pythagoras": {
+  "kind": "quiz",
+  "hash": "93372d107950f798",
+  "checked": "2026-11-22"
+ },
+ "quiz: sci / Stars & constellations": {
+  "kind": "quiz",
+  "hash": "3f00742d002ccf75",
+  "checked": "2026-11-22"
+ },
+ "quiz: sci / The heart": {
+  "kind": "quiz",
+  "hash": "dca8a628ff613135",
+  "checked": "2026-11-22"
+ },
+ "quiz: sci / The planets": {
+  "kind": "quiz",
+  "hash": "263f51e5b516a1a5",
+  "checked": "2026-11-22"
+ },
+ "quiz: tech / Build a simple chip": {
+  "kind": "quiz",
+  "hash": "f726bc3a56db18ae",
+  "checked": "2026-11-22"
+ },
+ "quiz: tech / How a GPU works": {
+  "kind": "quiz",
+  "hash": "6674ec0216e991a8",
+  "checked": "2026-11-22"
+ },
+ "quiz: tech / How developers build software (and chips)": {
+  "kind": "quiz",
+  "hash": "4ee240ee90423532",
+  "checked": "2026-11-22"
+ },
+ "quiz: tech / How phone chips work": {
+  "kind": "quiz",
+  "hash": "a6956742540e2d3a",
+  "checked": "2026-11-22"
+ },
+ "sales / Already Doing It Themselves (Badly)": {
+  "kind": "lesson",
+  "hash": "357d29a090fb794c",
+  "checked": "2026-11-22"
+ },
+ "sales / Budget's Frozen This Quarter": {
+  "kind": "lesson",
+  "hash": "50371e4d6f760fc1",
+  "checked": "2026-11-22"
+ },
+ "sales / Burned by a Similar Product Before": {
+  "kind": "lesson",
+  "hash": "1e1d61968b405617",
+  "checked": "2026-11-22"
+ },
+ "sales / Locked Into a Competitor's Contract": {
+  "kind": "lesson",
+  "hash": "3c647f6034e0420e",
+  "checked": "2026-11-22"
+ },
+ "sales / The Aggressive Price Shopper": {
+  "kind": "lesson",
+  "hash": "644947bbe93a5e8f",
+  "checked": "2026-11-22"
+ },
+ "sales / The Privacy-Concerned Parent": {
+  "kind": "lesson",
+  "hash": "6335b2fbee88897e",
+  "checked": "2026-11-22"
+ },
+ "sales / The Skeptical Small Business Owner": {
+  "kind": "lesson",
+  "hash": "cff259d529613d43",
+  "checked": "2026-11-22"
+ },
+ "sales / The Tech-Skeptic Retiree": {
+  "kind": "lesson",
+  "hash": "fe0a8f61b57186a7",
+  "checked": "2026-11-22"
+ },
+ "sales / “I Already Have Insurance”": {
+  "kind": "lesson",
+  "hash": "9d162c3d79b12c6a",
+  "checked": "2026-11-22"
+ },
+ "sales / “My Old One Works Fine”": {
+  "kind": "lesson",
+  "hash": "e6060a69adc6d155",
+  "checked": "2026-11-22"
+ },
+ "science / 15 minutes a day": {
+  "kind": "lesson",
+  "hash": "101b3875dde4dc85",
+  "checked": "2026-11-22"
+ },
+ "science / Compound growth": {
+  "kind": "lesson",
+  "hash": "ab23bdf80f105576",
+  "checked": "2026-11-22"
+ },
+ "science / Pythagoras": {
+  "kind": "lesson",
+  "hash": "c8c35b2a1ab75235",
+  "checked": "2026-11-22"
+ },
+ "science / Stars & constellations": {
+  "kind": "lesson",
+  "hash": "b578af21b14fd35a",
+  "checked": "2026-11-22"
+ },
+ "science / The heart": {
+  "kind": "lesson",
+  "hash": "0e62d165122f7a52",
+  "checked": "2026-11-22"
+ },
+ "science / The planets": {
+  "kind": "lesson",
+  "hash": "60ced6feed48f3da",
+  "checked": "2026-11-22"
+ },
+ "tech / Build a simple chip": {
+  "kind": "lesson",
+  "hash": "664ab117bd3ab240",
+  "checked": "2026-11-22"
+ },
+ "tech / How a GPU works": {
+  "kind": "lesson",
+  "hash": "dc8aed9a25854c4b",
+  "checked": "2026-11-22"
+ },
+ "tech / How developers build software (and chips)": {
+  "kind": "lesson",
+  "hash": "a8b2d9b5c301ecce",
+  "checked": "2026-11-22"
+ },
+ "tech / How phone chips work": {
+  "kind": "lesson",
+  "hash": "7dfe788d77e56f7e",
+  "checked": "2026-11-22"
+ }
+}

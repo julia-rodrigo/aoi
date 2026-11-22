@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aoi-teacher-v8';
+const CACHE_NAME = 'aoi-teacher-v9';
 const CORE_ASSETS = [
   './',
   './index.html',
@@ -7,6 +7,7 @@ const CORE_ASSETS = [
   './grammar/japanese.js',
   './narration/narr.js',
   './feedback/votes.js',
+  './mouth/mouth.js',
   './sprites/base.png',
   './sprites/blink.png',
   './sprites/eyes_determined.png',

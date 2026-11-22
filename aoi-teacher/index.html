@@ -1481,6 +1481,7 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
 <script src="grammar/japanese.js"></script>
 <script src="narration/narr.js"></script>
 <script src="feedback/votes.js"></script>
+<script src="mouth/mouth.js"></script>
 <script>
 /* One voice at a time. Aoi's lines, lesson narration, phrase clips and her Japanese all use
    separate audio players; whenever one starts, every other one stops, so she never talks over
@@ -1489,12 +1490,20 @@ h2,h3{ font-family:var(--font-mono); letter-spacing:.02em; }
   var players = [], orig = HTMLMediaElement.prototype.play;
   HTMLMediaElement.prototype.play = function(){
     var me = this;
+    /* Which recording is this? (Kept through the bundled data: copy, for her lip-sync.) */
+    var m = /audio\/([^?#]+\.mp3)$/.exec(me.getAttribute("src") || "");
+    if (m) me.__clip = m[1]; else if (!/^data:/.test(me.getAttribute("src") || "")) me.__clip = null;
     if (!me.__aoiMix){
       if (players.indexOf(me) < 0) players.push(me);
       players.forEach(function(el){ if (el !== me && !el.paused){ try{ el.pause(); }catch(e){} } });
       try{ if (window.speechSynthesis) speechSynthesis.cancel(); }catch(e){}
     }
     return orig.apply(this, arguments);
+  };
+  /* The recording she is saying right now, if any: {el, clip}. */
+  window.aoiSpeaking = function(){
+    for (var i = 0; i < players.length; i++){ var el = players[i]; if (!el.paused && !el.ended && el.__clip) return {el: el, clip: el.__clip}; }
+    return null;
   };
   window.aoiQuiet = function(){
     players.forEach(function(el){ try{ el.pause(); }catch(e){} });
@@ -3411,6 +3420,17 @@ function setLessonPlaying(p){
   }
 }
 
+/* One voice at a time, for taps too: tapping anything that makes a sound (a chord, a pedal, a riff,
+   a word, a piano key, a drum pad) stops her talking and pauses the lesson, so only that sound plays.
+   Press play to carry on. */
+var AOI_SOUND_TAPS = "[data-chord],[data-pstrum],.pedal[data-pedal],[data-wclip],[data-clip],[data-say],[data-strum],[data-key],[data-sf]," +
+  "[data-mplay],[data-splay],[data-gplay],[data-gstrum],[data-lhit],[data-waltz],[data-tstart],.chordbtn,.pkey";
+document.addEventListener("pointerdown", function(e){
+  var t = e.target;
+  if (!t || !t.closest || !t.closest(AOI_SOUND_TAPS)) return;
+  if (!views.teacherLesson.hidden && lessonPlaying && !teacherEnded) setLessonPlaying(false);
+  if (window.aoiQuiet) window.aoiQuiet();
+}, true);
 document.getElementById("lessonPlayBtn").addEventListener("click", function(e){
   e.stopPropagation();
   if (teacherEnded){ teacherTapAdvance(); return; }
@@ -3443,8 +3463,9 @@ function tutorPlayCurrent(){
   var beat = TUTOR_LESSON[tutorIdx], run = ++tutorRun, nar = narrFor(beat.text);
   $tutorAudio.pause(); $tutorAudio.onended = null; $tutorAudio.onerror = null;
   var queue = [];
-  if (nar) queue.push({src: "audio/narr/" + nar[0]});
+  /* Music first: she hums, strums or drums straight away, then explains. */
   if (beat.sound) queue.push({fn: beat.sound});
+  if (nar) queue.push({src: "audio/narr/" + nar[0]});
   if (beat.audio) queue.push({src: beat.audio});
   else if (beat.say) queue.push({fn: function(){ deviceSay(beat.say); }, ms: 2400});
   var started = Date.now();
@@ -4236,6 +4257,7 @@ function noteMidi(n){ var m = /^([A-G])(#|b)?(\d)$/.exec(n); return 12 * (+m[3] 
 function midiName(m){ return SHARP_NAMES[m % 12] + (Math.floor(m / 12) - 1); }
 function midiFreq(m){ return 440 * Math.pow(2, (m - 69) / 12); }
 function musStop(){
+  window.aoiSing = null;
   MUS.timers.forEach(clearTimeout); MUS.timers = [];
   MUS.sources.forEach(function(s){ try{ s.stop(); }catch(e){} }); MUS.sources = [];
 }
@@ -4371,8 +4393,10 @@ function musPlay(notes, inst, bpm, onNote, from, to){
         if (onNote) musLater(function(){ onNote(i); }, at * 1000);
       })(i);
     }
-    var last = notes[to - 1];
-    musLater(function(){ resolve(); }, (t0 + (last.beat + last.len - start) * spb) * 1000 + 150);
+    var last = notes[to - 1], ms = (t0 + (last.beat + last.len - start) * spb) * 1000 + 150;
+    /* Her mouth while she hums (closed "mmm") or sings "la" (opening on each note). */
+    if (inst === "hum" || inst === "la" || inst === "na" || inst === "aoi") window.aoiSing = {until: performance.now() + ms, la: inst !== "hum", notes: notes.slice(from, to), t0: performance.now() + t0 * 1000, spb: spb, start: start};
+    musLater(function(){ window.aoiSing = null; resolve(); }, ms);
   });
 }
 
@@ -8199,7 +8223,27 @@ function mouthFor(text, n){
   return 'mouth_mid';
 }
 
-/* ---------- idle loop: always running, blink + gentle bob, mouth flaps while typing ---------- */
+/* Lip-sync: while one of her recordings plays, her mouth follows that clip's mouth track
+   (mouth/mouth.js, worked out from the sound: closed, mid, open, "o", smile, 20 times a second).
+   A clip with no track flaps gently; with no sound, the mouth follows the caption as it types. */
+var MOUTH_SHAPE = {"1": "mouth_mid", "2": "mouth_open", "3": "mouth_o", "4": "mouth_smile"};
+function aoiMouth(){
+  var sp = window.aoiSpeaking ? window.aoiSpeaking() : null;
+  if (sp){
+    var tr = window.AOI_MOUTH && window.AOI_MOUTH[sp.clip];
+    if (tr) return MOUTH_SHAPE[tr.charAt(Math.floor(sp.el.currentTime * 20))] || null;
+    return ["mouth_mid", "mouth_open", "mouth_mid", null][Math.floor(sp.el.currentTime * 8) % 4];
+  }
+  var sg = window.aoiSing, now = performance.now();
+  if (sg && now < sg.until){
+    if (!sg.la) return "mouth_mid";
+    var b = (now - sg.t0) / 1000 / sg.spb + sg.start, on = false;
+    sg.notes.forEach(function(n){ if (n.p && b >= n.beat && b < n.beat + n.len * 0.85) on = true; });
+    return on ? "mouth_open" : "mouth_mid";
+  }
+  return typing ? mouthFor(curText, Math.floor(shownChars)) : null;
+}
+/* ---------- idle loop: always running, blink + gentle bob, mouth moves with her voice ---------- */
 var clock = 0, nextBlink = 1.5, last = performance.now();
 function frame(now){
   var dt = Math.min(0.1, (now - last) / 1000); last = now; clock += dt;
@@ -8210,7 +8254,7 @@ function frame(now){
   }
   if (clock > nextBlink + 0.13) nextBlink = clock + 2.5 + Math.random() * 3;
   var blink = clock >= nextBlink && clock < nextBlink + 0.13;
-  var mouth = typing ? mouthFor(curText, Math.floor(shownChars)) : null;
+  var mouth = aoiMouth();
   drawAoi({ pose: curPose, eyes: curEyes, blink: blink, mouth: mouth, bob: Math.sin(clock * 2.2) * 1.5 });
   requestAnimationFrame(frame);
 }
